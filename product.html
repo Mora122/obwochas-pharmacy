@@ -395,9 +395,7 @@ const ProductDB = {
     // Description with line breaks
 
 
-    var descHtml = p.description ? p.description.replace(/
-
-/g, '<br>') : 'No description available.';
+    var descHtml = p.description ? p.description.replace(/\n/g, '<br>') : 'No description available.';
 
 
     
