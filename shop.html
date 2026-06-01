@@ -765,10 +765,19 @@
           if (badge) badge.textContent = cart.reduce(function(s,i) { return s + (i.qty||1); }, 0);
 
 
-          alert('\u2705 Added to cart!');
+          showToast('\u2705 Added to cart!');
 
 
         } catch(e) {}
+
+
+      function showToast(msg) {
+        var t = document.createElement('div');
+        t.textContent = msg;
+        t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#2e7d32;color:#fff;padding:12px 24px;border-radius:30px;font-size:15px;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.3);animation:fadeInUp 0.3s;max-width:90%;text-align:center';
+        document.body.appendChild(t);
+        setTimeout(function(){ t.style.opacity='0';t.style.transition='opacity 0.3s';setTimeout(function(){t.remove()},300) }, 1500);
+      }
 
 
       }
