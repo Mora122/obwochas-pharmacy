@@ -612,6 +612,42 @@ function showConfirmation(method) {
   
   document.getElementById('orderConfirmOverlay').classList.add('active');
   launchConfetti();
+  
+  // Save order to database
+  saveOrder(method);
+}
+
+async function saveOrder(method) {
+  try {
+    const cart = JSON.parse(localStorage.getItem('obwocha_cart') || '[]');
+    const resp = await fetch(PAYMENT_API + '/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        customer: {
+          name: document.getElementById('fullName')?.value || 'Guest',
+          email: document.getElementById('email')?.value || '',
+          phone: document.getElementById('phoneNumber')?.value || '',
+          address: `${document.getElementById('street')?.value || ''}, ${document.getElementById('town')?.value || ''}, ${document.getElementById('county')?.value || ''}`
+        },
+        items: cart,
+        totals: { subtotal: 7750, shipping: 0, tax: 0, total: 7240 },
+        payment: { method: method, status: 'completed' },
+        notes: document.getElementById('instructions')?.value || ''
+      })
+    });
+    const data = await resp.json();
+    if (data.success) {
+      console.log('Order saved:', data.order.id);
+      // Update order number with real ID
+      document.getElementById('orderSeq').textContent = data.order.id.replace('ORD-', '');
+      // Clear cart after successful order
+      localStorage.removeItem('obwocha_cart');
+    }
+  } catch(err) {
+    console.error('Failed to save order:', err);
+    // Order still shows — it's just not persisted
+  }
 }
 
 function updatePinDots() {

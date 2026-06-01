@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard | Obwocha's Pharmacy</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+:root{--primary:#2e7d32;--primary-dark:#1b5e20}
+body{background:#f0f2f5}
+.admin-header{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;padding:20px 40px;display:flex;justify-content:space-between;align-items:center}
+.admin-header h1{margin:0;font-size:22px}
+.admin-header .stats{display:flex;gap:20px;font-size:13px}
+.admin-header .stats .num{font-size:24px;font-weight:800;display:block;text-align:center}
+.admin-container{max-width:1200px;margin:20px auto;padding:0 20px}
+.filters{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.filters select,.filters input{padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:13px}
+.order-card{background:#fff;border-radius:10px;padding:16px 20px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.08);display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.order-card:hover{box-shadow:0 3px 12px rgba(0,0,0,0.12)}
+.order-card .order-id{font-weight:700;color:var(--primary);font-size:15px}
+.order-card .total{font-weight:700;font-size:16px;color:var(--primary)}
+.order-card .date{font-size:11px;color:#999}
+.status-badge{display:inline-block;padding:4px 12px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase}
+.status-pending{background:#fff3e0;color:#e65100}
+.status-confirmed{background:#e3f2fd;color:#1565c0}
+.status-processing{background:#f3e5f5;color:#7b1fa2}
+.status-shipped{background:#e8f5e9;color:#2e7d32}
+.status-delivered{background:#e0f2f1;color:#00695c}
+.status-cancelled{background:#ffebee;color:#c62828}
+.order-detail-panel{display:none;background:#fff;border-radius:10px;padding:24px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+.order-detail-panel.active{display:block}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.detail-section h4{font-size:14px;color:var(--primary);margin-bottom:8px;border-bottom:1px solid #eee;padding-bottom:6px}
+.detail-section p{font-size:13px;margin:4px 0}
+.order-items-table{width:100%;border-collapse:collapse;margin-top:8px;font-size:13px}
+.order-items-table th{background:#f5f5f5;padding:8px 10px;text-align:left;font-weight:600;font-size:12px}
+.order-items-table td{padding:8px 10px;border-top:1px solid #eee}
+.status-update{display:flex;gap:8px;margin-top:12px;align-items:center}
+.loading,.error{text-align:center;padding:40px;font-size:14px}
+.error{color:#c62828}
+.tab-btn{background:#f0f2f5;border:none;padding:12px 24px;cursor:pointer;font-size:14px;font-weight:600;color:#666;border-radius:8px 8px 0 0}
+.tab-btn.active{background:#fff;color:var(--primary);border:2px solid #ddd;border-bottom:2px solid #fff;margin-bottom:-2px}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.product-card{background:#fff;border-radius:10px;padding:14px 18px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,0.08);display:flex;justify-content:space-between;align-items:center;gap:12px}
+.product-card:hover{box-shadow:0 3px 12px rgba(0,0,0,0.12)}
+.product-card .prod-name{font-weight:600;font-size:14px;color:#333}
+.product-card .prod-cat{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:0.5px}
+.product-card .prod-price{font-weight:700;color:var(--primary);font-size:15px}
+.product-card .prod-stock{font-size:12px}
+.stock-low{color:#c62828;font-weight:600}
+.stock-ok{color:#2e7d32}
+.stock-out{color:#999}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center}
+.modal.open{display:flex}
+.modal-content{background:#fff;border-radius:12px;padding:30px;max-width:500px;width:90%;max-height:90vh;overflow-y:auto;box-shadow:0 10px 40px rgba(0,0,0,0.2)}
+.form-group{margin-bottom:14px}
+.form-group label{font-size:13px;font-weight:600;display:block;margin-bottom:4px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:14px;box-sizing:border-box}
+.form-group textarea{min-height:80px;resize:vertical}
+.inline-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:768px){.admin-header{flex-direction:column;gap:10px;text-align:center}.order-card{flex-direction:column;gap:8px;text-align:center}.detail-grid{grid-template-columns:1fr}.product-card{flex-direction:column;gap:6px;text-align:center}.inline-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="admin-header">
+  <div><h1>Obwocha's Pharmacy <span style="opacity:0.7;font-size:14px;font-weight:400">Admin Dashboard</span></h1></div>
+  <div class="stats">
+    <div><span class="num" id="statPending">0</span>Pending</div>
+    <div><span class="num" id="statProcessing">0</span>Processing</div>
+    <div><span class="num" id="statShipped">0</span>Shipped</div>
+    <div><span class="num" id="statDelivered">0</span>Delivered</div>
+  </div>
+</div>
+
+<div class="admin-tabs" style="max-width:1200px;margin:20px auto 0;padding:0 20px;display:flex;gap:0;border-bottom:2px solid #ddd">
+  <button class="tab-btn active" data-tab="orders" onclick="switchTab('orders')">📦 Orders</button>
+  <button class="tab-btn" data-tab="products" onclick="switchTab('products')">💊 Products</button>
+</div>
+
+<!-- Orders Tab -->
+<div id="tab-orders" class="tab-content active">
+  <div class="admin-container">
+    <div class="filters">
+      <select id="statusFilter" onchange="loadOrders()">
+        <option value="">All Orders</option>
+        <option value="pending">Pending</option>
+        <option value="confirmed">Confirmed</option>
+        <option value="processing">Processing</option>
+        <option value="shipped">Shipped</option>
+        <option value="delivered">Delivered</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+      <input type="text" id="searchBox" placeholder="Search name, phone..." style="flex:1;min-width:200px" onkeyup="debounceSearch()">
+      <button class="btn btn-primary" onclick="loadOrders()" style="font-size:12px">Refresh</button>
+    </div>
+    <div id="orderList"><div class="loading">Loading orders...</div></div>
+    <div id="orderDetail" class="order-detail-panel"></div>
+  </div>
+</div>
+
+<!-- Products Tab -->
+<div id="tab-products" class="tab-content" style="display:none">
+  <div class="admin-container">
+    <div class="filters">
+      <select id="prodCategoryFilter" onchange="loadProducts()">
+        <option value="">All Categories</option>
+        <option value="Pain Relief">Pain Relief</option>
+        <option value="Cold & Flu">Cold & Flu</option>
+        <option value="Vitamins & Supplements">Vitamins & Supplements</option>
+        <option value="First Aid">First Aid</option>
+        <option value="Baby Care">Baby Care</option>
+        <option value="Digestive Health">Digestive Health</option>
+        <option value="Allergy & Skin Care">Allergy & Skin Care</option>
+        <option value="Diabetes Care">Diabetes Care</option>
+      </select>
+      <input type="text" id="prodSearchBox" placeholder="Search products..." style="flex:1;min-width:200px" onkeyup="debounceProductSearch()">
+      <button class="btn btn-primary" onclick="loadProducts()" style="font-size:12px">Refresh</button>
+      <button class="btn btn-success" onclick="showAddProduct()" style="font-size:12px;background:#2e7d32;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-weight:600">+ Add Product</button>
+    </div>
+    <div id="productList"><div class="loading">Loading products...</div></div>
+    <div id="inventorySummary" style="background:#fff;border-radius:10px;padding:16px 20px;margin-top:12px;box-shadow:0 1px 3px rgba(0,0,0,0.08);display:none"></div>
+  </div>
+</div>
+
+<!-- Product Modal -->
+<div id="productModal" class="modal">
+  <div class="modal-content">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <h3 style="margin:0;color:var(--primary)" id="modalTitle">Add Product</h3>
+      <button onclick="closeModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:#999">&times;</button>
+    </div>
+    <input type="hidden" id="editProductId">
+    <div class="form-group">
+      <label>Product Name *</label>
+      <input type="text" id="prodName">
+    </div>
+    <div class="form-group">
+      <label>Category *</label>
+      <select id="prodCategory">
+        <option value="Pain Relief">Pain Relief</option>
+        <option value="Cold & Flu">Cold & Flu</option>
+        <option value="Vitamins & Supplements">Vitamins & Supplements</option>
+        <option value="First Aid">First Aid</option>
+        <option value="Baby Care">Baby Care</option>
+        <option value="Digestive Health">Digestive Health</option>
+        <option value="Allergy & Skin Care">Allergy & Skin Care</option>
+        <option value="Diabetes Care">Diabetes Care</option>
+      </select>
+    </div>
+    <div class="inline-grid">
+      <div class="form-group">
+        <label>Price (KSh) *</label>
+        <input type="number" id="prodPrice">
+      </div>
+      <div class="form-group">
+        <label>Stock Quantity</label>
+        <input type="number" id="prodStock">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea id="prodDesc"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Image URL</label>
+      <input type="text" id="prodImage" placeholder="Optional">
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-primary" onclick="saveProduct()" style="flex:1;padding:12px;font-size:14px;font-weight:600">Save Product</button>
+      <button onclick="closeModal()" style="padding:12px 24px;border:1px solid #ddd;border-radius:6px;background:#fff;cursor:pointer;font-size:14px">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var API = '/api';
+var allOrders = [];
+var allProducts = [];
+var searchTimer;
+
+/* ========= TABS ========= */
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelectorAll('.tab-content').forEach(function(c) { c.style.display = 'none'; });
+  document.querySelector('.tab-btn[data-tab="' + tab + '"]').classList.add('active');
+  document.getElementById('tab-' + tab).style.display = 'block';
+  if (tab === 'orders') loadOrders();
+  if (tab === 'products') loadProducts();
+}
+
+/* ========= ORDERS ========= */
+function debounceSearch() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(loadOrders, 300);
+}
+
+async function loadOrders() {
+  document.getElementById('orderList').innerHTML = '<div class="loading">Loading...</div>';
+  try {
+    var r = await fetch(API + '/orders');
+    var d = await r.json();
+    if (!d.success) {
+      document.getElementById('orderList').innerHTML = '<div class="error">' + d.error + '</div>';
+      return;
+    }
+    allOrders = d.orders || [];
+    renderOrders();
+  } catch(e) {
+    document.getElementById('orderList').innerHTML = '<div class="error">Connection error</div>';
+  }
+}
+
+function renderOrders() {
+  var sf = document.getElementById('statusFilter').value;
+  var sq = document.getElementById('searchBox').value.toLowerCase();
+  var filtered = allOrders;
+  if (sf) filtered = filtered.filter(function(o) { return o.status === sf; });
+  if (sq) filtered = filtered.filter(function(o) {
+    var c = o.customer || {};
+    return (c.name + ' ' + c.phone + ' ' + c.email + ' ' + o.id).toLowerCase().includes(sq);
+  });
+  updateOrderStats();
+  var el = document.getElementById('orderList');
+  if (filtered.length === 0) {
+    el.innerHTML = '<div style="padding:60px;text-align:center;color:#999">No orders found</div>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < filtered.length; i++) {
+    var o = filtered[i];
+    var c = o.customer || {};
+    var sc = 'status-' + (o.status || 'pending');
+    var t = o.total || (o.totals ? o.totals.total : 0);
+    var ic = o.items ? o.items.length : 0;
+    var dt = o.createdAt ? new Date(o.createdAt).toLocaleString('en-KE', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '';
+    html += '<div class="order-card" onclick="showOrderDetail(\'' + o._id + '\')">' +
+      '<div><div class="order-id">#' + (o.id || o._id) + '</div><div style="font-size:13px;color:#333">' + (c.name || 'Guest') + '<br><small style="color:#888">' + (c.phone || '') + '</small></div></div>' +
+      '<div style="text-align:center"><span class="status-badge ' + sc + '">' + (o.status || 'pending') + '</span><br><span style="font-size:12px;color:#666">' + ic + ' item' + (ic !== 1 ? 's' : '') + '</span></div>' +
+      '<div style="text-align:right"><div class="total">KSh ' + Number(t).toLocaleString() + '</div><div class="date">' + dt + '</div></div></div>';
+  }
+  el.innerHTML = html;
+}
+
+function updateOrderStats() {
+  var s = {pending:0,confirmed:0,processing:0,shipped:0,delivered:0,cancelled:0};
+  for (var i = 0; i < allOrders.length; i++) {
+    var st = allOrders[i].status;
+    if (s[st] !== undefined) s[st]++;
+  }
+  document.getElementById('statPending').textContent = s.pending + s.confirmed;
+  document.getElementById('statProcessing').textContent = s.processing;
+  document.getElementById('statShipped').textContent = s.shipped;
+  document.getElementById('statDelivered').textContent = s.delivered;
+}
+
+async function showOrderDetail(id) {
+  var panel = document.getElementById('orderDetail');
+  try {
+    var r = await fetch(API + '/order?id=' + id);
+    var d = await r.json();
+    if (!d.success || !d.order) {
+      panel.innerHTML = '<div class="error">Order not found</div>';
+      panel.classList.add('active');
+      return;
+    }
+    var o = d.order;
+    var c = o.customer || {};
+    var p = o.payment || {};
+    var t = o.totals || {};
+    var sc = 'status-' + (o.status || 'pending');
+    var itemsHtml = '';
+    var items = o.items || [];
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      var lineTotal = (item.price || 0) * (item.quantity || 1);
+      itemsHtml += '<tr><td>' + (item.name || '') + '</td><td>' + (item.quantity || 1) + '</td><td>KSh ' + Number(item.price || 0).toLocaleString() + '</td><td>KSh ' + Number(lineTotal).toLocaleString() + '</td></tr>';
+    }
+    var statusOpts = ['pending','confirmed','processing','shipped','delivered','cancelled'];
+    var selHtml = '';
+    for (var i = 0; i < statusOpts.length; i++) {
+      selHtml += '<option value="' + statusOpts[i] + '"' + (o.status === statusOpts[i] ? ' selected' : '') + '>' + statusOpts[i].charAt(0).toUpperCase() + statusOpts[i].slice(1) + '</option>';
+    }
+    var oid = o.id || id;
+    panel.innerHTML =
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">' +
+        '<h3 style="margin:0;color:var(--primary)">Order #' + oid + '</h3>' +
+        '<span class="status-badge ' + sc + '" style="font-size:14px;padding:6px 16px">' + (o.status || '') + '</span>' +
+      '</div>' +
+      '<div class="detail-grid">' +
+        '<div class="detail-section"><h4>Customer</h4><p><strong>Name:</strong> ' + (c.name || '') + '</p><p><strong>Phone:</strong> ' + (c.phone || '') + '</p><p><strong>Email:</strong> ' + (c.email || '') + '</p><p><strong>Address:</strong> ' + (c.address || '') + '</p></div>' +
+        '<div class="detail-section"><h4>Payment</h4><p><strong>Method:</strong> ' + (p.method || '') + '</p><p><strong>Status:</strong> ' + (p.status || '') + '</p></div>' +
+      '</div>' +
+      '<div class="detail-section"><h4>Items (' + items.length + ')</h4><table class="order-items-table"><tr><th>Product</th><th>Qty</th><th>Price</th><th>Total</th></tr>' + itemsHtml + '</table></div>' +
+      '<div class="detail-grid">' +
+        '<div class="detail-section"><h4>Totals</h4><p><strong>Subtotal:</strong> KSh ' + Number(t.subtotal || 0).toLocaleString() + '</p><p><strong>Shipping:</strong> ' + (t.shipping === 0 ? 'FREE' : 'KSh ' + Number(t.shipping).toLocaleString()) + '</p><p><strong style="font-size:16px">Total:</strong> <strong style="color:var(--primary);font-size:18px">KSh ' + Number(t.total || 0).toLocaleString() + '</strong></p></div>' +
+        '<div class="detail-section"><h4>Timeline</h4><p><strong>Created:</strong> ' + (o.createdAt ? new Date(o.createdAt).toLocaleString('en-KE') : '') + '</p><p><strong>Updated:</strong> ' + (o.updatedAt ? new Date(o.updatedAt).toLocaleString('en-KE') : '') + '</p></div>' +
+      '</div>' +
+      '<div class="status-update"><strong style="font-size:13px">Update Status:</strong> <select id="statusSelect">' + selHtml + '</select> <button class="btn btn-primary" onclick="updateOrderStatus(\'' + (o.id || id) + '\')" style="font-size:12px">Update</button> <button class="btn" onclick="document.getElementById(\'orderDetail\').classList.remove(\'active\')" style="font-size:12px">Close</button></div>';
+    panel.classList.add('active');
+    panel.scrollIntoView({behavior:'smooth',block:'start'});
+  } catch(e) {
+    panel.innerHTML = '<div class="error">Error: ' + e.message + '</div>';
+    panel.classList.add('active');
+  }
+}
+
+async function updateOrderStatus(id) {
+  var status = document.getElementById('statusSelect').value;
+  try {
+    var r = await fetch(API + '/order?id=' + id, {method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:status})});
+    var d = await r.json();
+    if (d.success) {
+      loadOrders();
+      showOrderDetail(id);
+    } else {
+      alert('Error: ' + d.error);
+    }
+  } catch(e) {
+    alert('Error: ' + e.message);
+  }
+}
+
+/* ========= PRODUCTS ========= */
+function debounceProductSearch() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(loadProducts, 300);
+}
+
+async function loadProducts() {
+  document.getElementById('productList').innerHTML = '<div class="loading">Loading products...</div>';
+  try {
+    var cat = document.getElementById('prodCategoryFilter').value;
+    var search = document.getElementById('prodSearchBox').value;
+    var url = API + '/products?all=true';
+    if (cat) url += '&category=' + encodeURIComponent(cat);
+    if (search) url += '&search=' + encodeURIComponent(search);
+    var r = await fetch(url);
+    var d = await r.json();
+    if (!d.success) {
+      document.getElementById('productList').innerHTML = '<div class="error">' + d.error + '</div>';
+      return;
+    }
+    allProducts = d.products || [];
+    renderProducts();
+  } catch(e) {
+    document.getElementById('productList').innerHTML = '<div class="error">Connection error</div>';
+  }
+}
+
+function renderProducts() {
+  var el = document.getElementById('productList');
+  if (allProducts.length === 0) {
+    el.innerHTML = '<div style="padding:60px;text-align:center;color:#999">No products found. Click "+ Add Product" to get started.</div>';
+    document.getElementById('inventorySummary').style.display = 'none';
+    return;
+  }
+  var html = '';
+  var totalStock = 0;
+  var lowStock = 0;
+  var categories = {};
+  for (var i = 0; i < allProducts.length; i++) {
+    var p = allProducts[i];
+    totalStock += (p.stock || 0);
+    if (p.stock !== undefined && p.stock < 20) lowStock++;
+    if (!categories[p.category]) categories[p.category] = 0;
+    categories[p.category]++;
+    var stockClass = p.stock <= 0 ? 'stock-out' : p.stock < 20 ? 'stock-low' : 'stock-ok';
+    var stockLabel = p.stock <= 0 ? 'Out of stock' : p.stock + ' in stock';
+    html += '<div class="product-card">' +
+      '<div style="flex:1">' +
+        '<div class="prod-name">' + p.name + '</div>' +
+        '<div class="prod-cat">' + (p.category || '') + ' • ' + p.id + '</div>' +
+        '<div style="font-size:11px;color:#555;margin-top:2px">' + (p.description ? p.description.substring(0,60) + (p.description.length > 60 ? '...' : '') : '') + '</div>' +
+      '</div>' +
+      '<div style="text-align:center;min-width:90px">' +
+        '<div class="prod-price">KSh ' + Number(p.price).toLocaleString() + '</div>' +
+        '<div class="prod-stock ' + stockClass + '">' + stockLabel + '</div>' +
+      '</div>' +
+      '<div style="display:flex;gap:4px">' +
+        '<button class="btn btn-primary" onclick="showEditProduct(\'' + p.id + '\')" style="font-size:11px;padding:6px 12px">Edit</button>' +
+        '<button class="btn" onclick="deleteProduct(\'' + p.id + '\',\'' + p.name.replace(/'/g,"\\'") + '\')" style="font-size:11px;padding:6px 12px;background:#ffebee;color:#c62828;border:none;border-radius:4px;cursor:pointer">Del</button>' +
+      '</div></div>';
+  }
+  el.innerHTML = html;
+  
+  // Inventory summary
+  var catCount = Object.keys(categories).length;
+  document.getElementById('inventorySummary').style.display = 'block';
+  document.getElementById('inventorySummary').innerHTML =
+    '<strong>📊 Inventory Summary</strong> — ' + allProducts.length + ' products across ' + catCount + ' categories &nbsp;|&nbsp; ' +
+    '<span class="stock-ok">✅ ' + (allProducts.length - lowStock) + ' in stock</span> &nbsp;|&nbsp; ' +
+    '<span class="stock-low">⚠️ ' + lowStock + ' low stock</span> &nbsp;|&nbsp; ' +
+    '📦 ' + totalStock + ' total units';
+}
+
+function showAddProduct() {
+  document.getElementById('modalTitle').textContent = 'Add New Product';
+  document.getElementById('editProductId').value = '';
+  document.getElementById('prodName').value = '';
+  document.getElementById('prodCategory').value = 'Pain Relief';
+  document.getElementById('prodPrice').value = '';
+  document.getElementById('prodStock').value = '50';
+  document.getElementById('prodDesc').value = '';
+  document.getElementById('prodImage').value = '';
+  document.getElementById('productModal').classList.add('open');
+}
+
+function showEditProduct(id) {
+  var p = allProducts.find(function(x) { return x.id === id; });
+  if (!p) return;
+  document.getElementById('modalTitle').textContent = 'Edit Product: ' + p.name;
+  document.getElementById('editProductId').value = id;
+  document.getElementById('prodName').value = p.name || '';
+  document.getElementById('prodCategory').value = p.category || 'Pain Relief';
+  document.getElementById('prodPrice').value = p.price || 0;
+  document.getElementById('prodStock').value = p.stock || 0;
+  document.getElementById('prodDesc').value = p.description || '';
+  document.getElementById('prodImage').value = p.image || '';
+  document.getElementById('productModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('productModal').classList.remove('open');
+}
+
+async function saveProduct() {
+  var id = document.getElementById('editProductId').value;
+  var data = {
+    name: document.getElementById('prodName').value.trim(),
+    category: document.getElementById('prodCategory').value,
+    price: document.getElementById('prodPrice').value,
+    stock: document.getElementById('prodStock').value || 0,
+    description: document.getElementById('prodDesc').value.trim(),
+    image: document.getElementById('prodImage').value.trim()
+  };
+  if (!data.name || !data.price) { alert('Name and price are required'); return; }
+  
+  try {
+    var r;
+    if (id) {
+      r = await fetch(API + '/products?id=' + id, {method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    } else {
+      r = await fetch(API + '/products', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    }
+    var d = await r.json();
+    if (d.success) {
+      closeModal();
+      loadProducts();
+    } else {
+      alert('Error: ' + d.error);
+    }
+  } catch(e) {
+    alert('Error: ' + e.message);
+  }
+}
+
+async function deleteProduct(id, name) {
+  if (!confirm('Delete "' + name + '" permanently?')) return;
+  try {
+    var r = await fetch(API + '/products?id=' + id, {method:'DELETE'});
+    var d = await r.json();
+    if (d.success) {
+      loadProducts();
+    } else {
+      alert('Error: ' + d.error);
+    }
+  } catch(e) {
+    alert('Error: ' + e.message);
+  }
+}
+
+// Auto-refresh
+loadOrders();
+setInterval(loadOrders, 60000);
+</script>
+</body>
+</html>

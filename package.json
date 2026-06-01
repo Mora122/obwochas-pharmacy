@@ -1,0 +1,9 @@
+{
+  "name": "obwochas-pharmacy",
+  "version": "1.0.0",
+  "description": "Obwocha's Pharmacy - Full-stack e-commerce pharmacy",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "mongodb": "^6.3.0"
+  }
+}

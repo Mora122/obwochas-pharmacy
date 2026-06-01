@@ -1,65 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CeraVe Moisturising Cream 454g — Obwocha's Pharmacy</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Details — Obwocha's Pharmacy</title>
 <link rel="stylesheet" href="css/style.css">
-<script src="js/cart.js"></script>
+<style>
+.product-detail-wrapper { display:flex; gap:40px; flex-wrap:wrap; padding:30px 0; }
+.product-gallery { flex:1; min-width:300px; }
+.product-gallery img { width:100%; max-width:500px; height:auto; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.1); }
+.product-detail-info { flex:1.2; min-width:300px; }
+.product-detail-info .brand { color:#2e7d32; font-weight:600; font-size:14px; text-transform:uppercase; letter-spacing:1px; }
+.product-detail-info h2 { font-size:28px; margin:8px 0 12px; color:#1a1a1a; }
+.product-detail-info .price { font-size:28px; font-weight:700; color:#2e7d32; margin:10px 0; }
+.product-detail-info .price .old { font-size:18px; color:#999; text-decoration:line-through; font-weight:400; margin-right:10px; }
+.product-detail-info .stock-badge { display:inline-block; padding:4px 12px; border-radius:20px; font-size:13px; font-weight:600; margin:8px 0; }
+.stock-badge.in-stock { background:#e8f5e9; color:#2e7d32; }
+.stock-badge.low-stock { background:#fff3e0; color:#e65100; }
+.stock-badge.out-of-stock { background:#ffebee; color:#c62828; }
+.product-detail-info .description { color:#555; line-height:1.7; margin:16px 0; }
+.product-detail-info .qty-selector { display:flex; align-items:center; gap:0; margin:20px 0; }
+.product-detail-info .qty-selector button { width:40px; height:40px; border:1px solid #ddd; background:#f8f9fa; font-size:18px; cursor:pointer; }
+.product-detail-info .qty-selector input { width:60px; height:40px; text-align:center; border:1px solid #ddd; font-size:16px; }
+.product-detail-info .btn-row { display:flex; gap:12px; flex-wrap:wrap; margin:16px 0; }
+.product-detail-info .btn-row a, .product-detail-info .btn-row button { flex:1; min-width:160px; text-align:center; cursor:pointer; }
+.product-meta { margin-top:24px; padding-top:20px; border-top:1px solid #eee; }
+.product-meta p { margin:6px 0; font-size:14px; color:#666; }
+#relatedProducts { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:20px; margin-top:16px; }
+.loading-spinner { text-align:center; padding:60px; color:#999; }
+.error-state { text-align:center; padding:60px; }
+.error-state h3 { color:#c62828; }
+</style>
 </head>
 <body>
 <div class="top-bar"><div class="left"><span>🚚 Free Delivery For orders above KSh 2,500/=</span></div><div class="right"><a href="about.html">About Us</a><a href="faq.html">FAQ</a><a href="contact.html">Contact</a></div></div>
 <header>
-  <button class="mobile-menu-toggle" onclick="document.querySelector('.main-nav').classList.toggle('open')">☰</button>
+  <button class="mobile-menu-toggle" onclick="document.querySelector('.main-nav').classList.toggle('open')">&#9776; Menu</button>
   <a href="index.html" class="logo"><div class="logo-icon">O</div><div class="logo-text"><h1>Obwocha's <span>Pharmacy</span></h1><small>Meru's Own Pharmacy</small></div></a>
   <div class="search-bar"><input type="text" placeholder="Search products..."><button>Search</button></div>
-  <div class="header-icons"><a href="https://wa.me/+254710703000" target="_blank" class="whatsapp-btn">📱 0710703000</a><a href="account.html">👤 Account</a><a href="cart.html" class="cart-icon">🛒 <span class="badge">0</span></a></div>
-</header>
-<nav class="main-nav"><ul><li><a href="index.html">Home</a></li><li><a href="shop.html" class="active">Shop</a></li><li><a href="brands.html">Brands</a></li><li><a href="prescription.html">Prescription</a></li><li><a href="services.html">Health Services</a></li><li><a href="store-locator.html">Store Locator</a></li></ul></nav>
+  <div class="header-icons"><a href="https://wa.me/+254727747699" target="_blank" class="whatsapp-btn">📱 0727747699</a><a href="account.html">👤 Account</a><a href="cart.html" class="cart-icon">🛒 <span class="badge">0</span></a></div>
+</header>`n`n<!-- Navigation -->`n<nav class="main-nav"><ul><li><a href="index.html">Home</a></li><li><a href="shop.html">Shop By Category</a></li><li><a href="health-conditions.html">Shop By Condition</a></li><li><a href="brands.html">Shop By Brand</a></li><li><a href="shop.html?sale=1">Sale & Offers</a></li><li><a href="prescription.html">Submit Prescription</a></li><li><a href="services.html">Health Services</a></li><li><a href="store-locator.html">Store Locator</a></li></ul></nav>
 
 <div class="page-header">
-  <h2>Product Details</h2>
-  <div class="breadcrumb"><a href="index.html">Home</a> / <a href="shop.html">Shop</a> / <a href="shop.html?cat=skincare">Skin Care</a> / <span>CeraVe Moisturising Cream</span></div>
+  <h2 id="prodTitle">Product Details</h2>
+  <div class="breadcrumb" id="breadcrumb"><a href="index.html">Home</a> / <a href="shop.html">Shop</a> / <span id="bcProduct">Loading...</span></div>
 </div>
 
 <div class="container">
-  <div class="product-detail">
-    <div class="product-gallery"><img id="mainProductImage" src="images/cerave_cream.jpg" alt="Product Image" style="width:100%;max-width:400px;height:auto;object-fit:contain;"></div>
-    <div class="product-info">
-      <div class="product-brand">CeraVe</div>
-      <h2>CeraVe Moisturising Cream 454g</h2>
-      <div class="product-price"><span class="old">KSh 3,200</span> KSh 2,690 <span style="font-size:13px;color:#c00;font-weight:600;">(Save KSh 510)</span></div>
-      <span class="sale-badge">-16% OFF</span>
-      <div class="product-desc">
-        <p>Developed with dermatologists, CeraVe Moisturising Cream provides 24-hour hydration and helps restore the protective skin barrier with three essential ceramides. Suitable for dry to very dry skin on both face and body.</p>
-        <p><strong>Key Benefits:</strong><br>✅ 24-hour hydration<br>✅ Fragrance-free, non-comedogenic<br>✅ Contains 3 essential ceramides<br>✅ Suitable for sensitive skin</p>
-        <p><strong>Ingredients:</strong> Purified Water, Glycerin, Ceramides (1, 3, 6-II), Dimethicone, Cetearyl Alcohol, etc.</p>
-      </div>
-      <div class="qty-selector">
-        <button onclick="this.nextElementSibling.stepDown()">−</button>
-        <input type="number" value="1" min="1" max="99">
-        <button onclick="this.previousElementSibling.stepUp()">+</button>
-      </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;">
-        <button id="addToCartBtn" class="btn btn-primary" style="flex:1;text-align:center;cursor:pointer;">🛒 Add to Cart</button>
-        <a href="checkout.html" class="btn" style="flex:1;text-align:center;">Buy Now</a>
-      </div>
-      <div class="product-meta">
-        <p><strong>SKU:</strong> CRV-454-WH</p>
-        <p><strong>Category:</strong> <a href="shop.html?cat=skincare">Skin Care</a></p>
-        <p><strong>Availability:</strong> ✅ In Stock — Express delivery available</p>
-        <p><strong>Returns:</strong> Eligible for return within 7 days</p>
-      </div>
-    </div>
+  <div id="productContent">
+    <div class="loading-spinner"><h3>Loading product...</h3></div>
   </div>
 
-  <!-- Related Products -->
-  <div style="padding:30px 0 50px;">
+  <div id="relatedSection" style="padding:30px 0 50px;display:none;">
     <div class="section-title"><h2>You May Also Like</h2></div>
-    <div class="product-grid">
-      <div class="product-card"><div class="product-img">🧴</div><div class="product-body"><div class="brand">CeraVe</div><h3><a href="product.html">CeraVe Hydrating Cleanser 473ml</a></h3><div class="price">KSh 2,190</div><div class="product-actions"><a href="product.html" class="btn btn-sm">View</a><a href="cart.html" class="btn btn-primary btn-sm">Add to Cart</a></div></div></div>
-      <div class="product-card"><div class="product-img">🧴</div><div class="product-body"><div class="brand">Eucerin</div><h3><a href="product.html">Eucerin Urea Repair Cream 200ml</a></h3><div class="price">KSh 2,850</div><div class="product-actions"><a href="product.html" class="btn btn-sm">View</a><a href="cart.html" class="btn btn-primary btn-sm">Add to Cart</a></div></div></div>
-      <div class="product-card"><div class="product-img">🧴</div><div class="product-body"><div class="brand">La Roche-Posay</div><h3><a href="product.html">La Roche-Posay Cicaplast Baume B5 40ml</a></h3><div class="price">KSh 2,450</div><div class="product-actions"><a href="product.html" class="btn btn-sm">View</a><a href="cart.html" class="btn btn-primary btn-sm">Add to Cart</a></div></div></div>
-    </div>
+    <div id="relatedProducts"></div>
   </div>
 </div>
 
@@ -71,78 +65,129 @@
 
 <footer>
   <div class="footer-grid">
-    <div><h4>Shop By Category</h4><a href="shop.html?cat=vitamins">Vitamin & Supplements</a><a href="shop.html?cat=skincare">Skin Care</a><a href="brands.html">All Brands</a></div>
-    <div><h4>About Us</h4><a href="about.html">About Obwocha</a><a href="health-conditions.html">Health Conditions</a><a href="blog.html">Blog</a><a href="privacy.html">Privacy Policy</a></div>
-    <div><h4>Customer Care</h4><a href="returns.html">Delivery & Returns</a><a href="account.html">My Account</a><a href="faq.html">FAQ's</a></div>
-    <div class="contact-info"><h4>Contact Us</h4><p>📞 <a href="tel:0110093269">0110093269</a></p><p>📧 <a href="mailto:info@goodlife.africa.com">info@goodlife.africa.com</a></p><p>P.O. Box 1852-00621 Nairobi, Kenya</p></div>
+    <div><h4>Shop By Category</h4><a href="shop.html?cat=vitamins">Vitamins & Supplements</a><a href="shop.html?cat=skincare">Skin Care</a><a href="brands.html">All Brands</a><a href="prescription.html">Prescription Services</a></div>
+    <div><h4>About Us</h4><a href="about.html">About Obwocha</a><a href="health-conditions.html">Health Conditions</a><a href="blog.html">Blog</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms & Conditions</a></div>
+    <div><h4>Customer Care</h4><a href="returns.html">Delivery & Returns</a><a href="account.html">My Account</a><a href="faq.html">FAQ's</a><a href="sitemap.html">Sitemap</a></div>
+    <div class="contact-info"><h4>Contact Us</h4><p>📞 Phone: <a href="tel:0727747699">0727747699</a></p><p>📱 WhatsApp: <a href="https://wa.me/+254727747699">0727747699</a></p><p>📧 <a href="mailto:info@obwochaspharmacy.co.ke">info@obwochaspharmacy.co.ke</a></p><p><strong>Postal:</strong> P.O. Box 1852-00621 Nairobi, Kenya</p><div class="social-links"><a href="https://facebook.com/obwochaspharmacy" target="_blank">f</a><a href="https://instagram.com/obwochaspharmacy" target="_blank">📷</a><a href="https://twitter.com/obwochaspharmacy" target="_blank">𝕏</a><a href="https://linkedin.com/company/obwochas-pharmacy" target="_blank">in</a><a href="https://youtube.com/channel/UCSjKFmnurK8VCBact1TschQ" target="_blank">▶</a></div></div>
   </div>
-  <div class="footer-bottom"><div><a href="terms.html">Terms</a> | <a href="privacy.html">Privacy</a> | <a href="cookies.html">Cookies</a></div><p>Copyright © 2026 Obwocha's Pharmacy</p></div>
+  <div class="footer-bottom"><div><a href="terms.html">Terms & Conditions</a> | <a href="privacy.html">Privacy Policy</a> | <a href="cookies.html">Cookie Policy</a></div><p style="margin-top:8px;">Copyright © 2026 <a href="index.html">Obwocha's Pharmacy</a>. All Rights Reserved.</p><div class="payment-icons">💳 M-Pesa | Visa | MasterCard | Cash-on-Delivery</div></div>
 </footer>
-<a href="https://wa.me/+254710703000" target="_blank" class="whatsapp-float">💬</a>
+<a href="https://wa.me/+254727747699" target="_blank" class="whatsapp-float">💬</a>
 
 <script>
-// Dynamic product image by ID from URL
-(function() {
-  const products = {
-    1: 'images/wellman.png',
-    2: 'images/cerave_cream.jpg',
-    3: 'images/pampers.jpg',
-    4: 'images/dettol_antiseptic.jpg',
-    5: 'images/sante_tea.jpg',
-    6: 'images/colgate.jpg',
-    7: 'images/opti_whey.jpg',
-    8: 'images/nivea_sun.jpg',
-    9: 'images/seven_seas.jpg',
-    10: 'images/optrex.jpg',
-    11: 'images/piriton.jpg',
-    12: 'images/brufen.jpg',
-    13: 'images/cerave_foam.jpg',
-    14: 'images/cerave_am.jpg',
-    15: 'images/cerave_pm.png',
-    16: 'images/cerave_retinol.jpg',
-    17: 'images/cerave_lotion.jpg',
-    18: 'images/panadol_extra.jpg',
-    19: 'images/cetirizine.jpg',
-    20: 'images/vitamin_c.jpg',
-    21: 'images/omega3.jpg',
-    22: 'images/amoxicillin.jpg',
-    23: 'images/multivitamin.jpg',
-    24: 'images/hand_sanitizer.jpg'
-  };
-  const params = new URLSearchParams(window.location.search);
-  const pId = params.get('id');
-  if (pId && products[pId]) {
-    const img = document.getElementById('mainProductImage');
-    if (img) img.src = products[pId];
-    
-    // Update dynamic product info from ProductDB
-    const prod = typeof ProductDB !== 'undefined' ? ProductDB[pId] : null;
-    if (prod) {
-      document.title = prod.name + ' — Obwocha\'s Pharmacy';
-      const nameEl = document.querySelector('.product-title h1');
-      if (nameEl) nameEl.textContent = prod.name;
-      const brandEl = document.querySelector('.product-brand');
-      if (brandEl) brandEl.textContent = prod.brand;
-      const priceEl = document.querySelector('.product-price');
-      if (priceEl) priceEl.innerHTML = 'KSh ' + prod.price.toLocaleString();
-      const descEl = document.querySelector('.product-meta p:first-child');
-      if (descEl) descEl.innerHTML = '<strong>SKU:</strong> ' + prod.sku;
-      const catEl = document.querySelector('.product-meta p:nth-child(2) a');
-      if (catEl) catEl.href = 'shop.html?brand=' + prod.brand.toLowerCase();
-    }
+var CAT_ICONS = {'Pain Relief':'⚡','Cold & Flu':'🤧','Vitamins & Supplements':'💊','First Aid':'🩹','Baby Care':'🤱','Digestive Health':'🫁','Allergy & Skin Care':'🧴','Diabetes Care':'🩸'};
+
+function updateCartBadge() {
+  try {
+    var cart = JSON.parse(localStorage.getItem('cart')) || [];
+    var badge = document.querySelector('.cart-icon .badge');
+    if (badge) badge.textContent = cart.reduce(function(s,i) { return s + (i.qty||1); }, 0);
+  } catch(e) {}
+}
+
+async function loadProduct() {
+  var params = new URLSearchParams(window.location.search);
+  var id = params.get('id');
+  var container = document.getElementById('productContent');
+  var relatedSection = document.getElementById('relatedSection');
+  
+  if (!id) {
+    container.innerHTML = '<div class="error-state"><h3>😕 No product selected</h3><p>Please choose a product from our <a href="shop.html">shop</a>.</p></div>';
+    return;
   }
   
-  // Wire up Add to Cart button
-  const cartBtn = document.getElementById('addToCartBtn');
-  if (cartBtn && pId) {
-    cartBtn.onclick = function() {
-      const qtyInput = document.querySelector('.qty-selector input');
-      const qty = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
-      addToCart(parseInt(pId), qty);
-    };
+  try {
+    var r = await fetch('/api/products?id=' + encodeURIComponent(id));
+    var d = await r.json();
+    
+    if (!d.success || !d.product) {
+      container.innerHTML = '<div class="error-state"><h3>😕 Product not found</h3><p>The product you\'re looking for doesn\'t exist. <a href="shop.html">Browse shop</a></p></div>';
+      return;
+    }
+    
+    var p = d.product;
+    var imgHtml = p.image ? '<img src="' + p.image + '" alt="' + p.name + '" onerror="this.src=\'\';this.style.display=\'none\'">' : '<div style="width:100%;max-width:500px;height:300px;display:flex;align-items:center;justify-content:center;font-size:80px;background:#f5f8f5;border-radius:12px">' + (CAT_ICONS[p.category] || '💊') + '</div>';
+    
+    // Stock badge
+    var stockClass = 'in-stock';
+    var stockText = '✅ In Stock';
+    if (p.stock <= 0) { stockClass = 'out-of-stock'; stockText = '❌ Out of Stock'; }
+    else if (p.stock <= 10) { stockClass = 'low-stock'; stockText = '⚠️ Only ' + p.stock + ' left'; }
+    
+    // Description with line breaks
+    var descHtml = p.description ? p.description.replace(/\n/g, '<br>') : 'No description available.';
+    
+    var html = '<div class="product-detail-wrapper">' +
+      '<div class="product-gallery">' + imgHtml + '</div>' +
+      '<div class="product-detail-info">' +
+      '<div class="brand">' + p.category + '</div>' +
+      '<h2>' + p.name + '</h2>' +
+      '<div class="price"><span class="old">KSh ' + Number(p.price * 1.15).toFixed(0) + '</span> KSh ' + Number(p.price).toLocaleString() + '</div>' +
+      '<span class="stock-badge ' + stockClass + '">' + stockText + '</span>' +
+      '<div class="description">' + descHtml + '</div>' +
+      '<div class="qty-selector"><button onclick="this.nextElementSibling.stepDown()">−</button><input type="number" id="qtyInput" value="1" min="1" max="99"><button onclick="this.previousElementSibling.stepUp()">+</button></div>' +
+      '<div class="btn-row"><button class="btn btn-primary" onclick="addToCart(\'' + p.id + '\',\'' + p.name.replace(/'/g,"\\'") + '\',' + p.price + ')">🛒 Add to Cart</button>' +
+      '<a href="checkout.html" class="btn">Buy Now</a></div>' +
+      '<div class="product-meta">' +
+      '<p><strong>SKU:</strong> ' + p.id + '</p>' +
+      '<p><strong>Category:</strong> <a href="shop.html?cat=' + p.category.toLowerCase().replace(/[^a-z0-9]+/g,'') + '">' + p.category + '</a></p>' +
+      '<p><strong>Availability:</strong> ' + (p.stock > 0 ? '✅ In Stock — Express delivery available' : '❌ Currently unavailable') + '</p>' +
+      '<p><strong>Returns:</strong> Eligible for return within 7 days</p></div></div></div>';
+    
+    container.innerHTML = html;
+    
+    // Update page title and breadcrumb
+    document.title = p.name + ' — Obwocha\'s Pharmacy';
+    document.getElementById('prodTitle').textContent = p.name;
+    document.getElementById('bcProduct').textContent = p.name;
+    
+    // Load related products
+    loadRelated(p.category, p.id);
+    updateCartBadge();
+    
+  } catch(e) {
+    container.innerHTML = '<div class="error-state"><h3>😕 Connection error</h3><p>Couldn\'t load product details. <button onclick="loadProduct()" class="btn btn-primary" style="display:inline-block;margin-top:10px;">Retry</button></p></div>';
   }
-})();
-</script>
+}
 
+async function loadRelated(category, excludeId) {
+  try {
+    var r = await fetch('/api/products?category=' + encodeURIComponent(category) + '&all=true');
+    var d = await r.json();
+    if (!d.success || !d.products) return;
+    
+    var related = d.products.filter(function(p) { return p.id !== excludeId; }).slice(0, 4);
+    if (related.length === 0) return;
+    
+    var grid = document.getElementById('relatedProducts');
+    var html = '';
+    related.forEach(function(p) {
+      var icon = CAT_ICONS[p.category] || '💊';
+      var imgInner = p.image ? '<img src="' + p.image + '" alt="' + p.name + '" style="width:100%;height:100%;object-fit:cover;border-radius:8px" onerror="this.style.display=\'none\'">' : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:36px;">' + icon + '</div>';
+      html += '<div class="product-card"><div class="product-img">' + imgInner + '</div><div class="product-body"><div class="brand">' + p.category + '</div><h3><a href="product.html?id=' + p.id + '">' + p.name + '</a></h3><div class="price">KSh ' + Number(p.price).toLocaleString() + '</div><div class="product-actions"><a href="product.html?id=' + p.id + '" class="btn btn-sm">View</a><button class="btn btn-primary btn-sm" onclick="addToCart(\'' + p.id + '\',\'' + p.name.replace(/'/g,"\\'") + '\',' + p.price + ')">Add to Cart</button></div></div></div>';
+    });
+    grid.innerHTML = html;
+    document.getElementById('relatedSection').style.display = 'block';
+  } catch(e) {}
+}
+
+function addToCart(id, name, price) {
+  try {
+    var cart = JSON.parse(localStorage.getItem('cart')) || [];
+    var qty = parseInt(document.getElementById('qtyInput').value) || 1;
+    var existing = cart.find(function(item) { return item.id === id; });
+    if (existing) {
+      existing.qty = (existing.qty || 1) + qty;
+    } else {
+      cart.push({id: id, name: name, price: price, qty: qty});
+    }
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartBadge();
+    alert('✅ Added to cart!');
+  } catch(e) {}
+}
+
+loadProduct();
+</script>
 </body>
 </html>
