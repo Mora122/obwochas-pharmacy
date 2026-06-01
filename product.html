@@ -593,7 +593,8 @@ function addToCart(id, name, price) {
     } else {
 
 
-      cart.push({id: id, name: name, price: price, qty: qty});
+      var pInfo = typeof ProductDB !== 'undefined' && ProductDB[id] ? ProductDB[id] : {};
+      cart.push({id: id, name: name, price: price, qty: qty, image: pInfo.image || '', brand: pInfo.brand || '', sku: pInfo.sku || ''});
 
 
     }
