@@ -1,332 +1,980 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shop — Obwocha's Pharmacy</title>
-<link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-<!-- Top Bar -->
-<div class="top-bar"><div class="left"><span>🚚 Free Delivery For orders above KSh 2,500/=</span></div><div class="right"><a href="membership.html">Join Obwocha's Health Club</a><a href="wellness.html">360 Wellness Program</a><a href="about.html">About Us</a><a href="faq.html">FAQ</a><a href="contact.html">Contact</a></div></div>
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+
+<head>
+
+
+<meta charset="UTF-8">
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>Shop — Obwocha's Pharmacy</title>
+
+
+<link rel="stylesheet" href="css/style.css">
+
+
+</head>
+
+
+<body>
+
+
+<!-- Top Bar -->
+
+
+<div class="top-bar"><div class="left"><span>🚚 Free Delivery For orders above KSh 2,500/=</span></div><div class="right"><a href="membership.html">Join Obwocha's Health Club</a><a href="wellness.html">360 Wellness Program</a><a href="about.html">About Us</a><a href="faq.html">FAQ</a><a href="contact.html">Contact</a></div></div>
+
+
 <!-- Header -->
 <div class="header-nav-wrap">
-<header>
-  <button class="mobile-menu-toggle" onclick="document.querySelector('.main-nav').classList.toggle('open')">&#9776; Menu</button>
-  <a href="index.html" class="logo"><div class="logo-icon">O</div><div class="logo-text"><h1>Obwocha's <span>Pharmacy</span></h1><small>Meru's Own Pharmacy</small></div></a>
-  <div class="search-bar"><input type="text" placeholder="Search products..."><button>Search</button></div>
-  <div class="header-icons"><a href="https://wa.me/+254727747699" target="_blank" class="whatsapp-btn">📱 0727747699</a><a href="account.html">👤 Account</a><a href="cart.html" class="cart-icon">🛒 <span class="badge">0</span></a></div>
+<header>
+
+
+  <button class="mobile-menu-toggle" onclick="document.querySelector('.main-nav').classList.toggle('open')">&#9776; Menu</button>
+
+
+  <a href="index.html" class="logo"><div class="logo-icon">O</div><div class="logo-text"><h1>Obwocha's <span>Pharmacy</span></h1><small>Meru's Own Pharmacy</small></div></a>
+
+
+  <div class="search-bar"><input type="text" placeholder="Search products..."><button>Search</button></div>
+
+
+  <div class="header-icons"><a href="https://wa.me/+254727747699" target="_blank" class="whatsapp-btn">📱 0727747699</a><a href="account.html">👤 Account</a><a href="cart.html" class="cart-icon">🛒 <span class="badge">0</span></a></div>
+
+
 </header>
 
 <!-- Navigation -->
 <nav class="main-nav"><ul><li><a href="index.html">Home</a></li><li><a href="shop.html" class="active">Shop By Category</a></li><li><a href="health-conditions.html">Shop By Condition</a></li><li><a href="brands.html">Shop By Brand</a></li><li><a href="shop.html?sale=1">Sale & Offers</a></li><li><a href="prescription.html">Submit Prescription</a></li><li><a href="services.html">Health Services</a></li><li><a href="store-locator.html">Store Locator</a></li></ul></nav>
 </div>
 
-<!-- Page Header -->
-<div class="page-header">
-  <h2>🛍️ All Products</h2>
-  <p>Browse our full range of healthcare, beauty and wellness products</p>
-  <div class="breadcrumb"><a href="index.html">Home</a> / <span>Shop</span></div>
-</div>
-
-<div class="container">
-  <style>
-    @media (max-width:600px) {
-      .sidebar { display: none; }
-      .sidebar.mobile-show { display: block; }
-      .mobile-filter-toggle { display: flex !important; }
-    }
-    .mobile-filter-toggle {
-      display: none;
-      width: 100%;
-      padding: 12px;
-      background: var(--primary, #2e7d32);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-bottom: 12px;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-  </style>
-  <button class="mobile-filter-toggle" onclick="document.querySelector('.sidebar').classList.toggle('mobile-show')">🔍 Show Filters</button>
-  <div class="shop-layout">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <h3>📂 Categories</h3>
-      <ul>
-        <li><a href="shop.html" class="active">All Products</a></li>
-        <li><a href="shop.html?cat=vitamins">💊 Vitamins & Supplements</a></li>
-        <li><a href="shop.html?cat=skincare">🧴 Skin & Allergy</a></li>
-        <li><a href="shop.html?cat=pain">⚡ Pain Relief</a></li>
-        <li><a href="shop.html?cat=cold">🤧 Cold & Flu</a></li>
-        <li><a href="shop.html?cat=firstaid">🩹 First Aid</a></li>
-        <li><a href="shop.html?cat=baby">🤱 Baby Care</a></li>
-        <li><a href="shop.html?cat=digestive">🫁 Digestive Health</a></li>
-        <li><a href="shop.html?cat=diabetes">🩸 Diabetes Care</a></li>
-      </ul>
-      <h3 style="margin-top:20px;">💰 Price Range</h3>
-      <ul>
-        <li><a href="shop.html?price=under500">Under KSh 500</a></li>
-        <li><a href="shop.html?price=500-1000">KSh 500 - 1,000</a></li>
-        <li><a href="shop.html?price=1000-2000">KSh 1,000 - 2,000</a></li>
-        <li><a href="shop.html?price=2000-5000">KSh 2,000 - 5,000</a></li>
-        <li><a href="shop.html?price=above5000">Above KSh 5,000</a></li>
-      </ul>
-      <h3 style="margin-top:20px;">🏷️ Brands</h3>
-      <ul>
-        <li><a href="brands.html">View All Brands →</a></li>
-      </ul>
-    </aside>
-
-    <!-- Product Grid -->
-    <main>
-      <div class="shop-controls">
-        <p>Loading products...</p>
-        <select onchange="sortProducts(this.value)"><option value="">Sort by: Default</option><option value="price-asc">Price: Low to High</option><option value="price-desc">Price: High to Low</option><option value="name">Name: A-Z</option></select>
-      </div>
-      <div class="product-grid" id="productGrid">
-        <div style="text-align:center;padding:60px;grid-column:1/-1">Loading products...</div>
-      </div>
-      <div id="pagination" style="text-align:center;margin-top:24px;">
-        <div id="pageNumbers" style="display:inline-flex;gap:6px;"></div>
-      </div>
-
-      <script>
-      var API = '/api';
-      var allProducts = [];
-      var filteredProducts = [];
-      var activeCat = 'all';
-      var activePrice = 'all';
-      var sortMode = '';
-      var PER_PAGE = 12;
-      var currentPage = 1;
-
-      // Map URL cat params to DB category names
-      var CAT_MAP = {
-        'vitamins': 'Vitamins & Supplements',
-        'skincare': 'Allergy & Skin Care',
-        'pain': 'Pain Relief',
-        'cold': 'Cold & Flu',
-        'firstaid': 'First Aid',
-        'baby': 'Baby Care',
-        'digestive': 'Digestive Health',
-        'diabetes': 'Diabetes Care'
-      };
-
-      function inPriceRange(price, range) {
-        if (range === 'all') return true;
-        if (range === 'under500') return price < 500;
-        if (range === '500-1000') return price >= 500 && price <= 1000;
-        if (range === '1000-2000') return price >= 1000 && price <= 2000;
-        if (range === '2000-5000') return price >= 2000 && price <= 5000;
-        if (range === 'above5000') return price > 5000;
-        return true;
-      }
-
-      function getProductIcon(cat) {
-        var icons = {'Pain Relief':'⚡','Cold & Flu':'🤧','Vitamins & Supplements':'💊','First Aid':'🩹','Baby Care':'🤱','Digestive Health':'🫁','Allergy & Skin Care':'🧴','Diabetes Care':'🩸'};
-        return icons[cat] || '💊';
-      }
-
-      async function loadProducts() {
-        try {
-          var r = await fetch(API + '/products');
-          var d = await r.json();
-          if (d.success && d.products) {
-            allProducts = d.products;
-            checkUrlFilters();
-          } else {
-            document.getElementById('productGrid').innerHTML = '<div style="text-align:center;padding:60px;grid-column:1/-1">Could not load products. <button onclick="loadProducts()" class="btn btn-primary">Retry</button></div>';
-          }
-        } catch(e) {
-          document.getElementById('productGrid').innerHTML = '<div style="text-align:center;padding:60px;grid-column:1/-1">Connection error. <button onclick="loadProducts()" class="btn btn-primary">Retry</button></div>';
-        }
-      }
-
-      function checkUrlFilters() {
-        var params = new URLSearchParams(window.location.search);
-        var catParam = params.get('cat');
-        var priceParam = params.get('price');
-        if (catParam && CAT_MAP[catParam]) {
-          activeCat = CAT_MAP[catParam];
-          activateSidebar('cat', catParam);
-        }
-        if (priceParam) {
-          activePrice = priceParam;
-          activateSidebar('price', priceParam);
-        }
-        applyFilters();
-      }
-
-      function activateSidebar(type, val) {
-        document.querySelectorAll('.sidebar ul li a').forEach(function(a) {
-          a.classList.remove('active');
-          var href = a.getAttribute('href') || '';
-          if (href.indexOf(type + '=' + val) !== -1) a.classList.add('active');
-        });
-      }
-
-      function applyFilters() {
-        var results = allProducts.filter(function(p) {
-          if (activeCat !== 'all' && p.category !== activeCat) return false;
-          if (!inPriceRange(p.price, activePrice)) return false;
-          return true;
-        });
-        filteredProducts = results;
-        if (sortMode === 'price-asc') filteredProducts.sort(function(a,b) { return a.price - b.price; });
-        else if (sortMode === 'price-desc') filteredProducts.sort(function(a,b) { return b.price - a.price; });
-        else if (sortMode === 'name') filteredProducts.sort(function(a,b) { return a.name.localeCompare(b.name); });
-        currentPage = 1;
-        showPage(1);
-      }
-
-      function sortProducts(mode) {
-        sortMode = mode;
-        applyFilters();
-      }
-
-      function showPage(page) {
-        currentPage = page;
-        var total = filteredProducts.length;
-        var totalPages = Math.ceil(total / PER_PAGE) || 1;
-        var start = (page - 1) * PER_PAGE;
-        var end = Math.min(start + PER_PAGE, total);
-        var grid = document.getElementById('productGrid');
-
-        if (total === 0) {
-          grid.innerHTML = '<div style="text-align:center;padding:60px;grid-column:1/-1"><h3>😕 No products found</h3><p style="color:#666;margin:10px 0;">Try a different category or filter</p><button onclick="clearFilters()" class="btn btn-primary">Show All Products</button></div>';
-          document.getElementById('pageNumbers').innerHTML = '';
-          document.querySelector('.shop-controls p').innerHTML = 'Showing <strong>0</strong> products';
-          return;
-        }
-
-        var html = '';
-        for (var i = start; i < end; i++) {
-          var p = filteredProducts[i];
-          var oldPrice = null;
-          var sale = null;
-          if (p.price > 300) {
-            oldPrice = p.price + Math.floor(p.price * (0.08 + Math.random() * 0.15));
-            sale = Math.round((1 - p.price/oldPrice) * 100);
-          }
-          var stockLabel = p.stock > 10 ? '✅ In stock' : (p.stock > 0 ? '⚠️ Only ' + p.stock + ' left' : '❌ Out of stock');
-          var imgHtml = p.image ? '<img src="' + p.image + '" alt="' + p.name + '" style="width:100%;height:100%;object-fit:cover;border-radius:8px" onerror="this.style.display=\'none\'">' : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:48px;background:#f5f8f5;border-radius:8px">' + getProductIcon(p.category) + '</div>';
-          html += '<div class="product-card">' +
-            '<div class="product-img">' + imgHtml + '</div>' +
-            '<div class="product-body">' +
-            '<div class="brand">' + (p.category || '') + '</div>' +
-            '<h3><a href="product.html?id=' + p.id + '">' + p.name + '</a></h3>' +
-            '<div class="price">' + (oldPrice ? '<span class="old">KSh ' + Number(oldPrice).toLocaleString() + '</span> ' : '') + 'KSh ' + Number(p.price).toLocaleString() + '</div>' +
-            (sale ? '<span class="sale-badge">-' + sale + '%</span>' : '') +
-            '<div style="font-size:11px;color:#666;margin:4px 0">' + stockLabel + '</div>' +
-            '<div class="product-actions">' +
-            '<a href="product.html?id=' + p.id + '" class="btn btn-sm">View</a>' +
-            '<button class="btn btn-primary btn-sm" onclick="addToCart(\'' + p.id + '\',\'' + p.name.replace(/'/g,"\\'") + '\',' + p.price + ')">Add to Cart</button></div></div></div>';
-        }
-        grid.innerHTML = html;
-        renderPagination(page, totalPages, total);
-      }
-
-      function renderPagination(page, totalPages, total) {
-        var container = document.getElementById('pageNumbers');
-        if (total <= PER_PAGE) { container.innerHTML = ''; return; }
-        var html = '';
-        html += '<button onclick="showPage(' + (page - 1) + ')" style="padding:8px 14px;border:1px solid #ddd;border-radius:4px;cursor:pointer;background:#f8f9fa;' + (page === 1 ? 'visibility:hidden' : '') + '">\u2190 Prev</button>';
-        for (var i = 1; i <= totalPages; i++) {
-          html += '<button onclick="showPage(' + i + ')" style="padding:8px 14px;border:1px solid #ddd;border-radius:4px;cursor:pointer;' + (i === page ? 'background:#2e7d32;color:#fff;font-weight:600' : 'background:#f8f9fa') + '">' + i + '</button>';
-        }
-        html += '<button onclick="showPage(' + (page + 1) + ')" style="padding:8px 14px;border:1px solid #ddd;border-radius:4px;cursor:pointer;background:#f8f9fa;' + (page === totalPages ? 'visibility:hidden' : '') + '">Next \u2192</button>';
-        container.innerHTML = html;
-        var si = (page - 1) * PER_PAGE + 1;
-        var ei = Math.min(page * PER_PAGE, total);
-        document.querySelector('.shop-controls p').innerHTML = 'Showing <strong>' + si + '-' + ei + '</strong> of <strong>' + total + '</strong> products';
-      }
-
-      function addToCart(id, name, price) {
-        try {
-          var cart = JSON.parse(localStorage.getItem('cart')) || [];
-          var existing = cart.find(function(item) { return item.id === id; });
-          if (existing) {
-            existing.qty = (existing.qty || 1) + 1;
-          } else {
-            cart.push({id: id, name: name, price: price, qty: 1});
-          }
-          localStorage.setItem('cart', JSON.stringify(cart));
-          var badge = document.querySelector('.cart-icon .badge');
-          if (badge) badge.textContent = cart.reduce(function(s,i) { return s + (i.qty||1); }, 0);
-          alert('\u2705 Added to cart!');
-        } catch(e) {}
-      }
-
-      function clearFilters() {
-        activeCat = 'all';
-        activePrice = 'all';
-        document.querySelectorAll('.sidebar ul li a').forEach(function(a) { a.classList.remove('active'); });
-        var allLink = document.querySelector('.sidebar ul li:first-child a');
-        if (allLink) allLink.classList.add('active');
-        applyFilters();
-      }
-
-      // Wire sidebar links
-      document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.sidebar ul li a').forEach(function(a) {
-          if (a.getAttribute('href') === 'brands.html') return;
-          a.addEventListener('click', function(e) {
-            e.preventDefault();
-            var href = this.getAttribute('href');
-            if (href === 'shop.html' || href === 'shop.html?') { clearFilters(); return; }
-            var params = new URLSearchParams(href.split('?')[1] || '');
-            var cat = params.get('cat');
-            var price = params.get('price');
-            if (cat && CAT_MAP[cat]) {
-              activeCat = CAT_MAP[cat];
-              activePrice = 'all';
-              activateSidebar('cat', cat);
-              applyFilters();
-            } else if (price) {
-              activePrice = price;
-              activeCat = 'all';
-              activateSidebar('price', price);
-              applyFilters();
-            }
-          });
-        });
-        loadProducts();
-
-        // Update cart badge
-        try {
-          var cart = JSON.parse(localStorage.getItem('cart')) || [];
-          var badge = document.querySelector('.cart-icon .badge');
-          if (badge) badge.textContent = cart.reduce(function(s,i) { return s + (i.qty||1); }, 0);
-        } catch(e) {}
-      });
-      </script>
-    </main>
-  </div>
-</div>
-
-<!-- Newsletter -->
-<section class="newsletter">
-  <h3>📬 Stay in the Know</h3>
-  <p>Sign up for the latest deals, product news, health tips, and exclusive offers.</p>
-  <div class="newsletter-form"><input type="email" placeholder="Enter your email address"><button>Subscribe</button></div>
-</section>
-
-<!-- Footer -->
-<footer>
-  <div class="footer-grid">
-    <div><h4>Shop By Category</h4><a href="shop.html?cat=vitamins">Vitamins & Supplements</a><a href="shop.html?cat=skincare">Skin Care</a><a href="brands.html">All Brands</a><a href="prescription.html">Prescription Services</a></div>
-    <div><h4>About Us</h4><a href="about.html">About Obwocha</a><a href="health-conditions.html">Health Conditions</a><a href="blog.html">Blog</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms & Conditions</a></div>
-    <div><h4>Customer Care</h4><a href="returns.html">Delivery & Returns</a><a href="account.html">My Account</a><a href="faq.html">FAQ's</a><a href="sitemap.html">Sitemap</a></div>
-    <div class="contact-info"><h4>Contact Us</h4><p>📞 Phone: <a href="tel:0727747699">0727747699</a></p><p>📱 WhatsApp: <a href="https://wa.me/+254727747699">0727747699</a></p><p>📧 <a href="mailto:info@obwochaspharmacy.co.ke">info@obwochaspharmacy.co.ke</a></p><p><strong>Postal:</strong> P.O. Box 1852-00621 Nairobi, Kenya</p><div class="social-links"><a href="https://facebook.com/obwochaspharmacy" target="_blank">f</a><a href="https://instagram.com/obwochaspharmacy" target="_blank">📷</a><a href="https://twitter.com/obwochaspharmacy" target="_blank">𝕏</a><a href="https://linkedin.com/company/obwochas-pharmacy" target="_blank">in</a><a href="https://youtube.com/channel/UCSjKFmnurK8VCBact1TschQ" target="_blank">▶</a></div></div>
-  </div>
-  <div class="footer-bottom"><div><a href="terms.html">Terms & Conditions</a> | <a href="privacy.html">Privacy Policy</a> | <a href="cookies.html">Cookie Policy</a></div><p style="margin-top:8px;">Copyright © 2026 <a href="index.html">Obwocha's Pharmacy</a>. All Rights Reserved.</p><div class="payment-icons">💳 M-Pesa | Visa | MasterCard | Cash-on-Delivery</div></div>
-</footer>
-<a href="https://wa.me/+254727747699" target="_blank" class="whatsapp-float">💬</a>
-</body>
-</html>
+<!-- Page Header -->
+
+
+<div class="page-header">
+
+
+  <h2>🛍️ All Products</h2>
+
+
+  <p>Browse our full range of healthcare, beauty and wellness products</p>
+
+
+  <div class="breadcrumb"><a href="index.html">Home</a> / <span>Shop</span></div>
+
+
+</div>
+
+
+
+
+
+<div class="container">
+
+
+  <style>
+
+
+    @media (max-width:600px) {
+
+
+      .sidebar { display: none; }
+
+
+      .sidebar.mobile-show { display: block; }
+
+
+      .mobile-filter-toggle { display: flex !important; }
+
+
+    }
+
+
+    .mobile-filter-toggle {
+
+
+      display: none;
+
+
+      width: 100%;
+
+
+      padding: 12px;
+
+
+      background: var(--primary, #2e7d32);
+
+
+      color: #fff;
+
+
+      border: none;
+
+
+      border-radius: 8px;
+
+
+      font-size: 15px;
+
+
+      font-weight: 600;
+
+
+      cursor: pointer;
+
+
+      margin-bottom: 12px;
+
+
+      align-items: center;
+
+
+      justify-content: center;
+
+
+      gap: 8px;
+
+
+    }
+
+
+  </style>
+
+
+  <button class="mobile-filter-toggle" onclick="document.querySelector('.sidebar').classList.toggle('mobile-show')">🔍 Show Filters</button>
+
+
+  <div class="shop-layout">
+
+
+    <!-- Sidebar -->
+
+
+    <aside class="sidebar">
+
+
+      <h3>📂 Categories</h3>
+
+
+      <ul>
+
+
+        <li><a href="shop.html" class="active">All Products</a></li>
+
+
+        <li><a href="shop.html?cat=vitamins">💊 Vitamins & Supplements</a></li>
+
+
+        <li><a href="shop.html?cat=skincare">🧴 Skin & Allergy</a></li>
+
+
+        <li><a href="shop.html?cat=pain">⚡ Pain Relief</a></li>
+
+
+        <li><a href="shop.html?cat=cold">🤧 Cold & Flu</a></li>
+
+
+        <li><a href="shop.html?cat=firstaid">🩹 First Aid</a></li>
+
+
+        <li><a href="shop.html?cat=baby">🤱 Baby Care</a></li>
+
+
+        <li><a href="shop.html?cat=digestive">🫁 Digestive Health</a></li>
+
+
+        <li><a href="shop.html?cat=diabetes">🩸 Diabetes Care</a></li>
+
+
+      </ul>
+
+
+      <h3 style="margin-top:20px;">💰 Price Range</h3>
+
+
+      <ul>
+
+
+        <li><a href="shop.html?price=under500">Under KSh 500</a></li>
+
+
+        <li><a href="shop.html?price=500-1000">KSh 500 - 1,000</a></li>
+
+
+        <li><a href="shop.html?price=1000-2000">KSh 1,000 - 2,000</a></li>
+
+
+        <li><a href="shop.html?price=2000-5000">KSh 2,000 - 5,000</a></li>
+
+
+        <li><a href="shop.html?price=above5000">Above KSh 5,000</a></li>
+
+
+      </ul>
+
+
+      <h3 style="margin-top:20px;">🏷️ Brands</h3>
+
+
+      <ul>
+
+
+        <li><a href="brands.html">View All Brands →</a></li>
+
+
+      </ul>
+
+
+    </aside>
+
+
+
+
+
+    <!-- Product Grid -->
+
+
+    <main>
+
+
+      <div class="shop-controls">
+
+
+        <p>Loading products...</p>
+
+
+        <select onchange="sortProducts(this.value)"><option value="">Sort by: Default</option><option value="price-asc">Price: Low to High</option><option value="price-desc">Price: High to Low</option><option value="name">Name: A-Z</option></select>
+
+
+      </div>
+
+
+      <div class="product-grid" id="productGrid">
+
+
+        <div style="text-align:center;padding:60px;grid-column:1/-1">Loading products...</div>
+
+
+      </div>
+
+
+      <div id="pagination" style="text-align:center;margin-top:24px;">
+
+
+        <div id="pageNumbers" style="display:inline-flex;gap:6px;"></div>
+
+
+      </div>
+
+
+
+
+
+      <script>
+
+
+      var API = '/api';
+
+
+      var allProducts = [];
+
+
+      var filteredProducts = [];
+
+
+      var activeCat = 'all';
+
+
+      var activePrice = 'all';
+
+
+      var sortMode = '';
+
+
+      var PER_PAGE = 12;
+
+
+      var currentPage = 1;
+
+
+
+
+
+      // Map URL cat params to DB category names
+
+
+      var CAT_MAP = {
+
+
+        'vitamins': 'Vitamins & Supplements',
+
+
+        'skincare': 'Allergy & Skin Care',
+
+
+        'pain': 'Pain Relief',
+
+
+        'cold': 'Cold & Flu',
+
+
+        'firstaid': 'First Aid',
+
+
+        'baby': 'Baby Care',
+
+
+        'digestive': 'Digestive Health',
+
+
+        'diabetes': 'Diabetes Care'
+
+
+      };
+
+
+
+
+
+      function inPriceRange(price, range) {
+
+
+        if (range === 'all') return true;
+
+
+        if (range === 'under500') return price < 500;
+
+
+        if (range === '500-1000') return price >= 500 && price <= 1000;
+
+
+        if (range === '1000-2000') return price >= 1000 && price <= 2000;
+
+
+        if (range === '2000-5000') return price >= 2000 && price <= 5000;
+
+
+        if (range === 'above5000') return price > 5000;
+
+
+        return true;
+
+
+      }
+
+
+
+
+
+      function getProductIcon(cat) {
+
+
+        var icons = {'Pain Relief':'⚡','Cold & Flu':'🤧','Vitamins & Supplements':'💊','First Aid':'🩹','Baby Care':'🤱','Digestive Health':'🫁','Allergy & Skin Care':'🧴','Diabetes Care':'🩸'};
+
+
+        return icons[cat] || '💊';
+
+
+      }
+
+
+
+
+
+      async function loadProducts() {
+
+
+        try {
+
+
+          var r = await fetch(API + '/products');
+
+
+          var d = await r.json();
+
+
+          if (d.success && d.products) {
+
+
+            allProducts = d.products;
+
+
+            checkUrlFilters();
+
+
+          } else {
+
+
+            document.getElementById('productGrid').innerHTML = '<div style="text-align:center;padding:60px;grid-column:1/-1">Could not load products. <button onclick="loadProducts()" class="btn btn-primary">Retry</button></div>';
+
+
+          }
+
+
+        } catch(e) {
+
+
+          document.getElementById('productGrid').innerHTML = '<div style="text-align:center;padding:60px;grid-column:1/-1">Connection error. <button onclick="loadProducts()" class="btn btn-primary">Retry</button></div>';
+
+
+        }
+
+
+      }
+
+
+
+
+
+      function checkUrlFilters() {
+
+
+        var params = new URLSearchParams(window.location.search);
+
+
+        var catParam = params.get('cat');
+
+
+        var priceParam = params.get('price');
+
+
+        if (catParam && CAT_MAP[catParam]) {
+
+
+          activeCat = CAT_MAP[catParam];
+
+
+          activateSidebar('cat', catParam);
+
+
+        }
+
+
+        if (priceParam) {
+
+
+          activePrice = priceParam;
+
+
+          activateSidebar('price', priceParam);
+
+
+        }
+
+
+        applyFilters();
+
+
+      }
+
+
+
+
+
+      function activateSidebar(type, val) {
+
+
+        document.querySelectorAll('.sidebar ul li a').forEach(function(a) {
+
+
+          a.classList.remove('active');
+
+
+          var href = a.getAttribute('href') || '';
+
+
+          if (href.indexOf(type + '=' + val) !== -1) a.classList.add('active');
+
+
+        });
+
+
+      }
+
+
+
+
+
+      function applyFilters() {
+
+
+        var results = allProducts.filter(function(p) {
+
+
+          if (activeCat !== 'all' && p.category !== activeCat) return false;
+
+
+          if (!inPriceRange(p.price, activePrice)) return false;
+
+
+          return true;
+
+
+        });
+
+
+        filteredProducts = results;
+
+
+        if (sortMode === 'price-asc') filteredProducts.sort(function(a,b) { return a.price - b.price; });
+
+
+        else if (sortMode === 'price-desc') filteredProducts.sort(function(a,b) { return b.price - a.price; });
+
+
+        else if (sortMode === 'name') filteredProducts.sort(function(a,b) { return a.name.localeCompare(b.name); });
+
+
+        currentPage = 1;
+
+
+        showPage(1);
+
+
+      }
+
+
+
+
+
+      function sortProducts(mode) {
+
+
+        sortMode = mode;
+
+
+        applyFilters();
+
+
+      }
+
+
+
+
+
+      function showPage(page) {
+
+
+        currentPage = page;
+
+
+        var total = filteredProducts.length;
+
+
+        var totalPages = Math.ceil(total / PER_PAGE) || 1;
+
+
+        var start = (page - 1) * PER_PAGE;
+
+
+        var end = Math.min(start + PER_PAGE, total);
+
+
+        var grid = document.getElementById('productGrid');
+
+
+
+
+
+        if (total === 0) {
+
+
+          grid.innerHTML = '<div style="text-align:center;padding:60px;grid-column:1/-1"><h3>😕 No products found</h3><p style="color:#666;margin:10px 0;">Try a different category or filter</p><button onclick="clearFilters()" class="btn btn-primary">Show All Products</button></div>';
+
+
+          document.getElementById('pageNumbers').innerHTML = '';
+
+
+          document.querySelector('.shop-controls p').innerHTML = 'Showing <strong>0</strong> products';
+
+
+          return;
+
+
+        }
+
+
+
+
+
+        var html = '';
+
+
+        for (var i = start; i < end; i++) {
+
+
+          var p = filteredProducts[i];
+
+
+          var oldPrice = null;
+
+
+          var sale = null;
+
+
+          if (p.price > 300) {
+
+
+            oldPrice = p.price + Math.floor(p.price * (0.08 + Math.random() * 0.15));
+
+
+            sale = Math.round((1 - p.price/oldPrice) * 100);
+
+
+          }
+
+
+          var stockLabel = p.stock > 10 ? '✅ In stock' : (p.stock > 0 ? '⚠️ Only ' + p.stock + ' left' : '❌ Out of stock');
+
+
+          var imgHtml = p.image ? '<img src="' + p.image + '" alt="' + p.name + '" style="width:100%;height:100%;object-fit:cover;border-radius:8px" onerror="this.style.display=\'none\'">' : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:48px;background:#f5f8f5;border-radius:8px">' + getProductIcon(p.category) + '</div>';
+
+
+          html += '<div class="product-card">' +
+
+
+            '<div class="product-img">' + imgHtml + '</div>' +
+
+
+            '<div class="product-body">' +
+
+
+            '<div class="brand">' + (p.category || '') + '</div>' +
+
+
+            '<h3><a href="product.html?id=' + p.id + '">' + p.name + '</a></h3>' +
+
+
+            '<div class="price">' + (oldPrice ? '<span class="old">KSh ' + Number(oldPrice).toLocaleString() + '</span> ' : '') + 'KSh ' + Number(p.price).toLocaleString() + '</div>' +
+
+
+            (sale ? '<span class="sale-badge">-' + sale + '%</span>' : '') +
+
+
+            '<div style="font-size:11px;color:#666;margin:4px 0">' + stockLabel + '</div>' +
+
+
+            '<div class="product-actions">' +
+
+
+            '<a href="product.html?id=' + p.id + '" class="btn btn-sm">View</a>' +
+
+
+            '<button class="btn btn-primary btn-sm" onclick="addToCart(\'' + p.id + '\',\'' + p.name.replace(/'/g,"\\'") + '\',' + p.price + ')">Add to Cart</button></div></div></div>';
+
+
+        }
+
+
+        grid.innerHTML = html;
+
+
+        renderPagination(page, totalPages, total);
+
+
+      }
+
+
+
+
+
+      function renderPagination(page, totalPages, total) {
+
+
+        var container = document.getElementById('pageNumbers');
+
+
+        if (total <= PER_PAGE) { container.innerHTML = ''; return; }
+
+
+        var html = '';
+
+
+        html += '<button onclick="showPage(' + (page - 1) + ')" style="padding:8px 14px;border:1px solid #ddd;border-radius:4px;cursor:pointer;background:#f8f9fa;' + (page === 1 ? 'visibility:hidden' : '') + '">\u2190 Prev</button>';
+
+
+        for (var i = 1; i <= totalPages; i++) {
+
+
+          html += '<button onclick="showPage(' + i + ')" style="padding:8px 14px;border:1px solid #ddd;border-radius:4px;cursor:pointer;' + (i === page ? 'background:#2e7d32;color:#fff;font-weight:600' : 'background:#f8f9fa') + '">' + i + '</button>';
+
+
+        }
+
+
+        html += '<button onclick="showPage(' + (page + 1) + ')" style="padding:8px 14px;border:1px solid #ddd;border-radius:4px;cursor:pointer;background:#f8f9fa;' + (page === totalPages ? 'visibility:hidden' : '') + '">Next \u2192</button>';
+
+
+        container.innerHTML = html;
+
+
+        var si = (page - 1) * PER_PAGE + 1;
+
+
+        var ei = Math.min(page * PER_PAGE, total);
+
+
+        document.querySelector('.shop-controls p').innerHTML = 'Showing <strong>' + si + '-' + ei + '</strong> of <strong>' + total + '</strong> products';
+
+
+      }
+
+
+
+
+
+      function addToCart(id, name, price) {
+
+
+        try {
+
+
+          var cart = JSON.parse(localStorage.getItem('obwocha_cart')) || [];
+
+
+          var existing = cart.find(function(item) { return item.id === id; });
+
+
+          if (existing) {
+
+
+            existing.qty = (existing.qty || 1) + 1;
+
+
+          } else {
+
+
+            cart.push({id: id, name: name, price: price, qty: 1});
+
+
+          }
+
+
+          localStorage.setItem('obwocha_cart', JSON.stringify(cart));
+
+
+          var badge = document.querySelector('.cart-icon .badge');
+
+
+          if (badge) badge.textContent = cart.reduce(function(s,i) { return s + (i.qty||1); }, 0);
+
+
+          alert('\u2705 Added to cart!');
+
+
+        } catch(e) {}
+
+
+      }
+
+
+
+
+
+      function clearFilters() {
+
+
+        activeCat = 'all';
+
+
+        activePrice = 'all';
+
+
+        document.querySelectorAll('.sidebar ul li a').forEach(function(a) { a.classList.remove('active'); });
+
+
+        var allLink = document.querySelector('.sidebar ul li:first-child a');
+
+
+        if (allLink) allLink.classList.add('active');
+
+
+        applyFilters();
+
+
+      }
+
+
+
+
+
+      // Wire sidebar links
+
+
+      document.addEventListener('DOMContentLoaded', function() {
+
+
+        document.querySelectorAll('.sidebar ul li a').forEach(function(a) {
+
+
+          if (a.getAttribute('href') === 'brands.html') return;
+
+
+          a.addEventListener('click', function(e) {
+
+
+            e.preventDefault();
+
+
+            var href = this.getAttribute('href');
+
+
+            if (href === 'shop.html' || href === 'shop.html?') { clearFilters(); return; }
+
+
+            var params = new URLSearchParams(href.split('?')[1] || '');
+
+
+            var cat = params.get('cat');
+
+
+            var price = params.get('price');
+
+
+            if (cat && CAT_MAP[cat]) {
+
+
+              activeCat = CAT_MAP[cat];
+
+
+              activePrice = 'all';
+
+
+              activateSidebar('cat', cat);
+
+
+              applyFilters();
+
+
+            } else if (price) {
+
+
+              activePrice = price;
+
+
+              activeCat = 'all';
+
+
+              activateSidebar('price', price);
+
+
+              applyFilters();
+
+
+            }
+
+
+          });
+
+
+        });
+
+
+        loadProducts();
+
+
+
+
+
+        // Update cart badge
+
+
+        try {
+
+
+          var cart = JSON.parse(localStorage.getItem('obwocha_cart')) || [];
+
+
+          var badge = document.querySelector('.cart-icon .badge');
+
+
+          if (badge) badge.textContent = cart.reduce(function(s,i) { return s + (i.qty||1); }, 0);
+
+
+        } catch(e) {}
+
+
+      });
+
+
+      </script>
+
+
+    </main>
+
+
+  </div>
+
+
+</div>
+
+
+
+
+
+<!-- Newsletter -->
+
+
+<section class="newsletter">
+
+
+  <h3>📬 Stay in the Know</h3>
+
+
+  <p>Sign up for the latest deals, product news, health tips, and exclusive offers.</p>
+
+
+  <div class="newsletter-form"><input type="email" placeholder="Enter your email address"><button>Subscribe</button></div>
+
+
+</section>
+
+
+
+
+
+<!-- Footer -->
+
+
+<footer>
+
+
+  <div class="footer-grid">
+
+
+    <div><h4>Shop By Category</h4><a href="shop.html?cat=vitamins">Vitamins & Supplements</a><a href="shop.html?cat=skincare">Skin Care</a><a href="brands.html">All Brands</a><a href="prescription.html">Prescription Services</a></div>
+
+
+    <div><h4>About Us</h4><a href="about.html">About Obwocha</a><a href="health-conditions.html">Health Conditions</a><a href="blog.html">Blog</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms & Conditions</a></div>
+
+
+    <div><h4>Customer Care</h4><a href="returns.html">Delivery & Returns</a><a href="account.html">My Account</a><a href="faq.html">FAQ's</a><a href="sitemap.html">Sitemap</a></div>
+
+
+    <div class="contact-info"><h4>Contact Us</h4><p>📞 Phone: <a href="tel:0727747699">0727747699</a></p><p>📱 WhatsApp: <a href="https://wa.me/+254727747699">0727747699</a></p><p>📧 <a href="mailto:info@obwochaspharmacy.co.ke">info@obwochaspharmacy.co.ke</a></p><p><strong>Postal:</strong> P.O. Box 1852-00621 Nairobi, Kenya</p><div class="social-links"><a href="https://facebook.com/obwochaspharmacy" target="_blank">f</a><a href="https://instagram.com/obwochaspharmacy" target="_blank">📷</a><a href="https://twitter.com/obwochaspharmacy" target="_blank">𝕏</a><a href="https://linkedin.com/company/obwochas-pharmacy" target="_blank">in</a><a href="https://youtube.com/channel/UCSjKFmnurK8VCBact1TschQ" target="_blank">▶</a></div></div>
+
+
+  </div>
+
+
+  <div class="footer-bottom"><div><a href="terms.html">Terms & Conditions</a> | <a href="privacy.html">Privacy Policy</a> | <a href="cookies.html">Cookie Policy</a></div><p style="margin-top:8px;">Copyright © 2026 <a href="index.html">Obwocha's Pharmacy</a>. All Rights Reserved.</p><div class="payment-icons">💳 M-Pesa | Visa | MasterCard | Cash-on-Delivery</div></div>
+
+
+</footer>
+
+
+<a href="https://wa.me/+254727747699" target="_blank" class="whatsapp-float">💬</a>
+
+
+</body>
+
+
+</html>
+
+
