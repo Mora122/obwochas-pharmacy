@@ -464,7 +464,7 @@
           } else {
 
 
-            document.getElementById('productGrid').innerHTML = '<div style="text-align:center;padding:60px;grid-column:1/-1">Could not load products. <button onclick="loadProducts()" class="btn btn-primary">Retry</button></div>';
+            var skel=document.querySelector('.product-grid-skeleton');if(skel)skel.style.display='none';document.getElementById('productGrid').innerHTML = '<div style="text-align:center;padding:60px;grid-column:1/-1">Could not load products. <button onclick="loadProducts()" class="btn btn-primary">Retry</button></div>';
 
 
           }
@@ -473,7 +473,7 @@
         } catch(e) {
 
 
-          document.getElementById('productGrid').innerHTML = '<div style="text-align:center;padding:60px;grid-column:1/-1">Connection error. <button onclick="loadProducts()" class="btn btn-primary">Retry</button></div>';
+          var skel=document.querySelector('.product-grid-skeleton');if(skel)skel.style.display='none';document.getElementById('productGrid').innerHTML = '<div style="text-align:center;padding:60px;grid-column:1/-1">Connection error. <button onclick="loadProducts()" class="btn btn-primary">Retry</button></div>';
 
 
         }
@@ -629,7 +629,7 @@
         var end = Math.min(start + PER_PAGE, total);
 
 
-        var grid = document.getElementById('productGrid');
+        var grid = document.getElementById('productGrid');var skel=document.querySelector('.product-grid-skeleton');if(skel)skel.style.display='none';
 
 
 
