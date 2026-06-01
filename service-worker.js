@@ -1,4 +1,4 @@
-const CACHE = 'obwocha-v1';
+const CACHE = 'obwocha-v2';
 const ASSETS = [
   '/',
   '/index.html',
@@ -16,7 +16,6 @@ const ASSETS = [
   '/prescription.html',
   '/product.html',
   '/account.html',
-  '/admin.html',
   '/css/style.css',
   '/js/cart.js',
   '/manifest.json'
@@ -39,6 +38,8 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
+  // Skip API requests — never cache or intercept them
+  if (e.request.url.includes('/api/')) return;
   if (e.request.method !== 'GET') return;
   e.respondWith(
     caches.match(e.request).then(cached => {
