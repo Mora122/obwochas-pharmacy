@@ -64,7 +64,7 @@ function addToCart(productId, qty) {
 }
 
 function removeFromCart(productId) {
-  let cart = getCart().filter(i => i.id !== productId);
+  let cart = getCart().filter(i => String(i.id) !== String(productId));
   saveCart(cart);
   renderCart();
 }
@@ -72,7 +72,7 @@ function removeFromCart(productId) {
 function updateQty(productId, qty) {
   if (qty < 1) { removeFromCart(productId); return; }
   let cart = getCart();
-  const item = cart.find(i => i.id === productId);
+  const item = cart.find(i => String(i.id) === String(productId));
   if (item) { item.qty = qty; saveCart(cart); renderCart(); }
 }
 
@@ -131,13 +131,13 @@ function renderCart() {
         <td>KSh ${item.price.toLocaleString()}</td>
         <td>
           <div class="qty-selector" style="margin:0;">
-            <button onclick="updateQty(${item.id}, ${item.qty - 1})">−</button>
-            <input type="number" value="${item.qty}" min="1" style="width:40px;" onchange="updateQty(${item.id}, parseInt(this.value) || 1)">
-            <button onclick="updateQty(${item.id}, ${item.qty + 1})">+</button>
+            <button onclick="updateQty('${item.id}', ${item.qty - 1})">−</button>
+            <input type="number" value="${item.qty}" min="1" style="width:40px;" onchange="updateQty('${item.id}', parseInt(this.value) || 1)">
+            <button onclick="updateQty('${item.id}', ${item.qty + 1})">+</button>
           </div>
         </td>
         <td><strong>KSh ${sub.toLocaleString()}</strong></td>
-        <td><button class="btn btn-sm btn-danger" onclick="removeFromCart(${item.id})">✕</button></td>
+        <td><button class="btn btn-sm btn-danger" onclick="removeFromCart('${item.id}')">✕</button></td>
       </tr>
     `;
   });
