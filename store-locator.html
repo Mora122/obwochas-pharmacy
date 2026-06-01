@@ -1,7 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Store Locator — Obwocha's Pharmacy</title><link rel="preload" href="css/style.css" as="style">
-  <link rel="stylesheet" href="css/style.css"></head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Store Locator — Obwocha's Pharmacy</title>
+<meta name="description" content="Find Obwocha's Pharmacy locations near you. 150+ stores across Kenya.">
+<meta property="og:title" content="Store Locator — Obwocha's Pharmacy">
+<meta property="og:description" content="Find Obwocha's Pharmacy locations near you. 150+ stores across Kenya.">
+<meta property="og:url" content="https://obwochas-pharmacy.vercel.app/store-locator.html">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://obwochas-pharmacy.vercel.app//icons/icon-192.svg">
+<meta name="twitter:card" content="summary_large_image"><link rel="preload" href="css/style.css" as="style">
+  <link rel="stylesheet" href="css/style.css">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1a5c2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ObwochaRx"><script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Pharmacy",
+  "name": "Obwocha's Pharmacy",
+  "alternateName": "Obwocha's Pharmacy Ltd",
+  "description": "Meru's own trusted pharmacy chain with 150+ stores nationwide.",
+  "url": "https://obwochas-pharmacy.vercel.app",
+  "telephone": "+254-727-747-699",
+  "email": "info@obwochaspharmacy.co.ke",
+  "address": {
+    "@type": "PostalAddress",
+    "postOfficeBoxNumber": "1852-00621",
+    "addressLocality": "Nairobi",
+    "addressCountry": "KE"
+  },
+  "areaServed": "Kenya",
+  "priceRange": "$",
+  "paymentAccepted": "M-Pesa, Visa, MasterCard, Cash",
+  "openingHoursSpecification": {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+    "opens": "08:00",
+    "closes": "20:00"
+  }
+}
+</script></head>
 <body><div class="top-bar"><div class="left"><span>🚚 Free Delivery For orders above KSh 2,500/=</span></div><div class="right"><a href="shop.html">Shop</a><a href="about.html">About</a><a href="contact.html">Contact</a></div></div>
 <div class="header-nav-wrap">
 <header><button class="mobile-menu-toggle" onclick="document.querySelector('.main-nav').classList.toggle('open')">&#9776; Menu</button><a href="index.html" class="logo"><div class="logo-icon">O</div><div class="logo-text"><h1>Obwocha's <span>Pharmacy</span></h1><small>Meru's Own Pharmacy</small></div></a><div class="search-bar"><input type="text" placeholder="Search stores..."><button>Search</button></div><div class="header-icons"><a href="cart.html" class="cart-icon">🛒 <span class="badge">0</span></a></div></header>
@@ -35,5 +73,8 @@
 <section class="newsletter"><h3>📬 Stay in Touch</h3><p>Find your nearest Obwocha's Pharmacy and start saving today.</p></section>
 <footer><div class="footer-grid"><div><h4>Locations</h4><a href="#">Nairobi</a><a href="#">Mombasa</a><a href="#">Kisumu</a><a href="#">Nakuru</a></div><div><h4>Help</h4><a href="faq.html">FAQ</a><a href="contact.html">Contact</a></div></div><div class="footer-bottom"><p>Copyright © 2026 Obwocha's Pharmacy</p></div></footer>
 <a href="https://wa.me/+254727747699" target="_blank" class="whatsapp-float">💬</a>
-</body>
+
+<script>
+if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(e){console.log("SW registration failed:",e)})}
+</script></body>
 </html>

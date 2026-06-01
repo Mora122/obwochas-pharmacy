@@ -1,12 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Checkout — Obwocha's Pharmacy</title>
+<meta name="description" content="Complete your order at Obwocha's Pharmacy. Fast delivery across Nairobi and Meru.">
+<meta property="og:title" content="Checkout — Obwocha's Pharmacy">
+<meta property="og:description" content="Complete your order at Obwocha's Pharmacy. Fast delivery across Nairobi and Meru.">
+<meta property="og:url" content="https://obwochas-pharmacy.vercel.app/checkout.html">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://obwochas-pharmacy.vercel.app//icons/icon-192.svg">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preload" href="css/style.css" as="style">
   <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/payment.css">
 <script src="js/cart.js" defer></script>
 <script src="https://js.stripe.com/v3/"></script>
-</head>
+
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1a5c2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ObwochaRx"><script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Pharmacy",
+  "name": "Obwocha's Pharmacy",
+  "alternateName": "Obwocha's Pharmacy Ltd",
+  "description": "Meru's own trusted pharmacy chain with 150+ stores nationwide.",
+  "url": "https://obwochas-pharmacy.vercel.app",
+  "telephone": "+254-727-747-699",
+  "email": "info@obwochaspharmacy.co.ke",
+  "address": {
+    "@type": "PostalAddress",
+    "postOfficeBoxNumber": "1852-00621",
+    "addressLocality": "Nairobi",
+    "addressCountry": "KE"
+  },
+  "areaServed": "Kenya",
+  "priceRange": "$",
+  "paymentAccepted": "M-Pesa, Visa, MasterCard, Cash",
+  "openingHoursSpecification": {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+    "opens": "08:00",
+    "closes": "20:00"
+  }
+}
+</script></head>
 <body>
 <div class="top-bar"><div class="left"><span>🚚 Free Delivery For orders above KSh 2,500/=</span></div><div class="right"><a href="help.html">Help</a><a href="contact.html">Contact</a></div></div>
 <header><a href="index.html" class="logo"><div class="logo-icon">O</div><div class="logo-text"><h1>Obwocha's <span>Pharmacy</span></h1><small>Meru's Own Pharmacy</small></div></a><div class="header-icons"><a href="cart.html">🛒 Cart</a></div></header>
@@ -696,5 +734,8 @@ function launchConfetti() {
 // Initialize
 document.querySelectorAll('.payment-option:first-child input').forEach(el => el.checked = true);
 </script>
-</body>
+
+<script>
+if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(e){console.log("SW registration failed:",e)})}
+</script></body>
 </html>

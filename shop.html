@@ -14,13 +14,51 @@
 
 
 <title>Shop — Obwocha's Pharmacy</title>
+<meta name="description" content="Browse all products at Obwocha's Pharmacy. Vitamins, skincare, pain relief, baby care, diabetes care and more. Order online.">
+<meta property="og:title" content="Shop — Obwocha's Pharmacy">
+<meta property="og:description" content="Browse all products at Obwocha's Pharmacy. Vitamins, skincare, pain relief, baby care, diabetes care and more. Order online.">
+<meta property="og:url" content="https://obwochas-pharmacy.vercel.app/shop.html">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://obwochas-pharmacy.vercel.app//icons/icon-192.svg">
+<meta name="twitter:card" content="summary_large_image">
 
 
 <link rel="preload" href="css/style.css" as="style">
   <link rel="stylesheet" href="css/style.css">
 
 
-</head>
+
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1a5c2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ObwochaRx"><script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Pharmacy",
+  "name": "Obwocha's Pharmacy",
+  "alternateName": "Obwocha's Pharmacy Ltd",
+  "description": "Meru's own trusted pharmacy chain with 150+ stores nationwide.",
+  "url": "https://obwochas-pharmacy.vercel.app",
+  "telephone": "+254-727-747-699",
+  "email": "info@obwochaspharmacy.co.ke",
+  "address": {
+    "@type": "PostalAddress",
+    "postOfficeBoxNumber": "1852-00621",
+    "addressLocality": "Nairobi",
+    "addressCountry": "KE"
+  },
+  "areaServed": "Kenya",
+  "priceRange": "$",
+  "paymentAccepted": "M-Pesa, Visa, MasterCard, Cash",
+  "openingHoursSpecification": {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+    "opens": "08:00",
+    "closes": "20:00"
+  }
+}
+</script></head>
 
 
 <body>
@@ -43,7 +81,7 @@
   <a href="index.html" class="logo"><div class="logo-icon">O</div><div class="logo-text"><h1>Obwocha's <span>Pharmacy</span></h1><small>Meru's Own Pharmacy</small></div></a>
 
 
-  <div class="search-bar"><input type="text" placeholder="Search products..."><button>Search</button></div>
+  <div class="search-bar"><input type="text" id="searchInput" placeholder="Search products..." oninput="doSearch()"><button>Search</button></div>
 
 
   <div class="header-icons"><a href="https://wa.me/+254727747699" target="_blank" class="whatsapp-btn">📱 0727747699</a><a href="account.html">👤 Account</a><a href="cart.html" class="cart-icon">🛒 <span class="badge">0</span></a></div>
@@ -247,7 +285,14 @@
       <div class="shop-controls">
 
 
-        <p>Loading products...</p>
+        <div class="product-grid-skeleton" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:20px;padding:40px 0">
+          <div class="product-card"><div class="skeleton skeleton-img"></div><div class="product-body"><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text short"></div><div class="skeleton skeleton-btn" style="margin-top:10px"></div></div></div>
+          <div class="product-card"><div class="skeleton skeleton-img"></div><div class="product-body"><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text short"></div><div class="skeleton skeleton-btn" style="margin-top:10px"></div></div></div>
+          <div class="product-card"><div class="skeleton skeleton-img"></div><div class="product-body"><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text short"></div><div class="skeleton skeleton-btn" style="margin-top:10px"></div></div></div>
+          <div class="product-card"><div class="skeleton skeleton-img"></div><div class="product-body"><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text short"></div><div class="skeleton skeleton-btn" style="margin-top:10px"></div></div></div>
+          <div class="product-card"><div class="skeleton skeleton-img"></div><div class="product-body"><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text short"></div><div class="skeleton skeleton-btn" style="margin-top:10px"></div></div></div>
+          <div class="product-card"><div class="skeleton skeleton-img"></div><div class="product-body"><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text short"></div><div class="skeleton skeleton-btn" style="margin-top:10px"></div></div></div>
+        </div>
 
 
         <select onchange="sortProducts(this.value)"><option value="">Sort by: Default</option><option value="price-asc">Price: Low to High</option><option value="price-desc">Price: High to Low</option><option value="name">Name: A-Z</option></select>
@@ -631,10 +676,10 @@
           }
 
 
-          var stockLabel = p.stock > 10 ? '✅ In stock' : (p.stock > 0 ? '⚠️ Only ' + p.stock + ' left' : '❌ Out of stock');
+          var stockLabel = '<span style="color:' + (p.stock > 10 ? '#2e7d32' : (p.stock > 0 ? '#e65100' : '#c62828')) + ';font-weight:600">' + (p.stock > 10 ? '\u2705 In stock' : (p.stock > 0 ? '\u26a0\ufe0f Only ' + p.stock + ' left' : '\u274c Out of stock')) + '</span>'
 
 
-          var imgHtml = p.image ? '<img src="' + p.image + '" alt="' + p.name + '" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:8px" onerror="this.style.display=\'none\'">' : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:48px;background:#f5f8f5;border-radius:8px">' + getProductIcon(p.category) + '</div>';
+          var imgHtml = p.image ? '<img src="' + p.image + '" alt="' + p.name + '" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:8px" onerror="this.style.display=\'none\'">' : '<img src="images/placeholder.svg" alt="' + p.name + '" loading="lazy" style="width:100%;height:100%;object-fit:contain;padding:20px;background:#f5f8f5;border-radius:8px">';
 
 
           html += '<div class="product-card">' +
@@ -730,7 +775,38 @@
 
 
 
-      function addToCart(id, name, price) {
+      
+      // Real-time search
+      function filterBySearch() {
+        var q = document.getElementById('searchInput').value.toLowerCase().trim();
+        if (!q) {
+          removeSearchFilter();
+          return;
+        }
+        var results = allProducts.filter(function(p) {
+          return p.name.toLowerCase().indexOf(q) !== -1 ||
+                 (p.category || '').toLowerCase().indexOf(q) !== -1 ||
+                 (p.brand || '').toLowerCase().indexOf(q) !== -1 ||
+                 (p.description || '').toLowerCase().indexOf(q) !== -1;
+        });
+        filteredProducts = results;
+        if (sortMode === 'price-asc') filteredProducts.sort(function(a,b) { return a.price - b.price; });
+        else if (sortMode === 'price-desc') filteredProducts.sort(function(a,b) { return b.price - a.price; });
+        else if (sortMode === 'name') filteredProducts.sort(function(a,b) { return a.name.localeCompare(b.name); });
+        currentPage = 1;
+        showPage(1);
+      }
+
+      function removeSearchFilter() {
+        activeCat = 'all';
+        activePrice = 'all';
+        applyFilters();
+      }
+
+      function doSearch() {
+        filterBySearch();
+      }
+function addToCart(id, name, price) {
 
 
         try {
@@ -982,7 +1058,10 @@
 <a href="https://wa.me/+254727747699" target="_blank" class="whatsapp-float">💬</a>
 
 
-</body>
+
+<script>
+if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(e){console.log("SW registration failed:",e)})}
+</script></body>
 
 
 </html>

@@ -1,0 +1,21 @@
+{
+  "name": "Obwocha's Pharmacy",
+  "short_name": "ObwochaRx",
+  "description": "Meru's own trusted pharmacy. Order medicines, OTC products, beauty items and supplements online. Express 3-hour delivery.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a5c2e",
+  "theme_color": "#1a5c2e",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
