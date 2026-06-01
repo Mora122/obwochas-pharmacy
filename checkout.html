@@ -56,13 +56,13 @@
         <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Select your preferred payment method below</p>
 
         <!-- M-Pesa -->
-        <div class="payment-option selected" onclick="selectPayment('mpesa')">
-          <label>
+        <div class="payment-option selected" data-method="mpesa">
+          <div class="payment-header">
             <input type="radio" name="payment" value="mpesa" checked>
             <span class="radio-circle"></span>
             <span style="font-size:24px;">📱</span>
             <div><strong>M-Pesa</strong><br><span style="font-size:12px;color:var(--text-muted);">Pay via M-Pesa STK Push — Kenya's fastest mobile money</span></div>
-          </label>
+          </div>
           <div class="mpesa-form visible">
             <label style="font-size:13px;">M-Pesa Phone Number *</label>
             <input type="tel" id="mpesaPhone" value="0727747699" placeholder="0712 345 678" style="font-size:18px;">
@@ -71,13 +71,13 @@
         </div>
 
         <!-- Card -->
-        <div class="payment-option" onclick="selectPayment('card')">
-          <label>
+        <div class="payment-option" data-method="card">
+          <div class="payment-header">
             <input type="radio" name="payment" value="card">
             <span class="radio-circle"></span>
             <span style="font-size:24px;">💳</span>
             <div><strong>Visa / MasterCard</strong><br><span style="font-size:12px;color:var(--text-muted);">Debit or credit card — secure checkout</span></div>
-          </label>
+          </div>
           <div class="card-form">
             <div class="card-form-row">
               <div class="card-input-wrapper">
@@ -97,13 +97,13 @@
         </div>
 
         <!-- Cash on Delivery -->
-        <div class="payment-option" onclick="selectPayment('cash')">
-          <label>
+        <div class="payment-option" data-method="cash">
+          <div class="payment-header">
             <input type="radio" name="payment" value="cash">
             <span class="radio-circle"></span>
             <span style="font-size:24px;">💵</span>
             <div><strong>Cash on Delivery</strong><br><span style="font-size:12px;color:var(--text-muted);">Pay in cash when your order arrives</span></div>
-          </label>
+          </div>
           <div class="cash-notice" style="display:block !important;">
             <strong>📌 Cash-on-Delivery Note</strong>
             Please have exact change ready. Our delivery agent will collect payment upon delivery. A small convenience fee of KSh 100 may apply for COD orders.
@@ -287,24 +287,36 @@ function goToStep(n) {
 
 function selectPayment(method) {
   selectedPayment = method;
-  document.querySelectorAll('.payment-option').forEach(el => el.classList.remove('selected'));
-  document.querySelectorAll('.payment-option input').forEach(el => el.checked = false);
-  document.querySelectorAll('.mpesa-form').forEach(el => el.classList.remove('visible'));
-  document.querySelectorAll('.card-form').forEach(el => el.classList.remove('visible'));
+  document.querySelectorAll('.payment-option').forEach(function(el) { el.classList.remove('selected'); });
+  document.querySelectorAll('.payment-option input').forEach(function(el) { el.checked = false; });
+  document.querySelectorAll('.mpesa-form').forEach(function(el) { el.classList.remove('visible'); });
+  document.querySelectorAll('.card-form').forEach(function(el) { el.classList.remove('visible'); });
 
+  var options = document.querySelectorAll('.payment-option');
+  var inputs = document.querySelectorAll('.payment-option input');
   if(method === 'mpesa') {
-    document.querySelector('.payment-option:first-child').classList.add('selected');
-    document.querySelector('.payment-option:first-child input').checked = true;
+    options[0].classList.add('selected');
+    inputs[0].checked = true;
     document.querySelector('.mpesa-form').classList.add('visible');
   } else if(method === 'card') {
-    document.querySelectorAll('.payment-option')[1].classList.add('selected');
-    document.querySelectorAll('.payment-option input')[1].checked = true;
+    options[1].classList.add('selected');
+    inputs[1].checked = true;
     document.querySelector('.card-form').classList.add('visible');
   } else if(method === 'cash') {
-    document.querySelectorAll('.payment-option')[2].classList.add('selected');
-    document.querySelectorAll('.payment-option input')[2].checked = true;
+    options[2].classList.add('selected');
+    inputs[2].checked = true;
   }
 }
+
+// Attach click listeners to payment options (works on mobile touch)
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.payment-option').forEach(function(el) {
+    el.addEventListener('click', function(e) {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      selectPayment(this.getAttribute('data-method'));
+    });
+  });
+});
 
 function formatCard(input) {
   let val = input.value.replace(/\D/g, '').substring(0, 16);
