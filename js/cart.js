@@ -121,7 +121,7 @@ function renderCart() {
       <tr>
         <td>
           <div class="cart-product">
-            <div class="cart-product-img">${item.image ? '<img src="images/' + item.image + '" alt="' + item.name + '" style="width:80px;height:80px;object-fit:contain;" onerror="this.style.display=\'none\'">' : '<div style="width:80px;height:80px;display:flex;align-items:center;justify-content:center;font-size:28px;background:#f5f8f5;border-radius:8px;">📦</div>'}</div>
+            <div class="cart-product-img">${item.image ? '<img loading="lazy" src="images/' + item.image + '" alt="' + item.name + '" style="width:80px;height:80px;object-fit:contain;" onerror="this.style.display=\'none\'">' : '<div style="width:80px;height:80px;display:flex;align-items:center;justify-content:center;font-size:28px;background:#f5f8f5;border-radius:8px;">📦</div>'}</div>
             <div>
               <strong>${item.name}</strong><br>
               <span style="font-size:12px;color:var(--text-muted);">SKU: ${item.sku || 'N/A'}</span>
