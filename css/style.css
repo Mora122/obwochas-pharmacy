@@ -343,3 +343,50 @@ img{max-width:100%;height:auto}
 .cat-tag.active{background:var(--primary);color:#fff}
 .search-bar input:focus{border-color:var(--primary-light)}
 .product-card{transition:transform .2s,box-shadow .2s}
+
+/* Logo refresh */
+.logo-icon{width:44px;height:44px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-icon img{width:100%;height:100%;object-fit:contain}
+
+/* Star ratings */
+.stars{display:flex;gap:2px;margin:4px 0 6px}
+.stars span{font-size:13px;color:#ddd}
+.stars span.filled{color:#ffd700}
+.stars span.half{color:#ffd700;position:relative}
+.rating-text{font-size:11px;color:var(--text-muted);margin-left:6px}
+
+/* Testimonials */
+.testimonials{background:var(--bg-light);padding:50px 20px}
+.testimonial-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;max-width:1100px;margin:0 auto}
+.testimonial-card{background:#fff;border-radius:var(--radius);padding:28px 24px;border:1px solid var(--border);transition:var(--transition)}
+.testimonial-card:hover{box-shadow:var(--shadow);transform:translateY(-3px)}
+.testimonial-card .stars{margin-bottom:10px}
+.testimonial-card p{font-size:13px;color:var(--text-light);line-height:1.7;font-style:italic;margin-bottom:14px}
+.testimonial-author{display:flex;align-items:center;gap:10px}
+.testimonial-author .avatar{width:40px;height:40px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex-shrink:0}
+.testimonial-author .info{font-size:13px}
+.testimonial-author .info strong{display:block;color:var(--text)}
+.testimonial-author .info small{color:var(--text-muted);font-size:11px}
+
+/* Image fallback */
+.product-img .img-fallback{display:none;width:60px;height:60px;background:var(--bg-light);border-radius:50%;align-items:center;justify-content:center;font-size:28px;color:#ccc}
+.product-img img[src=""]+.img-fallback,
+.product-img img.img-error{display:none}
+.product-img img.img-error ~ .img-fallback{display:flex}
+
+/* Responsive testimonials */
+@media (max-width:600px){.testimonial-grid{grid-template-columns:1fr}}
+
+/* Consistent product image behavior */
+.product-img{position:relative;overflow:hidden}
+.product-img img{transition:transform .3s}
+.product-card:hover .product-img img{transform:scale(1.05)}
+
+/* Cart toast animation */
+.cart-toast{animation:slideIn .3s ease}
+@keyframes slideIn{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* Trust badges section */
+.trust-badges{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;padding:30px 20px;max-width:1000px;margin:0 auto}
+.trust-badge{text-align:center;font-size:13px;color:var(--text-light)}
+.trust-badge .icon{font-size:28px;margin-bottom:4px}
