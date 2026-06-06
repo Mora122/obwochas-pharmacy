@@ -27,10 +27,10 @@ let memoryBrands = [
   { id: 'BR-014', name: 'Sante', icon: '??', slug: 'sante', image: 'https://placehold.co/200x200/2e7d32/ffffff?text=Sante', createdAt: new Date().toISOString() },
   { id: 'BR-015', name: 'Opti-Nutrition', icon: '??', slug: 'opti', image: 'https://placehold.co/200x200/e65100/ffffff?text=Opti', createdAt: new Date().toISOString() },
   { id: 'BR-016', name: 'Clarins', icon: '??', slug: 'clarins', image: 'https://placehold.co/200x200/880e4f/ffffff?text=Clarins', createdAt: new Date().toISOString() },
-  { id: 'BR-017', name: "L'OrÈal", icon: '??', slug: 'loreal', image: 'https://placehold.co/200x200/000000/ffffff?text=L%27Oreal', createdAt: new Date().toISOString() },
+  { id: 'BR-017', name: "L'OrÔøΩal", icon: '??', slug: 'loreal', image: 'https://placehold.co/200x200/000000/ffffff?text=L%27Oreal', createdAt: new Date().toISOString() },
   { id: 'BR-018', name: 'Bioderma', icon: '??', slug: 'bioderma', image: 'https://placehold.co/200x200/00695c/ffffff?text=Bioderma', createdAt: new Date().toISOString() },
   { id: 'BR-019', name: 'A-Derma', icon: '??', slug: 'a-derma', image: 'https://placehold.co/200x200/33691e/ffffff?text=A-Derma', createdAt: new Date().toISOString() },
-  { id: 'BR-020', name: 'AvËne', icon: '??', slug: 'avene', image: 'https://placehold.co/200x200/004d40/ffffff?text=Av%C3%A8ne', createdAt: new Date().toISOString() },
+  { id: 'BR-020', name: 'AvÔøΩne', icon: '??', slug: 'avene', image: 'https://placehold.co/200x200/004d40/ffffff?text=Av%C3%A8ne', createdAt: new Date().toISOString() },
   { id: 'BR-021', name: 'Centrum', icon: '??', slug: 'centrum', image: 'https://placehold.co/200x200/1565c0/ffffff?text=Centrum', createdAt: new Date().toISOString() },
   { id: 'BR-022', name: 'Vitafusion', icon: '??', slug: 'vitafusion', image: 'https://placehold.co/200x200/c62828/ffffff?text=Vitafusion', createdAt: new Date().toISOString() },
   { id: 'BR-023', name: 'Calpol', icon: '??', slug: 'calpol', image: 'https://placehold.co/200x200/00695c/ffffff?text=Calpol', createdAt: new Date().toISOString() },
@@ -111,7 +111,14 @@ module.exports = async (req, res) => {
       let brands;
       if (conn.mode === 'mongodb') {
         brands = await conn.db.collection('brands').find({}).sort({ name: 1 }).toArray();
-        brands = brands.map(b => ({ id: b._id.toString(), name: b.name, icon: b.icon, slug: b.slug }));
+        brands = brands.map(b => {
+          var brand = { id: b._id.toString(), name: b.name, icon: b.icon, slug: b.slug, image: b.image || '' };
+          // Auto-fill placeholder image if missing
+          if (!brand.image) {
+            brand.image = 'https://placehold.co/200x200/1a5c2e/ffffff?text=' + encodeURIComponent(brand.name);
+          }
+          return brand;
+        });
       } else {
         brands = [...memoryBrands].sort((a, b) => a.name.localeCompare(b.name));
       }
@@ -135,9 +142,9 @@ module.exports = async (req, res) => {
 
       const brandName = name.trim();
       const slug = makeSlug(brandName);
-      const brandIcon = icon || '???';
+      const brandIcon = icon || 'üè∑Ô∏è';
       const now = new Date().toISOString();
-  const brandImage = image || 'https://placehold.co/200x200/1a5c2e/ffffff?text=' + encodeURIComponent(brandName);
+      const brandImage = image || 'https://placehold.co/200x200/1a5c2e/ffffff?text=' + encodeURIComponent(brandName);
 
       if (conn.mode === 'mongodb') {
         // Check if brand already exists
