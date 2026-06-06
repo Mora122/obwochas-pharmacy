@@ -488,44 +488,29 @@
 
 
       function checkUrlFilters() {
-
-
         var params = new URLSearchParams(window.location.search);
-
-
         var catParam = params.get('cat');
-
-
         var priceParam = params.get('price');
-
+        var searchParam = params.get('search');
 
         if (catParam && CAT_MAP[catParam]) {
-
-
           activeCat = CAT_MAP[catParam];
-
-
           activateSidebar('cat', catParam);
-
-
         }
-
-
         if (priceParam) {
-
-
           activePrice = priceParam;
-
-
           activateSidebar('price', priceParam);
-
-
         }
-
-
         applyFilters();
 
-
+        // Handle search query from URL
+        if (searchParam) {
+          var searchInput = document.getElementById('searchInput');
+          if (searchInput) {
+            searchInput.value = decodeURIComponent(searchParam);
+            filterBySearch();
+          }
+        }
       }
 
 
@@ -803,7 +788,19 @@
         else if (sortMode === 'price-desc') filteredProducts.sort(function(a,b) { return b.price - a.price; });
         else if (sortMode === 'name') filteredProducts.sort(function(a,b) { return a.name.localeCompare(b.name); });
         currentPage = 1;
+        // Update URL without reloading
+        var url = new URL(window.location);
+        url.searchParams.set('search', q);
+        window.history.replaceState({}, '', url);
         showPage(1);
+      }
+
+      function clearSearchFilter() {
+        document.getElementById('searchInput').value = '';
+        var url = new URL(window.location);
+        url.searchParams.delete('search');
+        window.history.replaceState({}, '', url);
+        removeSearchFilter();
       }
 
       function removeSearchFilter() {
@@ -1072,7 +1069,7 @@ function addToCart(id, name, price) {
 
 <script>
 if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(e){console.log("SW registration failed:",e)})}
-</script></body>
+<script src="js/search.js" defer></script></script></body>
 
 
 </html>
