@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Admin — Manage Brands | Obwocha's Pharmacy</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .admin-panel { max-width: 900px; margin: 0 auto; padding: 20px; }
+  .admin-panel h2 { color: var(--primary); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+  .admin-card { background: #fff; border-radius: var(--radius); padding: 24px; margin-bottom: 20px; box-shadow: var(--shadow); }
+  .admin-card h3 { color: var(--primary); margin-bottom: 14px; font-size: 16px; }
+  .admin-form { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+  .admin-form label { font-size: 13px; color: var(--text-light); display: block; margin-bottom: 4px; }
+  .admin-form .field { flex: 1; min-width: 150px; }
+  .admin-form input, .admin-form select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; }
+  .admin-form input:focus { border-color: var(--primary); outline: none; }
+  .brands-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+  .brand-item { display: flex; align-items: center; justify-content: space-between; background: var(--bg-light); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); }
+  .brand-item .info { display: flex; align-items: center; gap: 10px; }
+  .brand-item .info .icon { font-size: 22px; }
+  .brand-item .info .name { font-size: 14px; font-weight: 500; color: var(--text); }
+  .brand-item .info .slug { font-size: 11px; color: var(--text-muted); }
+  .btn-remove { background: none; border: 1px solid #e74c3c; color: #e74c3c; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: 0.2s; }
+  .btn-remove:hover { background: #e74c3c; color: #fff; }
+  .btn-sm { padding: 10px 16px; font-size: 13px; white-space: nowrap; }
+  .msg { padding: 10px 14px; border-radius: 6px; margin-bottom: 14px; font-size: 13px; display: none; }
+  .msg.success { display: block; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+  .msg.error { display: block; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+  .loading { text-align: center; padding: 40px; color: var(--text-muted); }
+  .no-auth { text-align: center; padding: 60px 20px; max-width: 500px; margin: 0 auto; }
+  .no-auth h2 { color: #e74c3c; }
+  .no-auth p { color: var(--text-light); margin: 14px 0 20px; }
+  .brand-count { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; }
+  .icon-picker { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .icon-picker span { font-size: 24px; cursor: pointer; padding: 4px; border-radius: 4px; transition: 0.15s; }
+  .icon-picker span:hover { background: var(--bg-light); transform: scale(1.15); }
+  .icon-picker span.selected { background: var(--primary); border-radius: 4px; }
+  .back-link { display: inline-block; margin-bottom: 16px; font-size: 13px; color: var(--primary); text-decoration: none; }
+  .back-link:hover { text-decoration: underline; }
+  @media (max-width: 600px) {
+    .admin-form { flex-direction: column; }
+    .admin-form .field { min-width: 100%; }
+    .brands-list { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="top-bar"><div class="left"><span>🚚 Free Delivery For orders above KSh 2,500/=</span></div><div class="right"><a href="account.html">Account</a><a href="shop.html">Shop</a></div></div>
+<div class="header-nav-wrap">
+<header>
+  <a href="index.html" class="logo"><div class="logo-icon"><img src="icons/logo.svg" alt="Obwochas Pharmacy" width="44" height="44"></div><div class="logo-text"><h1>Obwocha's <span>Pharmacy</span></h1><small>Admin Panel</small></div></a>
+  <div class="header-icons"><a href="account.html" class="cart-icon">👤</a></div>
+</header>
+<nav class="main-nav"><ul><li><a href="index.html">Home</a></li><li><a href="brands.html">Brands</a></li><li><a href="shop.html">Shop</a></li><li><a href="admin-brands.html" class="active">Manage Brands</a></li></ul></nav>
+</div>
+
+<div class="admin-panel" id="adminPanel">
+  <!-- Will be populated by JS -->
+</div>
+
+<footer><div class="footer-bottom"><p>Copyright © 2026 Obwocha's Pharmacy</p></div></footer>
+
+<script>
+const ADMIN_EMAIL = 'admin@obwochaspharmacy.co.ke';
+
+// Check auth
+function getLoggedInUser() {
+  try {
+    const u = localStorage.getItem('obwochas_user');
+    return u ? JSON.parse(u) : null;
+  } catch { return null; }
+}
+
+function isAdmin() {
+  const user = getLoggedInUser();
+  return user && user.email === ADMIN_EMAIL;
+}
+
+// Load brands
+async function loadBrands() {
+  try {
+    const res = await fetch('/api/brands');
+    const data = await res.json();
+    if (data.success) return data.brands;
+    return [];
+  } catch {
+    return [];
+  }
+}
+
+// Delete brand
+async function deleteBrand(brandId, brandName) {
+  if (!confirm(`Remove "${brandName}" from brands?`)) return;
+  
+  const user = getLoggedInUser();
+  if (!user) { showMessage('Please sign in first.', 'error'); return; }
+
+  try {
+    const res = await fetch('/api/brands', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        adminEmail: user.email,
+        adminPassword: prompt('Enter your password to confirm removal:'),
+        brandId: brandId
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showMessage(data.message, 'success');
+      renderPanel();
+    } else {
+      showMessage(data.message, 'error');
+    }
+  } catch (e) {
+    showMessage('Connection error. Please try again.', 'error');
+  }
+}
+
+// Add brand
+async function addBrand(name, icon) {
+  const user = getLoggedInUser();
+  if (!user) { showMessage('Please sign in first.', 'error'); return false; }
+
+  try {
+    const res = await fetch('/api/brands', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        adminEmail: user.email,
+        adminPassword: prompt('Enter your password to add this brand:'),
+        name: name,
+        icon: icon
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showMessage(data.message, 'success');
+      return true;
+    } else {
+      showMessage(data.message, 'error');
+      return false;
+    }
+  } catch (e) {
+    showMessage('Connection error. Please try again.', 'error');
+    return false;
+  }
+}
+
+function showMessage(text, type) {
+  const panel = document.getElementById('adminPanel');
+  const msg = document.createElement('div');
+  msg.className = 'msg ' + type;
+  msg.textContent = text;
+  panel.insertBefore(msg, panel.firstChild);
+  setTimeout(() => msg.remove(), 4000);
+}
+
+// Common brand icons
+const ICONS = ['💊', '🧴', '🤱', '🦷', '❤️', '👁️', '🤧', '⚡', '🌿', '💪', '💄', '🩹', '🧪', '🧬', '🏥', '🌡️', '🩺', '💉', '🧃', '🧴', '🫧', '🧽', '🪥', '🧼', '🌿', '🍃', '🏷️'];
+
+let selectedIcon = '🏷️';
+
+async function renderPanel() {
+  const panel = document.getElementById('adminPanel');
+
+  if (!isAdmin()) {
+    panel.innerHTML = `
+      <div class="no-auth">
+        <h2>🔒 Admin Access Only</h2>
+        <p>You need to be logged in as the pharmacy admin to manage brands.</p>
+        <p style="font-size:12px;color:var(--text-muted);">Admin email: ${ADMIN_EMAIL}</p>
+        <a href="account.html" class="btn btn-primary" style="display:inline-block;margin-top:10px;">Sign In</a>
+      </div>
+    `;
+    return;
+  }
+
+  const user = getLoggedInUser();
+  panel.innerHTML = `
+    <a href="index.html" class="back-link">← Back to Home</a>
+    <h2>⚙️ Manage Brands</h2>
+    <p style="color:var(--text-light);margin-bottom:20px;font-size:13px;">Logged in as <strong>${user.name}</strong> (${user.email})</p>
+
+    <div id="msgArea"></div>
+
+    <div class="admin-card">
+      <h3>➕ Add New Brand</h3>
+      <form id="addBrandForm" class="admin-form">
+        <div class="field">
+          <label>Brand Name</label>
+          <input type="text" id="brandName" placeholder="e.g. Panadol" required>
+        </div>
+        <div class="field" style="flex:0.6;min-width:120px;">
+          <label>Icon</label>
+          <input type="text" id="brandIcon" value="🏷️" style="font-size:20px;text-align:center;" maxlength="2">
+          <div class="icon-picker" id="iconPicker"></div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm" style="height:40px;">Add Brand</button>
+      </form>
+    </div>
+
+    <div class="admin-card">
+      <h3>📋 All Brands</h3>
+      <div class="brand-count" id="brandCount">Loading...</div>
+      <div class="brands-list" id="brandsList">
+        <div class="loading">⏳ Loading brands...</div>
+      </div>
+    </div>
+  `;
+
+  // Setup icon picker
+  const iconInput = document.getElementById('brandIcon');
+  const picker = document.getElementById('iconPicker');
+  ICONS.forEach(ic => {
+    const span = document.createElement('span');
+    span.textContent = ic;
+    span.onclick = () => {
+      iconInput.value = ic;
+      selectedIcon = ic;
+      picker.querySelectorAll('span').forEach(s => s.classList.remove('selected'));
+      span.classList.add('selected');
+    };
+    picker.appendChild(span);
+  });
+  iconInput.value = '🏷️';
+
+  // Load and display brands
+  const brands = await loadBrands();
+  const list = document.getElementById('brandsList');
+  const count = document.getElementById('brandCount');
+
+  if (brands.length === 0) {
+    list.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">No brands yet. Add one above!</p>';
+    count.textContent = '0 brands';
+  } else {
+    count.textContent = `${brands.length} brand${brands.length !== 1 ? 's' : ''}`;
+    list.innerHTML = brands.map(b => `
+      <div class="brand-item">
+        <div class="info">
+          <span class="icon">${b.icon || '🏷️'}</span>
+          <div>
+            <div class="name">${b.name}</div>
+            <div class="slug">/${b.slug}</div>
+          </div>
+        </div>
+        <button class="btn-remove" onclick="deleteBrand('${b.id}', '${b.name.replace(/'/g, "\\'")}')">✕ Remove</button>
+      </div>
+    `).join('');
+  }
+
+  // Setup add form
+  document.getElementById('addBrandForm').onsubmit = async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('brandName').value.trim();
+    const icon = document.getElementById('brandIcon').value || '🏷️';
+    if (!name) return;
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    btn.textContent = 'Adding...';
+    const success = await addBrand(name, icon);
+    btn.disabled = false;
+    btn.textContent = 'Add Brand';
+    if (success) {
+      document.getElementById('brandName').value = '';
+      renderPanel(); // refresh
+    }
+  };
+}
+
+document.addEventListener('DOMContentLoaded', renderPanel);
+</script>
+<script src="js/search.js" defer></script>
+</body>
+</html>
