@@ -11,32 +11,32 @@ const ADMIN_EMAIL = 'admin@obwochaspharmacy.co.ke';
 let client = null;
 let db = null;
 let memoryBrands = [
-  { id: 'BR-001', name: 'Wellman', icon: '💊', slug: 'wellman', createdAt: new Date().toISOString() },
-  { id: 'BR-002', name: 'Wellwoman', icon: '💊', slug: 'wellwoman', createdAt: new Date().toISOString() },
-  { id: 'BR-003', name: 'CeraVe', icon: '🧴', slug: 'cerave', createdAt: new Date().toISOString() },
-  { id: 'BR-004', name: 'La Roche-Posay', icon: '🧴', slug: 'laroche', createdAt: new Date().toISOString() },
-  { id: 'BR-005', name: 'Eucerin', icon: '🧴', slug: 'eucerin', createdAt: new Date().toISOString() },
-  { id: 'BR-006', name: 'Nivea', icon: '🧴', slug: 'nivea', createdAt: new Date().toISOString() },
-  { id: 'BR-007', name: 'Dettol', icon: '🩹', slug: 'dettol', createdAt: new Date().toISOString() },
-  { id: 'BR-008', name: 'Pampers', icon: '🤱', slug: 'pampers', createdAt: new Date().toISOString() },
-  { id: 'BR-009', name: 'Colgate', icon: '🦷', slug: 'colgate', createdAt: new Date().toISOString() },
-  { id: 'BR-010', name: 'Seven Seas', icon: '❤️', slug: 'sevenseas', createdAt: new Date().toISOString() },
-  { id: 'BR-011', name: 'Optrex', icon: '👁️', slug: 'optrex', createdAt: new Date().toISOString() },
-  { id: 'BR-012', name: 'Piriton', icon: '🤧', slug: 'piriton', createdAt: new Date().toISOString() },
-  { id: 'BR-013', name: 'Brufen', icon: '⚡', slug: 'brufen', createdAt: new Date().toISOString() },
-  { id: 'BR-014', name: 'Sante', icon: '🌿', slug: 'sante', createdAt: new Date().toISOString() },
-  { id: 'BR-015', name: 'Opti-Nutrition', icon: '💪', slug: 'opti', createdAt: new Date().toISOString() },
-  { id: 'BR-016', name: 'Clarins', icon: '💄', slug: 'clarins', createdAt: new Date().toISOString() },
-  { id: 'BR-017', name: "L'Oréal", icon: '💄', slug: 'loreal', createdAt: new Date().toISOString() },
-  { id: 'BR-018', name: 'Bioderma', icon: '🧴', slug: 'bioderma', createdAt: new Date().toISOString() },
-  { id: 'BR-019', name: 'A-Derma', icon: '🧴', slug: 'a-derma', createdAt: new Date().toISOString() },
-  { id: 'BR-020', name: 'Avène', icon: '🧴', slug: 'avene', createdAt: new Date().toISOString() },
-  { id: 'BR-021', name: 'Centrum', icon: '💊', slug: 'centrum', createdAt: new Date().toISOString() },
-  { id: 'BR-022', name: 'Vitafusion', icon: '💊', slug: 'vitafusion', createdAt: new Date().toISOString() },
-  { id: 'BR-023', name: 'Calpol', icon: '🤱', slug: 'calpol', createdAt: new Date().toISOString() },
-  { id: 'BR-024', name: "Johnson's", icon: '🤱', slug: 'johnsons', createdAt: new Date().toISOString() },
-  { id: 'BR-025', name: 'GSK', icon: '💊', slug: 'gsk', createdAt: new Date().toISOString() },
-  { id: 'BR-026', name: 'Bayer', icon: '💊', slug: 'bayer', createdAt: new Date().toISOString() }
+  { id: 'BR-001', name: 'Wellman', icon: '??', slug: 'wellman', image: 'https://placehold.co/200x200/1a5c2e/ffffff?text=Wellman', createdAt: new Date().toISOString() },
+  { id: 'BR-002', name: 'Wellwoman', icon: '??', slug: 'wellwoman', image: 'https://placehold.co/200x200/1a5c2e/ffffff?text=Wellwoman', createdAt: new Date().toISOString() },
+  { id: 'BR-003', name: 'CeraVe', icon: '??', slug: 'cerave', image: 'https://placehold.co/200x200/0077b6/ffffff?text=CeraVe', createdAt: new Date().toISOString() },
+  { id: 'BR-004', name: 'La Roche-Posay', icon: '??', slug: 'laroche', image: 'https://placehold.co/200x200/003d66/ffffff?text=LRP', createdAt: new Date().toISOString() },
+  { id: 'BR-005', name: 'Eucerin', icon: '??', slug: 'eucerin', image: 'https://placehold.co/200x200/005a3c/ffffff?text=Eucerin', createdAt: new Date().toISOString() },
+  { id: 'BR-006', name: 'Nivea', icon: '??', slug: 'nivea', image: 'https://placehold.co/200x200/003399/ffffff?text=Nivea', createdAt: new Date().toISOString() },
+  { id: 'BR-007', name: 'Dettol', icon: '??', slug: 'dettol', image: 'https://placehold.co/200x200/00a650/ffffff?text=Dettol', createdAt: new Date().toISOString() },
+  { id: 'BR-008', name: 'Pampers', icon: '??', slug: 'pampers', image: 'https://placehold.co/200x200/005e8c/ffffff?text=Pampers', createdAt: new Date().toISOString() },
+  { id: 'BR-009', name: 'Colgate', icon: '??', slug: 'colgate', image: 'https://placehold.co/200x200/004b87/ffffff?text=Colgate', createdAt: new Date().toISOString() },
+  { id: 'BR-010', name: 'Seven Seas', icon: '??', slug: 'sevenseas', image: 'https://placehold.co/200x200/8b0000/ffffff?text=7Seas', createdAt: new Date().toISOString() },
+  { id: 'BR-011', name: 'Optrex', icon: '???', slug: 'optrex', image: 'https://placehold.co/200x200/006064/ffffff?text=Optrex', createdAt: new Date().toISOString() },
+  { id: 'BR-012', name: 'Piriton', icon: '??', slug: 'piriton', image: 'https://placehold.co/200x200/4a148c/ffffff?text=Piriton', createdAt: new Date().toISOString() },
+  { id: 'BR-013', name: 'Brufen', icon: '?', slug: 'brufen', image: 'https://placehold.co/200x200/b71c1c/ffffff?text=Brufen', createdAt: new Date().toISOString() },
+  { id: 'BR-014', name: 'Sante', icon: '??', slug: 'sante', image: 'https://placehold.co/200x200/2e7d32/ffffff?text=Sante', createdAt: new Date().toISOString() },
+  { id: 'BR-015', name: 'Opti-Nutrition', icon: '??', slug: 'opti', image: 'https://placehold.co/200x200/e65100/ffffff?text=Opti', createdAt: new Date().toISOString() },
+  { id: 'BR-016', name: 'Clarins', icon: '??', slug: 'clarins', image: 'https://placehold.co/200x200/880e4f/ffffff?text=Clarins', createdAt: new Date().toISOString() },
+  { id: 'BR-017', name: "L'Or�al", icon: '??', slug: 'loreal', image: 'https://placehold.co/200x200/000000/ffffff?text=L%27Oreal', createdAt: new Date().toISOString() },
+  { id: 'BR-018', name: 'Bioderma', icon: '??', slug: 'bioderma', image: 'https://placehold.co/200x200/00695c/ffffff?text=Bioderma', createdAt: new Date().toISOString() },
+  { id: 'BR-019', name: 'A-Derma', icon: '??', slug: 'a-derma', image: 'https://placehold.co/200x200/33691e/ffffff?text=A-Derma', createdAt: new Date().toISOString() },
+  { id: 'BR-020', name: 'Av�ne', icon: '??', slug: 'avene', image: 'https://placehold.co/200x200/004d40/ffffff?text=Av%C3%A8ne', createdAt: new Date().toISOString() },
+  { id: 'BR-021', name: 'Centrum', icon: '??', slug: 'centrum', image: 'https://placehold.co/200x200/1565c0/ffffff?text=Centrum', createdAt: new Date().toISOString() },
+  { id: 'BR-022', name: 'Vitafusion', icon: '??', slug: 'vitafusion', image: 'https://placehold.co/200x200/c62828/ffffff?text=Vitafusion', createdAt: new Date().toISOString() },
+  { id: 'BR-023', name: 'Calpol', icon: '??', slug: 'calpol', image: 'https://placehold.co/200x200/00695c/ffffff?text=Calpol', createdAt: new Date().toISOString() },
+  { id: 'BR-024', name: "Johnson's", icon: '??', slug: 'johnsons', image: 'https://placehold.co/200x200/003d79/ffffff?text=Johnson', createdAt: new Date().toISOString() },
+  { id: 'BR-025', name: 'GSK', icon: '??', slug: 'gsk', image: 'https://placehold.co/200x200/76232f/ffffff?text=GSK', createdAt: new Date().toISOString() },
+  { id: 'BR-026', name: 'Bayer', icon: '??', slug: 'bayer', image: 'https://placehold.co/200x200/003366/ffffff?text=Bayer', createdAt: new Date().toISOString() }
 ];
 let memoryIdCounter = 27;
 
@@ -120,7 +120,7 @@ module.exports = async (req, res) => {
 
     // POST — Add a brand (admin only)
     if (req.method === 'POST') {
-      const { adminEmail, adminPassword, name, icon } = req.body;
+      const { adminEmail, adminPassword, name, icon, image } = req.body;
 
       if (!adminEmail || !adminPassword) {
         return res.status(401).json({ success: false, message: 'Admin credentials required' });
@@ -135,8 +135,9 @@ module.exports = async (req, res) => {
 
       const brandName = name.trim();
       const slug = makeSlug(brandName);
-      const brandIcon = icon || '🏷️';
+      const brandIcon = icon || '???';
       const now = new Date().toISOString();
+  const brandImage = image || 'https://placehold.co/200x200/1a5c2e/ffffff?text=' + encodeURIComponent(brandName);
 
       if (conn.mode === 'mongodb') {
         // Check if brand already exists
@@ -145,11 +146,11 @@ module.exports = async (req, res) => {
           return res.status(409).json({ success: false, message: `Brand "${brandName}" already exists` });
         }
         const result = await conn.db.collection('brands').insertOne({
-          name: brandName, icon: brandIcon, slug, createdAt: now
+          name: brandName, icon: brandIcon, image: brandImage, slug, createdAt: now
         });
         return res.status(201).json({
           success: true, message: `Brand "${brandName}" added!`,
-          brand: { id: result.insertedId.toString(), name: brandName, icon: brandIcon, slug }
+          brand: { id: result.insertedId.toString(), name: brandName, icon: brandIcon, image: brandImage, slug }
         });
       }
 
@@ -159,7 +160,7 @@ module.exports = async (req, res) => {
       }
       const newBrand = {
         id: `BR-${String(memoryIdCounter++).padStart(3, '0')}`,
-        name: brandName, icon: brandIcon, slug, createdAt: now
+        name: brandName, icon: brandIcon, image: brandImage, slug, createdAt: now
       };
       memoryBrands.push(newBrand);
       return res.status(201).json({

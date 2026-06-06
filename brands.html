@@ -39,7 +39,11 @@
     "closes": "20:00"
   }
 }
-</script></head>
+</script><style>
+.brand-card .brand-icon { overflow:hidden; background:#f5f5f5; }
+.brand-card .brand-icon img { width:100%; height:100%; object-fit:contain; transition:transform .3s; }
+.brand-card:hover .brand-icon img { transform:scale(1.1); }
+</style></head>
 <body>
 <div class="top-bar"><div class="left"><span>🚚 Free Delivery For orders above KSh 2,500/=</span></div><div class="right"><a href="shop.html">Shop</a><a href="about.html">About</a><a href="contact.html">Contact</a></div></div>
 <div class="header-nav-wrap">
@@ -63,25 +67,27 @@
 <a href="https://wa.me/+254727747699" target="_blank" class="whatsapp-float">💬</a>
 
 <script>
-// Load brands dynamically from API
 async function loadBrands() {
-  const grid = document.getElementById('brandsGrid');
+  var grid = document.getElementById('brandsGrid');
   try {
-    const res = await fetch('/api/brands');
-    const data = await res.json();
+    var res = await fetch('/api/brands');
+    var data = await res.json();
     if (!data.success || !data.brands || data.brands.length === 0) {
       grid.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:40px;grid-column:1/-1;">No brands found.</p>';
       return;
     }
-    grid.innerHTML = data.brands.map(b =>
-      `<a href="shop.html?brand=${b.slug}" class="brand-card"><div class="brand-icon">${b.icon || '🏷️'}</div><h4>${b.name}</h4></a>`
-    ).join('');
-  } catch (e) {
-    grid.innerHTML = '<p style="color:#e74c3c;text-align:center;padding:40px;grid-column:1/-1;">⚠️ Failed to load brands. Please try again later.</p>';
+    grid.innerHTML = data.brands.map(function(b) {
+      var iconContent = b.icon || '&#x1F3F7;';
+      if (b.image) {
+        iconContent = '<img src="' + b.image + '" alt="' + b.name + '" onerror="this.style.display=\'none\';this.parentNode.textContent=\'' + (b.icon || '') + '\'" loading="lazy">';
+      }
+      return '<a href="shop.html?brand=' + b.slug + '" class="brand-card"><div class="brand-icon">' + iconContent + '</div><h4>' + b.name + '</h4></a>';
+    }).join('');
+  } catch(e) {
+    grid.innerHTML = '<p style="color:#e74c3c;text-align:center;padding:40px;grid-column:1/-1;">&#x26A0;&#xFE0F; Failed to load brands. Please try again later.</p>';
   }
 }
 document.addEventListener('DOMContentLoaded', loadBrands);
-
 if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(e){console.log("SW registration failed:",e)})}
 </script>
 <script src="js/search.js" defer></script>
