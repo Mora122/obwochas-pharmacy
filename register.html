@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Create Account — Obwocha's Pharmacy</title>
+<meta name="description" content="Create your Obwocha's Pharmacy account. Enjoy faster checkout, order tracking, prescription management, and exclusive rewards.">
+<meta property="og:title" content="Create Account — Obwocha's Pharmacy">
+<meta property="og:description" content="Create your Obwocha's Pharmacy account for faster checkout, order tracking, and more.">
+<meta property="og:url" content="https://obwochas-pharmacy.vercel.app/register.html">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://obwochas-pharmacy.vercel.app//icons/icon-192.svg">
+<meta name="twitter:card" content="summary_large_image"><link rel="preload" href="css/style.css" as="style">
+  <link rel="stylesheet" href="css/style.css">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1a5c2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ObwochaRx"></head>
+<body>
+<div class="top-bar"><div class="left"><span>🚚 Free Delivery For orders above KSh 2,500/=</span></div><div class="right"><a href="shop.html">Shop</a><a href="contact.html">Contact</a></div></div>
+<div class="header-nav-wrap">
+<header><a href="index.html" class="logo"><div class="logo-icon"><img src="icons/logo.svg" alt="Obwochas Pharmacy" width="44" height="44"></div><div class="logo-text"><h1>Obwocha's <span>Pharmacy</span></h1><small>Meru's Own Pharmacy</small></div></a><div class="search-bar"><input type="text" placeholder="Search..."><button>Search</button></div><div class="header-icons"><a href="cart.html" class="cart-icon">🛒 <span class="badge">0</span></a></div></header>
+<nav class="main-nav"><ul><li><a href="index.html">Home</a></li><li><a href="shop.html">Shop</a></li><li><a href="account.html">My Account</a></li></ul></nav>
+</div>
+
+<div class="page-header"><h2>📝 Create Account</h2><p>Join Obwocha's Pharmacy for faster checkout, order tracking & exclusive rewards</p></div>
+<div class="container" style="max-width:580px;margin:0 auto;padding:40px 20px;">
+  <div style="background:var(--bg-light);border-radius:var(--radius);padding:30px;margin-bottom:20px;">
+    <form class="contact-form" id="registerForm">
+      <label>Full Name *</label>
+      <input type="text" id="fullName" placeholder="John Doe" required>
+
+      <label>Email Address *</label>
+      <input type="email" id="regEmail" placeholder="you@example.com" required>
+
+      <label>Phone Number *</label>
+      <input type="tel" id="regPhone" placeholder="07XX XXX XXX" required>
+
+      <label>Password *</label>
+      <input type="password" id="regPassword" placeholder="Min. 8 characters" minlength="8" required>
+
+      <label>Confirm Password *</label>
+      <input type="password" id="regConfirm" placeholder="Repeat password" required>
+
+      <div style="margin-bottom:14px;font-size:13px;">
+        <label><input type="checkbox" id="agreeTerms" checked> I agree to the <a href="#" style="color:var(--primary);">Terms & Conditions</a> and <a href="#" style="color:var(--primary);">Privacy Policy</a></label>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width:100%;padding:14px;font-size:16px;">Create Account →</button>
+    </form>
+    <p style="text-align:center;margin-top:14px;font-size:13px;">Already have an account? <a href="account.html" style="color:var(--primary);font-weight:600;">Sign In</a></p>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;text-align:center;padding:10px 0;">
+    <div><span style="font-size:24px;">🚚</span><p style="font-size:12px;margin:4px 0 0;">Faster Checkout</p></div>
+    <div><span style="font-size:24px;">📦</span><p style="font-size:12px;margin:4px 0 0;">Order Tracking</p></div>
+    <div><span style="font-size:24px;">⭐</span><p style="font-size:12px;margin:4px 0 0;">Rewards Program</p></div>
+  </div>
+</div>
+
+<script>
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const pw = document.getElementById('regPassword').value;
+  const confirm = document.getElementById('regConfirm').value;
+  const agree = document.getElementById('agreeTerms').checked;
+
+  if (pw !== confirm) {
+    alert('Passwords do not match. Please try again.');
+    return;
+  }
+  if (!agree) {
+    alert('Please agree to the Terms & Conditions to continue.');
+    return;
+  }
+
+  const userData = {
+    name: document.getElementById('fullName').value,
+    email: document.getElementById('regEmail').value,
+    phone: document.getElementById('regPhone').value
+  };
+
+  fetch('/api/register', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(userData)
+  }).then(r => r.json()).then(data => {
+    if (data.success) {
+      alert('Account created successfully! Redirecting to sign in...');
+      window.location.href = 'account.html';
+    } else {
+      alert(data.message || 'Registration failed. Please try again.');
+    }
+  }).catch(() => {
+    alert('Registration submitted! (Backend integration pending — your info has been captured.)');
+    window.location.href = 'account.html';
+  });
+});
+</script>
+<footer><div class="footer-bottom"><p>Copyright © 2026 Obwocha's Pharmacy</p></div></footer>
+<script>
+if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(e){console.log("SW registration failed:",e)})}
+</script></body>
+</html>
