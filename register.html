@@ -58,39 +58,54 @@
 <script>
 document.getElementById('registerForm').addEventListener('submit', function(e) {
   e.preventDefault();
+  const btn = this.querySelector('button[type=submit]');
+  btn.disabled = true;
+  btn.textContent = 'Creating Account...';
+
   const pw = document.getElementById('regPassword').value;
   const confirm = document.getElementById('regConfirm').value;
   const agree = document.getElementById('agreeTerms').checked;
 
   if (pw !== confirm) {
     alert('Passwords do not match. Please try again.');
+    btn.disabled = false;
+    btn.textContent = 'Create Account →';
     return;
   }
   if (!agree) {
     alert('Please agree to the Terms & Conditions to continue.');
+    btn.disabled = false;
+    btn.textContent = 'Create Account →';
     return;
   }
 
   const userData = {
     name: document.getElementById('fullName').value,
     email: document.getElementById('regEmail').value,
-    phone: document.getElementById('regPhone').value
+    phone: document.getElementById('regPhone').value,
+    password: pw
   };
 
   fetch('/api/register', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(userData)
-  }).then(r => r.json()).then(data => {
+  })
+  .then(r => r.json())
+  .then(data => {
     if (data.success) {
-      alert('Account created successfully! Redirecting to sign in...');
+      alert('✅ ' + data.message);
       window.location.href = 'account.html';
     } else {
-      alert(data.message || 'Registration failed. Please try again.');
+      alert('❌ ' + data.message);
+      btn.disabled = false;
+      btn.textContent = 'Create Account →';
     }
-  }).catch(() => {
-    alert('Registration submitted! (Backend integration pending — your info has been captured.)');
-    window.location.href = 'account.html';
+  })
+  .catch(() => {
+    alert('⚠ Connection error. Please check your internet and try again.');
+    btn.disabled = false;
+    btn.textContent = 'Create Account →';
   });
 });
 </script>
