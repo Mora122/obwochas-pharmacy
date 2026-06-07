@@ -137,6 +137,22 @@ body{background:#f0f2f5}
 
 </style>
 
+/* Admin Login Gate */
+#loginOverlay{position:fixed;top:0;left:0;width:100%;height:100%;background:#f0f2f5;z-index:999999;display:flex;align-items:center;justify-content:center}
+#loginOverlay.hidden{display:none}
+.login-box{background:#fff;padding:40px;border-radius:12px;max-width:380px;width:90%;text-align:center}
+.login-box h2{color:#2e7d32;font-weight:800;margin-bottom:6px}
+.login-box p{color:#888;font-size:13px;margin-bottom:24px}
+.login-box input{width:100%;padding:12px 16px;border:2px solid #ddd;border-radius:8px;font-size:16px;outline:none;transition:0.2s;margin-bottom:12px;box-sizing:border-box}
+.login-box input:focus{border-color:#2e7d32}
+.login-box button{width:100%;padding:12px;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;transition:0.2s}
+.login-box .btn-login{background:#2e7d32;color:#fff}
+.login-box .btn-login:hover{background:#1b5e20}
+.login-box .btn-login:disabled{opacity:0.5;cursor:not-allowed}
+.login-box .login-error{color:#c62828;font-size:13px;margin-top:8px;display:none}
+.login-box .login-error.show{display:block}
+.login-box .login-logo{font-size:48px;margin-bottom:12px}
+
 
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1a5c2e">
@@ -145,6 +161,67 @@ body{background:#f0f2f5}
 <meta name="apple-mobile-web-app-title" content="ObwochaRx"></head>
 
 <body>
+
+<!-- Login Overlay -->
+<div id="loginOverlay">
+  <div class="login-box">
+    <div class="login-logo">💊</div>
+    <h2>Admin Dashboard</h2>
+    <p>Obwocha's Pharmacy — Management Panel</p>
+    <input type="password" id="adminPass" placeholder="Enter admin password" autocomplete="off" onkeydown="if(event.key==='Enter')loginAdmin()">
+    <button class="btn-login" id="loginBtn" onclick="loginAdmin()">Unlock Dashboard</button>
+    <div class="login-error" id="loginError">Invalid password. Try again.</div>
+  </div>
+</div>
+
+<script>
+// Admin login
+function loginAdmin() {
+  var pass = document.getElementById('adminPass').value;
+  if (!pass) return;
+  var btn = document.getElementById('loginBtn');
+  btn.disabled = true;
+  btn.textContent = 'Checking...';
+  document.getElementById('loginError').classList.remove('show');
+  fetch('/api/verify', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({password: pass})
+  }).then(function(r) { return r.json(); }).then(function(d) {
+    if (d.success) {
+      sessionStorage.setItem('adminToken', d.token);
+      sessionStorage.setItem('adminExpires', Date.now() + d.expiresIn);
+      document.getElementById('loginOverlay').classList.add('hidden');
+    } else {
+      document.getElementById('loginError').classList.add('show');
+      btn.disabled = false;
+      btn.textContent = 'Unlock Dashboard';
+    }
+  }).catch(function() {
+    document.getElementById('loginError').textContent = 'Connection error. Site offline?';
+    document.getElementById('loginError').classList.add('show');
+    btn.disabled = false;
+    btn.textContent = 'Unlock Dashboard';
+  });
+}
+
+// Check login on page load
+(function(){
+  var token = sessionStorage.getItem('adminToken');
+  var expires = parseInt(sessionStorage.getItem('adminExpires') || '0');
+  if (token && expires > Date.now()) {
+    document.getElementById('loginOverlay').classList.add('hidden');
+  }
+})();
+
+function adminLogout() {
+  if (confirm('Logout of admin dashboard?')) {
+    sessionStorage.removeItem('adminToken');
+    sessionStorage.removeItem('adminExpires');
+    document.getElementById('loginOverlay').classList.remove('hidden');
+  }
+}
+</script>
 
 <div class="admin-header">
 
@@ -159,7 +236,7 @@ body{background:#f0f2f5}
     <div><span class="num" id="statShipped">0</span>Shipped</div>
 
     <div><span class="num" id="statDelivered">0</span>Delivered</div>
-
+    <button onclick="adminLogout()" style="margin-left:16px;background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.3);padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">🔒 Logout</button>
   </div>
 
 </div>
