@@ -18,6 +18,8 @@ async function fetchProducts(filters = {}) {
   if (filters.category) params.set('category', filters.category);
   if (filters.search) params.set('search', filters.search);
   if (filters.limit) params.set('limit', filters.limit);
+  if (filters.featured) params.set('featured', 'true');
+  if (filters.specialOffer) params.set('specialOffer', 'true');
 
   const url = `${API}/products${params.toString() ? '?' + params.toString() : ''}`;
   try {

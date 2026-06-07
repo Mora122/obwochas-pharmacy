@@ -88,12 +88,16 @@ async function getProducts(conn, filter = {}) {
     if (filter.category) query.category = filter.category;
     if (filter.active !== undefined) query.active = filter.active;
     if (filter.search) query.name = { $regex: filter.search, $options: 'i' };
+    if (filter.featured) query.featured = true;
+    if (filter.specialOffer) query.specialOffer = true;
     return await col.find(query, { sort: { name: 1 } }).toArray();
   }
   let result = [...productsMemoryStore];
   if (filter.category) result = result.filter(p => p.category === filter.category);
   if (filter.active !== undefined) result = result.filter(p => p.active === filter.active);
   if (filter.search) result = result.filter(p => p.name.toLowerCase().includes(filter.search.toLowerCase()));
+  if (filter.featured) result = result.filter(p => p.featured === true);
+  if (filter.specialOffer) result = result.filter(p => p.specialOffer === true);
   return result.sort((a, b) => a.name.localeCompare(b.name));
 }
 

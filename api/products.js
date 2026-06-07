@@ -33,6 +33,8 @@ module.exports = async (req, res) => {
       if (req.query.search) filter.search = req.query.search;
       if (req.query.all === 'true') filter.active = undefined;
       else filter.active = req.query.active !== 'false';
+      if (req.query.featured === 'true') filter.featured = true;
+      if (req.query.specialOffer === 'true') filter.specialOffer = true;
 
       const products = await productsDb.getProducts(conn, filter);
       return res.json({ success: true, count: products.length, products });
@@ -55,7 +57,7 @@ module.exports = async (req, res) => {
         return res.status(400).json({ success: false, error: 'Product ID required' });
       }
       const updates = {};
-      const fields = ['name', 'category', 'price', 'stock', 'description', 'image', 'active'];
+      const fields = ['name', 'category', 'price', 'stock', 'description', 'image', 'active', 'featured', 'specialOffer'];
       for (const f of fields) {
         if (req.body[f] !== undefined) updates[f] = f === 'price' || f === 'stock' ? Number(req.body[f]) : req.body[f];
       }

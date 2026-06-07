@@ -100,6 +100,12 @@ body{background:#f0f2f5}
 .product-card .prod-name{font-weight:600;font-size:14px;color:#333}
 
 .product-card .prod-cat{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:0.5px}
+.product-card .prod-badge{display:inline-block;font-size:9px;padding:1px 6px;border-radius:3px;font-weight:700;margin-right:3px}
+.featured-badge{background:#fff8e1;color:#f57f17;border:1px solid #ffecb3}
+.special-badge{background:#e8f5e9;color:#2e7d32;border:1px solid #c8e6c9}
+.feature-toggle{font-size:10px;padding:2px 8px;border-radius:3px;cursor:pointer;font-weight:600;border:1px solid #ddd;background:#f5f5f5;color:#333;transition:0.15s}
+.feature-toggle.on{background:#fff8e1;color:#f57f17;border-color:#ffd54f}
+.feature-toggle.off:hover{background:#fce4ec;color:#c62828}
 
 .product-card .prod-price{font-weight:700;color:var(--primary);font-size:15px}
 
@@ -848,6 +854,10 @@ function renderProducts() {
         '<div class="prod-name">' + p.name + '</div>' +
         '<div class="prod-cat">' + (p.category || '') + ' • ' + p.id + '</div>' +
         '<div style="font-size:11px;color:#555;margin-top:2px">' + (p.description ? p.description.substring(0,60) + (p.description.length > 60 ? '...' : '') : '') + '</div>' +
+        '<div style="margin-top:4px">' +
+          (p.featured ? '<span class="prod-badge featured-badge">⭐ Featured</span>' : '') +
+          (p.specialOffer ? '<span class="prod-badge special-badge">🔥 Special</span>' : '') +
+        '</div>' +
       '</div>' +
       '<div style="text-align:center;min-width:120px">' +
         '<div class="prod-price">KSh ' + Number(p.price).toLocaleString() + '</div>' +
@@ -857,9 +867,13 @@ function renderProducts() {
           '<button onclick="quickStock(\'' + p.id + '\',-5)" style="font-size:10px;padding:2px 8px;background:#ffebee;color:#c62828;border:none;border-radius:3px;cursor:pointer;font-weight:600">-5</button>' +
         '</div>' +
       '</div>' +
-      '<div style="display:flex;gap:4px">' +
-        '<button class="btn btn-primary" onclick="showEditProduct(\'' + p.id + '\')" style="font-size:11px;padding:6px 12px">Edit</button>' +
-        '<button class="btn" onclick="deleteProduct(\'' + p.id + '\',\'' + p.name.replace(/'/g,"\\'") + '\')" style="font-size:11px;padding:6px 12px;background:#ffebee;color:#c62828;border:none;border-radius:4px;cursor:pointer">Del</button>' +
+      '<div style="display:flex;flex-direction:column;gap:4px;align-items:center">' +
+        '<button class="feature-toggle' + (p.featured ? ' on' : ' off') + '" onclick="toggleFeatured(\'' + p.id + '\',this)" title="Toggle Featured">' + (p.featured ? '⭐ Marked' : '⭐ Feature') + '</button>' +
+        '<button class="feature-toggle' + (p.specialOffer ? ' on' : ' off') + '" onclick="toggleSpecial(\'' + p.id + '\',this)" title="Toggle Special Offer">' + (p.specialOffer ? '🔥 Marked' : '🔥 Offer') + '</button>' +
+        '<div style="display:flex;gap:4px;margin-top:2px">' +
+          '<button class="btn btn-primary" onclick="showEditProduct(\'' + p.id + '\')" style="font-size:10px;padding:3px 8px">Edit</button>' +
+          '<button class="btn" onclick="deleteProduct(\'' + p.id + '\',\'' + p.name.replace(/'/g,"\\'") + '\')" style="font-size:10px;padding:3px 8px;background:#ffebee;color:#c62828;border:none;border-radius:4px;cursor:pointer">Del</button>' +
+        '</div>' +
       '</div></div>';
   }
 
@@ -1072,6 +1086,34 @@ function quickStock(id, delta) {
     method: 'PATCH',
     headers: {'Content-Type':'application/json'},
     body: JSON.stringify({ stock: newStock })
+  }).then(function(r) { return r.json(); }).then(function(d) {
+    if (d.success) { loadProducts(); }
+    else { alert('Error: ' + d.error); }
+  });
+}
+
+function toggleFeatured(id, btn) {
+  var p = allProductsRaw.find(function(x) { return x.id === id; });
+  if (!p) return;
+  var newVal = !p.featured;
+  fetch('/api/products?id=' + id, {
+    method: 'PATCH',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ featured: newVal })
+  }).then(function(r) { return r.json(); }).then(function(d) {
+    if (d.success) { loadProducts(); }
+    else { alert('Error: ' + d.error); }
+  });
+}
+
+function toggleSpecial(id, btn) {
+  var p = allProductsRaw.find(function(x) { return x.id === id; });
+  if (!p) return;
+  var newVal = !p.specialOffer;
+  fetch('/api/products?id=' + id, {
+    method: 'PATCH',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ specialOffer: newVal })
   }).then(function(r) { return r.json(); }).then(function(d) {
     if (d.success) { loadProducts(); }
     else { alert('Error: ' + d.error); }

@@ -975,13 +975,27 @@ if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-work
 </script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  loadFeaturedProducts(6);
-  // Also load special offers (last 3 cheapest products)
-  fetchProducts({limit:50}).then(function(prods) {
-    var sorted = prods.slice().sort(function(a,b){return a.price - b.price});
-    var cheap = sorted.slice(0,3);
+  // Load featured products
+  fetchProducts({featured: true}).then(function(prods) {
+    var grid = document.getElementById('featuredProductGrid');
+    if (grid) {
+      if (prods.length === 0) {
+        grid.innerHTML = '<div style="text-align:center;padding:40px;color:#999">No featured products selected yet. <a href="admin.html" style="color:#2e7d32">Go to Admin</a> to mark products as featured.</div>';
+      } else {
+        renderProducts(prods.slice(0,6), grid);
+      }
+    }
+  });
+  // Load special offers
+  fetchProducts({specialOffer: true}).then(function(prods) {
     var grid = document.getElementById('specialOfferGrid');
-    if (grid) renderProducts(cheap, grid);
+    if (grid) {
+      if (prods.length === 0) {
+        grid.innerHTML = '<div style="text-align:center;padding:40px;color:#999">No special offers selected yet. <a href="admin.html" style="color:#2e7d32">Go to Admin</a> to mark products as special offers.</div>';
+      } else {
+        renderProducts(prods.slice(0,6), grid);
+      }
+    }
   });
 });
 </script></body>
