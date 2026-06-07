@@ -59,7 +59,8 @@ module.exports = async (req, res) => {
       // LIST ORDERS
       const status = req.query?.status;
       const limit = parseInt(req.query?.limit) || 50;
-      const orders = await db.getOrders({ status, limit });
+      const userFilter = req.query?.user;
+      const orders = await db.getOrders({ status, limit, userId: userFilter });
       return res.json({
         success: true,
         count: orders.length,

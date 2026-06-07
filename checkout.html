@@ -668,6 +668,13 @@ function showConfirmation(method) {
   saveOrder(method);
 }
 
+function getUserId() {
+  try {
+    var u = JSON.parse(localStorage.getItem('user') || 'null');
+    return u && u.id ? u.id : '';
+  } catch(e) { return ''; }
+}
+
 async function saveOrder(method) {
   try {
     const cart = JSON.parse(localStorage.getItem('obwocha_cart') || '[]');
@@ -675,6 +682,7 @@ async function saveOrder(method) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        userId: getUserId(),
         customer: {
           name: document.getElementById('fullName')?.value || 'Guest',
           email: document.getElementById('email')?.value || '',

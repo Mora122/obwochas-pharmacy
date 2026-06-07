@@ -38,6 +38,9 @@ async function createOrder(orderData) {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
+    if (orderData.userId) {
+      order.userId = orderData.userId;
+    }
     const result = await conn.db.collection('orders').insertOne(order);
     return { ...order, _id: result.insertedId.toString() };
   }
@@ -59,6 +62,7 @@ async function getOrders(filter = {}) {
   if (conn.mode === 'mongodb') {
     const query = {};
     if (filter.status) query.status = filter.status;
+    if (filter.userId) query.userId = filter.userId;
     const opts = { sort: { createdAt: -1 } };
     if (filter.limit) opts.limit = filter.limit;
     return await conn.db.collection('orders').find(query, opts).toArray();

@@ -1,152 +1,289 @@
 <!DOCTYPE html>
-
-
 <html lang="en">
-
-
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>My Account — Obwocha's Pharmacy</title>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Account — Obwocha's Pharmacy</title>
 <meta name="description" content="Manage your Obwocha's Pharmacy account. View order history, saved addresses, and prescription records.">
 <meta property="og:title" content="My Account — Obwocha's Pharmacy">
-<meta property="og:description" content="Manage your Obwocha's Pharmacy account. View order history, saved addresses, and prescription records.">
+<meta property="og:description" content="Manage your Obwocha's Pharmacy account.">
 <meta property="og:url" content="https://obwochas-pharmacy.vercel.app/account.html">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://obwochas-pharmacy.vercel.app//icons/icon-192.svg">
-<meta name="twitter:card" content="summary_large_image"><link rel="preload" href="css/style.css" as="style">
-  <link rel="stylesheet" href="css/style.css">
+<meta property="og:image" content="https://obwochas-pharmacy.vercel.app/icons/icon-192.svg">
+<link rel="preload" href="css/style.css" as="style">
+<link rel="stylesheet" href="css/style.css">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1a5c2e">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="ObwochaRx"><script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Pharmacy",
-  "name": "Obwocha's Pharmacy",
-  "alternateName": "Obwocha's Pharmacy Ltd",
-  "description": "Meru's own trusted pharmacy chain with 150+ stores nationwide.",
-  "url": "https://obwochas-pharmacy.vercel.app",
-  "telephone": "+254-727-747-699",
-  "email": "info@obwochaspharmacy.co.ke",
-  "address": {
-    "@type": "PostalAddress",
-    "postOfficeBoxNumber": "79919-00100",
-    "addressLocality": "Kisii",
-    "addressCountry": "KE"
-  },
-  "areaServed": "Kenya",
-  "priceRange": "$",
-  "paymentAccepted": "M-Pesa, Visa, MasterCard, Cash",
-  "openingHoursSpecification": {
-    "@type": "OpeningHoursSpecification",
-    "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
-    "opens": "08:00",
-    "closes": "20:00"
-  }
-}
-</script></head>
+<style>
+.auth-toggle{text-align:center;margin-top:16px;font-size:13px;color:#666}
+.auth-toggle a{cursor:pointer;color:#2e7d32;font-weight:600;text-decoration:underline}
+.form-success{background:#e8f5e9;color:#2e7d32;padding:12px 16px;border-radius:8px;margin-bottom:14px;font-size:14px;display:none}
+.form-error{background:#ffebee;color:#c62828;padding:12px 16px;border-radius:8px;margin-bottom:14px;font-size:14px;display:none}
+#dashContent{display:none}
+.dash-card{background:#fff;padding:20px;border-radius:10px;border:1px solid #e0e0e0;margin-bottom:16px}
+.dash-card h3{color:#1a5c2e;margin:0 0 12px 0;font-size:16px}
+.order-history-item{padding:12px;border-bottom:1px solid #f0f0f0;font-size:14px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.order-history-item:last-child{border-bottom:none}
+.order-status{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600}
+.status-confirmed{background:#e3f2fd;color:#1565c0}
+.status-processing{background:#fff8e1;color:#f57f17}
+.status-shipped{background:#e8f5e9;color:#2e7d32}
+.status-delivered{background:#e8f5e9;color:#1b5e20}
+.status-cancelled{background:#ffebee;color:#c62828}.status-pending{background:#f3e5f5;color:#7b1fa2}
+</style>
+</head>
+<body>
 
-
-<body><div class="top-bar"><div class="left"><span>🚚 Free Delivery For orders above KSh 2,500/=</span></div><div class="right"><a href="shop.html">Shop</a><a href="contact.html">Contact</a></div></div>
-
+<div class="top-bar">
+  <div class="left"><span>🚚 Free Delivery For orders above KSh 2,500/=</span></div>
+  <div class="right"><a href="shop.html">Shop</a><a href="contact.html">Contact</a></div>
+</div>
 
 <div class="header-nav-wrap">
-
-<header><a href="index.html" class="logo"><div class="logo-icon"><img src="icons/logo.svg" alt="Obwochas Pharmacy" width="44" height="44"></div><div class="logo-text"><h1>Obwocha's <span>Pharmacy</span></h1><small>Meru's Own Pharmacy</small></div></a><div class="search-bar"><input type="text" placeholder="Search..."><button>Search</button></div><div class="header-icons"><a href="cart.html" class="cart-icon">🛒 <span class="badge">3</span></a></div></header>
-
-<!-- Navigation -->
-<nav class="main-nav"><ul><li><a href="index.html">Home</a></li><li><a href="shop.html">Shop</a></li><li><a href="account.html" class="active">My Account</a></li></ul></nav>
-
+  <header>
+    <a href="index.html" class="logo">
+      <div class="logo-icon"><img src="icons/logo.svg" alt="Obwochas Pharmacy" width="44" height="44"></div>
+      <div class="logo-text"><h1>Obwocha's <span>Pharmacy</span></h1><small>Meru's Own Pharmacy</small></div>
+    </a>
+    <div class="search-bar"><input type="text" placeholder="Search..."><button>Search</button></div>
+    <div class="header-icons"><a href="cart.html" class="cart-icon">🛒 <span class="badge" id="cartBadge">0</span></a></div>
+  </header>
+  <nav class="main-nav">
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="account.html" class="active">My Account</a></li>
+    </ul>
+  </nav>
 </div>
 
+<div class="page-header">
+  <h2 id="pageTitle">👤 My Account</h2>
+  <p id="pageSub">Manage your profile, orders, and preferences</p>
+</div>
 
+<div class="container" style="max-width:640px;margin:0 auto;padding:40px 20px;">
 
-
-
-
-<div class="page-header"><h2>👤 My Account</h2><p>Manage your profile, orders, and preferences</p></div>
-
-
-<div class="container" style="max-width:600px;margin:0 auto;padding:40px 20px;">
-
-
-  <div style="background:var(--bg-light);border-radius:var(--radius);padding:30px;margin-bottom:20px;">
-
-
-    <h3 style="color:var(--primary);margin-bottom:16px;">🔑 Sign In</h3>
-
-
-    <form class="contact-form">
-
-
-      <label>Email Address *</label><input type="email" value="robinsonobwocha10@gmail.com">
-
-
-      <label>Password *</label><input type="password" placeholder="Enter your password">
-
-
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-
-
-        <label style="font-size:13px;"><input type="checkbox"> Remember me</label>
-
-
-        <a href="#" style="font-size:13px;">Forgot password?</a>
-
-
-      </div>
-
-
-      <button type="submit" class="btn btn-primary" style="width:100%;">Sign In →</button>
-
-
+  <!-- LOGIN FORM -->
+  <div id="loginForm" style="background:#f9fafb;border-radius:12px;padding:30px">
+    <h3 style="color:#1a5c2e;margin-bottom:18px;text-align:center;">🔑 Sign In</h3>
+    <div class="form-error" id="loginError"></div>
+    <div class="form-success" id="loginSuccess"></div>
+    <form onsubmit="return handleLogin(event)">
+      <label>Email Address *</label>
+      <input type="email" id="loginEmail" required>
+      <label>Password *</label>
+      <input type="password" id="loginPass" required>
+      <button type="submit" class="btn btn-primary" style="width:100%;margin-top:8px" id="loginBtn">Sign In →</button>
     </form>
-
-
-    <p style="text-align:center;margin-top:14px;font-size:13px;">Don't have an account? <a href="register.html">Create Account</a></p>
-
-
+    <div class="auth-toggle">Don't have an account? <a onclick="showRegister()">Create Account</a></div>
   </div>
 
+  <!-- REGISTER FORM -->
+  <div id="registerForm" style="background:#f9fafb;border-radius:12px;padding:30px;display:none">
+    <h3 style="color:#1a5c2e;margin-bottom:18px;text-align:center;">📝 Create Account</h3>
+    <div class="form-error" id="regError"></div>
+    <div class="form-success" id="regSuccess"></div>
+    <form onsubmit="return handleRegister(event)">
+      <label>Full Name *</label>
+      <input type="text" id="regName" required>
+      <label>Email Address *</label>
+      <input type="email" id="regEmail" required>
+      <label>Phone Number</label>
+      <input type="tel" id="regPhone" placeholder="e.g. 0722xxxxxx">
+      <label>Password *</label>
+      <input type="password" id="regPass" required minlength="6" placeholder="At least 6 characters">
+      <label>Delivery Address</label>
+      <textarea id="regAddress" rows="2" placeholder="Town, estate, landmark"></textarea>
+      <button type="submit" class="btn btn-primary" style="width:100%;margin-top:8px" id="regBtn">Create Account →</button>
+    </form>
+    <div class="auth-toggle">Already have an account? <a onclick="showLogin()">Sign In</a></div>
+  </div>
 
-  <div style="background:var(--bg-light);border-radius:var(--radius);padding:24px;">
-
-
-    <h3 style="color:var(--primary);margin-bottom:12px;">📊 Quick Links</h3>
-
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-
-
-      <a href="account.html?tab=orders" style="display:block;background:#fff;padding:16px;border-radius:var(--radius);text-align:center;border:1px solid var(--border);">📦 My Orders</a>
-
-
-      <a href="account.html?tab=prescriptions" style="display:block;background:#fff;padding:16px;border-radius:var(--radius);text-align:center;border:1px solid var(--border);">📋 Prescriptions</a>
-
-
-      <a href="account.html?tab=addresses" style="display:block;background:#fff;padding:16px;border-radius:var(--radius);text-align:center;border:1px solid var(--border);">📍 My Addresses</a>
-
-
-      <a href="account.html?tab=rewards" style="display:block;background:#fff;padding:16px;border-radius:var(--radius);text-align:center;border:1px solid var(--border);">⭐ My Rewards</a>
-
-
+  <!-- DASHBOARD -->
+  <div id="dashContent">
+    <div class="dash-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px">
+        <div>
+          <h3 id="dashUserName" style="margin:0 0 4px 0;font-size:18px">👋 Welcome!</h3>
+          <p id="dashUserEmail" style="margin:0;font-size:13px;color:#666"></p>
+          <p id="dashUserPhone" style="margin:2px 0 0;font-size:13px;color:#666"></p>
+        </div>
+        <div style="text-align:right">
+          <div style="background:#e8f5e9;color:#2e7d32;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;" id="dashTier">Standard Member</div>
+        </div>
+      </div>
     </div>
 
+    <div class="dash-card">
+      <h3>📦 Recent Orders</h3>
+      <div id="orderHistory" style="font-size:14px;color:#999;text-align:center;padding:20px 0">No orders yet.</div>
+    </div>
 
+    <div class="dash-card">
+      <h3>⚡ Quick Actions</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <a href="shop.html" style="display:block;background:#f0f8f0;padding:14px;border-radius:8px;text-align:center;text-decoration:none;color:#1a5c2e;font-size:13px;font-weight:600;">🛍️ Shop Now</a>
+        <a href="track-order.html" style="display:block;background:#f0f8f0;padding:14px;border-radius:8px;text-align:center;text-decoration:none;color:#1a5c2e;font-size:13px;font-weight:600;">📦 Track Order</a>
+        <a href="prescription.html" style="display:block;background:#f0f8f0;padding:14px;border-radius:8px;text-align:center;text-decoration:none;color:#1a5c2e;font-size:13px;font-weight:600;">📋 Prescriptions</a>
+        <a onclick="logoutUser()" style="display:block;background:#ffebee;padding:14px;border-radius:8px;text-align:center;text-decoration:none;color:#c62828;font-size:13px;font-weight:600;cursor:pointer;">🚪 Sign Out</a>
+      </div>
+    </div>
   </div>
-
-
 </div>
-
 
 <footer><div class="footer-bottom"><p>Copyright © 2026 Obwocha's Pharmacy</p></div></footer>
 
+<script>
+var API = 'https://obwochas-pharmacy.vercel.app';
 
+function showRegister() {
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('registerForm').style.display = 'block';
+}
+function showLogin() {
+  document.getElementById('loginForm').style.display = 'block';
+  document.getElementById('registerForm').style.display = 'none';
+}
+
+// --- LOGIN ---
+function handleLogin(e) {
+  e.preventDefault();
+  var btn = document.getElementById('loginBtn');
+  var email = document.getElementById('loginEmail').value;
+  var pass = document.getElementById('loginPass').value;
+  btn.disabled = true; btn.textContent = 'Signing in...';
+  hideError('loginError'); hideSuccess('loginSuccess');
+
+  fetch(API + '/api/users', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({action:'login', email:email, password:pass})
+  }).then(r => r.json()).then(d => {
+    if (d.success) {
+      showSuccess('loginSuccess', d.message);
+      localStorage.setItem('userToken', d.token);
+      localStorage.setItem('user', JSON.stringify(d.user));
+      loadDashboard();
+    } else {
+      showError('loginError', d.error);
+      btn.disabled = false; btn.textContent = 'Sign In →';
+    }
+  }).catch(function() {
+    showError('loginError', 'Connection error. Try again.');
+    btn.disabled = false; btn.textContent = 'Sign In →';
+  });
+}
+
+// --- REGISTER ---
+function handleRegister(e) {
+  e.preventDefault();
+  var btn = document.getElementById('regBtn');
+  var data = {
+    action:'register',
+    name: document.getElementById('regName').value,
+    email: document.getElementById('regEmail').value,
+    phone: document.getElementById('regPhone').value,
+    password: document.getElementById('regPass').value,
+    address: document.getElementById('regAddress').value
+  };
+  btn.disabled = true; btn.textContent = 'Creating account...';
+  hideError('regError'); hideSuccess('regSuccess');
+
+  fetch(API + '/api/users', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(data)
+  }).then(r => r.json()).then(d => {
+    if (d.success) {
+      showSuccess('regSuccess', d.message + ' Redirecting...');
+      localStorage.setItem('userToken', d.token);
+      localStorage.setItem('user', JSON.stringify(d.user));
+      setTimeout(loadDashboard, 800);
+    } else {
+      showError('regError', d.error);
+      btn.disabled = false; btn.textContent = 'Create Account →';
+    }
+  }).catch(function() {
+    showError('regError', 'Connection error. Try again.');
+    btn.disabled = false; btn.textContent = 'Create Account →';
+  });
+}
+
+// --- DASHBOARD ---
+function loadDashboard() {
+  var userData = localStorage.getItem('user');
+  if (!userData) {
+    document.getElementById('loginForm').style.display = 'block';
+    document.getElementById('registerForm').style.display = 'none';
+    document.getElementById('dashContent').style.display = 'none';
+    return;
+  }
+  var user = JSON.parse(userData);
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('registerForm').style.display = 'none';
+  document.getElementById('dashContent').style.display = 'block';
+  document.getElementById('pageTitle').textContent = '👋 Welcome, ' + user.name.split(' ')[0];
+  document.getElementById('pageSub').textContent = 'Manage your account';
+  document.getElementById('dashUserName').textContent = '👋 ' + user.name;
+  document.getElementById('dashUserEmail').textContent = '📧 ' + user.email;
+  document.getElementById('dashUserPhone').textContent = user.phone ? '📞 ' + user.phone : '';
+  document.getElementById('dashTier').textContent = (user.tier || 'Standard') + ' Member';
+
+  // Load order history
+  if (user.id) {
+    fetch(API + '/api/orders?user=' + user.id)
+      .then(r => r.json())
+      .then(d => {
+        var container = document.getElementById('orderHistory');
+        if (d.orders && d.orders.length > 0) {
+          container.innerHTML = d.orders.slice(0,5).map(function(o) {
+            var statusClass = 'status-' + (o.status || 'pending').toLowerCase();
+            return '<div class="order-history-item"><span><strong>#' + (o.id || o._id) + '</strong> — KSh ' + Number(o.total || 0).toLocaleString() + '</span><span><span class="order-status ' + statusClass + '">' + (o.status || 'Pending') + '</span> <small style="color:#999">' + (o.createdAt ? new Date(o.createdAt).toLocaleDateString() : '') + '</small></span></div>';
+          }).join('');
+        } else {
+          container.innerHTML = '<div style="font-size:14px;color:#999;text-align:center;padding:20px 0">No orders yet. <a href="shop.html" style="color:#2e7d32">Start shopping →</a></div>';
+        }
+      })
+      .catch(function() {
+        document.getElementById('orderHistory').innerHTML = '<div style="font-size:14px;color:#999;text-align:center;padding:20px 0">Could not load orders.</div>';
+      });
+  }
+}
+
+function logoutUser() {
+  if (confirm('Sign out of your account?')) {
+    localStorage.removeItem('userToken');
+    localStorage.removeItem('user');
+    document.getElementById('dashContent').style.display = 'none';
+    showLogin();
+    document.getElementById('pageTitle').textContent = '👤 My Account';
+    document.getElementById('pageSub').textContent = 'Sign in to manage your account';
+  }
+}
+
+function showError(id, msg) {
+  var el = document.getElementById(id); el.textContent = msg; el.style.display = 'block';
+}
+function hideError(id) {
+  document.getElementById(id).style.display = 'none';
+}
+function showSuccess(id, msg) {
+  var el = document.getElementById(id); el.textContent = msg; el.style.display = 'block';
+}
+function hideSuccess(id) {
+  document.getElementById(id).style.display = 'none';
+}
+
+// On load: check if logged in
+(function(){
+  var token = localStorage.getItem('userToken');
+  if (token) loadDashboard();
+})();
+</script>
 
 <script>
 if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(e){console.log("SW registration failed:",e)})}
-</script></body>
-
-
+</script>
+</body>
 </html>
-
-
