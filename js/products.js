@@ -5,6 +5,9 @@
 
 const API = '/api';
 
+// API product cache for add-to-cart integration
+window.ApiProductDB = {};
+
 /**
  * Fetch products from the API
  * @param {Object} filters - { category?, search?, all? }
@@ -56,7 +59,7 @@ function createProductCard(product, useNumericalId) {
       ${hasOldPrice ? `<span class="sale-badge">-${discount}%</span>` : ''}
       <div class="product-actions">
         <a href="product.html?id=${id}" class="btn btn-sm">View</a>
-        <a href="#" onclick="addToCart('${id}',1);return false;" class="btn btn-primary btn-sm">Add to Cart</a>
+        <a href="#" data-pid="${id}" class="btn btn-primary btn-sm add-api-cart">Add to Cart</a>
       </div>
     </div>
   `;
@@ -91,6 +94,9 @@ function renderProducts(products, containerSelector, options = {}) {
     container.innerHTML = '<div style="padding:40px;text-align:center;color:#999;grid-column:1/-1">No products found</div>';
     return;
   }
+
+  // Populate API product cache for add-to-cart
+  products.forEach(p => window.ApiProductDB[p.id] = p);
 
   container.innerHTML = '';
   const limit = options.limit || products.length;
@@ -129,6 +135,19 @@ async function loadShopProducts(filters = {}) {
   
   return products;
 }
+
+// Attach delegated click handler for API product Add to Cart buttons
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('.add-api-cart');
+  if (!btn) return;
+  e.preventDefault();
+  var pid = btn.getAttribute('data-pid');
+  if (!pid) return;
+  var prod = window.ApiProductDB[pid];
+  if (!prod) { console.error('API product not found:', pid); return; }
+  // Call global addToCart — cart.js will check ApiProductDB fallback
+  addToCart(pid, 1);
+});
 
 // Utility
 function escapeHtml(text) {

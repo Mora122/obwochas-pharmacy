@@ -55,8 +55,16 @@ function addToCart(productId, qty) {
   if (existing) {
     existing.qty += qty;
   } else {
-    const prod = ProductDB[productId];
-    if (!prod) { console.error('Unknown product:', productId); return; }
+    let prod = ProductDB[productId];
+    if (!prod) {
+      // Fallback: check API-loaded products
+      if (window.ApiProductDB && window.ApiProductDB[productId]) {
+        prod = window.ApiProductDB[productId];
+      } else {
+        console.error('Unknown product:', productId);
+        return;
+      }
+    }
     cart.push({ id: productId, qty: qty, name: prod.name, price: prod.price, image: prod.image, brand: prod.brand, sku: prod.sku });
   }
   saveCart(cart);
