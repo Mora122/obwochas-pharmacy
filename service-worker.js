@@ -1,4 +1,4 @@
-const CACHE = 'obwocha-v2';
+const CACHE = 'obwocha-v3';
 const ASSETS = [
   '/',
   '/index.html',
@@ -18,7 +18,13 @@ const ASSETS = [
   '/account.html',
   '/css/style.css',
   '/js/cart.js',
-  '/manifest.json'
+  '/manifest.json',
+  '/delivery.html',
+  '/careers.html',
+  '/health-tips.html',
+  '/loyalty.html',
+  '/refund.html',
+  '/order-confirmation.html'
 ];
 
 self.addEventListener('install', e => {
