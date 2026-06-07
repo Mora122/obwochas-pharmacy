@@ -1089,7 +1089,7 @@ function showBulkStock() {
       '<span class="' + (p.stock < STOCK_THRESHOLD ? 'stock-low' : 'stock-ok') + '" style="font-size:12px">' + (p.stock||0) + '</span>' +
       '</label>';
   }
-  html += '<div style="margin-top:8px;font-size:11px;color:#999;text-align:right"><span onclick="document.querySelectorAll('.bulk-chk').forEach(function(e){e.checked=true})" style="cursor:pointer;color:#1565c0;text-decoration:underline">Select all</span> | <span onclick="document.querySelectorAll('.bulk-chk').forEach(function(e){e.checked=false})" style="cursor:pointer;color:#1565c0;text-decoration:underline">Clear</span></div>';
+  html += '<div style="margin-top:8px;font-size:11px;color:#999;text-align:right"><span onclick="document.querySelectorAll(\'.bulk-chk\').forEach(function(e){e.checked=true})" style="cursor:pointer;color:#1565c0;text-decoration:underline">Select all</span> | <span onclick="document.querySelectorAll(\'.bulk-chk\').forEach(function(e){e.checked=false})" style="cursor:pointer;color:#1565c0;text-decoration:underline">Clear</span></div>';
   document.getElementById('bulkProductList').innerHTML = html;
   document.getElementById('bulkStockAdjust').value = '0';
   document.getElementById('bulkStockModal').classList.add('open');
