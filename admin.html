@@ -1,15 +1,4 @@
-allProductsRaw = d.products || [];
-    var stockFilter = document.getElementById('prodStockFilter').value;
-    if (stockFilter === 'low') {
-      allProducts = allProductsRaw.filter(function(p) { return p.stock > 0 && p.stock < STOCK_THRESHOLD; });
-    } else if (stockFilter === 'out') {
-      allProducts = allProductsRaw.filter(function(p) { return p.stock <= 0; });
-    } else if (stockFilter === 'ok') {
-      allProducts = allProductsRaw.filter(function(p) { return p.stock >= STOCK_THRESHOLD; });
-    } else {
-      allProducts = allProductsRaw.slice();
-    }
-    renderProducts();<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en">
 
