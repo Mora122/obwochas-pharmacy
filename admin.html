@@ -548,7 +548,7 @@ function renderOrders() {
 
     var t = o.total || (o.totals ? o.totals.total : 0);
 
-    var ic = o.items ? o.items.length : 0;
+    var ic = typeof o.items === 'number' ? o.items : (o.items ? o.items.length : 0);
 
     var dt = o.createdAt ? new Date(o.createdAt).toLocaleString('en-KE', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '';
 
@@ -624,11 +624,11 @@ async function showOrderDetail(id) {
 
     var itemsHtml = '';
 
-    var items = o.items || [];
+    var itemsCount = typeof o.items === 'number' ? o.items : 0;
+    var items = [];
+    for (var i = 0; i < itemsCount; i++) {
 
-    for (var i = 0; i < items.length; i++) {
-
-      var item = items[i];
+      var item = items[i] || {};
 
       var lineTotal = (item.price || 0) * (item.quantity || 1);
 
@@ -666,7 +666,7 @@ async function showOrderDetail(id) {
 
       '</div>' +
 
-      '<div class="detail-section"><h4>Items (' + items.length + ')</h4><table class="order-items-table"><tr><th>Product</th><th>Qty</th><th>Price</th><th>Total</th></tr>' + itemsHtml + '</table></div>' +
+      '<div class="detail-section"><h4>Items (' + itemsCount + ')</h4><table class="order-items-table"><tr><th>Product</th><th>Qty</th><th>Price</th><th>Total</th></tr>' + itemsHtml + '</table></div>' +
 
       '<div class="detail-grid">' +
 
