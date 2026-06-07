@@ -1,4 +1,15 @@
-<!DOCTYPE html>
+allProductsRaw = d.products || [];
+    var stockFilter = document.getElementById('prodStockFilter').value;
+    if (stockFilter === 'low') {
+      allProducts = allProductsRaw.filter(function(p) { return p.stock > 0 && p.stock < STOCK_THRESHOLD; });
+    } else if (stockFilter === 'out') {
+      allProducts = allProductsRaw.filter(function(p) { return p.stock <= 0; });
+    } else if (stockFilter === 'ok') {
+      allProducts = allProductsRaw.filter(function(p) { return p.stock >= STOCK_THRESHOLD; });
+    } else {
+      allProducts = allProductsRaw.slice();
+    }
+    renderProducts();<!DOCTYPE html>
 
 <html lang="en">
 
@@ -238,11 +249,41 @@ body{background:#f0f2f5}
 
       <input type="text" id="prodSearchBox" placeholder="Search products..." style="flex:1;min-width:200px" onkeyup="debounceProductSearch()">
 
+      <select id="prodStockFilter" onchange="loadProducts()" style="padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:13px">
+
+        <option value="">All Stock Levels</option>
+
+        <option value="low">Low Stock ( < 20 )</option>
+
+        <option value="out">Out of Stock</option>
+
+        <option value="ok">In Stock</option>
+
+      </select>
+
+      <select id="prodSortBy" onchange="renderProducts()" style="padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:13px">
+
+        <option value="name">Sort by Name</option>
+
+        <option value="stock_asc">Stock: Low → High</option>
+
+        <option value="stock_desc">Stock: High → Low</option>
+
+        <option value="price_asc">Price: Low → High</option>
+
+        <option value="price_desc">Price: High → Low</option>
+
+      </select>
+
       <button class="btn btn-primary" onclick="loadProducts()" style="font-size:12px">Refresh</button>
 
       <button class="btn btn-success" onclick="showAddProduct()" style="font-size:12px;background:#2e7d32;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-weight:600">+ Add Product</button>
 
+      <button onclick="showBulkStock()" style="font-size:11px;padding:8px 14px;background:#1565c0;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600">Bulk Stock</button>
+
     </div>
+
+    <div id="stockAlertBanner" style="display:none"></div>
 
     <div id="productList"><div class="loading">Loading products...</div></div>
 
@@ -352,6 +393,42 @@ body{background:#f0f2f5}
 
 </div>
 
+<!-- Bulk Stock Modal -->
+
+<div id="bulkStockModal" class="modal">
+
+  <div class="modal-content" style="max-width:600px">
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+
+      <h3 style="margin:0;color:var(--primary)">Bulk Stock Update</h3>
+
+      <button onclick="closeBulkModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:#999">&times;</button>
+
+    </div>
+
+    <p style="font-size:13px;color:#666;margin-bottom:16px">Select products and adjust stock quantities</p>
+
+    <div id="bulkProductList" style="max-height:300px;overflow-y:auto;margin-bottom:16px"></div>
+
+    <div style="display:flex;gap:10px;align-items:center;padding:12px;background:#f5f5f5;border-radius:8px;flex-wrap:wrap">
+
+      <span style="font-weight:600;font-size:13px">Adjust all selected:</span>
+
+      <input type="number" id="bulkStockAdjust" value="0" style="width:80px;padding:8px;border:1px solid #ddd;border-radius:6px;font-size:14px;text-align:center">
+
+      <span style="font-size:12px;color:#666">(positive = add, negative = remove)</span>
+
+      <button onclick="applyBulkStock()" style="padding:10px 24px;background:#2e7d32;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-size:14px">Apply</button>
+
+      <button onclick="closeBulkModal()" style="padding:10px 24px;border:1px solid #ddd;border-radius:6px;background:#fff;cursor:pointer;font-size:14px">Cancel</button>
+
+    </div>
+
+  </div>
+
+</div>
+
 
 
 <script>
@@ -362,7 +439,11 @@ var allOrders = [];
 
 var allProducts = [];
 
+var allProductsRaw = [];
+
 var searchTimer;
+
+var STOCK_THRESHOLD = 20;
 
 
 
@@ -690,7 +771,27 @@ async function loadProducts() {
 
     }
 
-    allProducts = d.products || [];
+    allProductsRaw = d.products || [];
+
+    var stockFilter = document.getElementById('prodStockFilter').value;
+
+    if (stockFilter === 'low') {
+
+      allProducts = allProductsRaw.filter(function(p) { return p.stock > 0 && p.stock < STOCK_THRESHOLD; });
+
+    } else if (stockFilter === 'out') {
+
+      allProducts = allProductsRaw.filter(function(p) { return p.stock <= 0; });
+
+    } else if (stockFilter === 'ok') {
+
+      allProducts = allProductsRaw.filter(function(p) { return p.stock >= STOCK_THRESHOLD; });
+
+    } else {
+
+      allProducts = allProductsRaw.slice();
+
+    }
 
     renderProducts();
 
@@ -708,90 +809,104 @@ function renderProducts() {
 
   var el = document.getElementById('productList');
 
-  if (allProducts.length === 0) {
+  // Sort
+  var sortBy = document.getElementById('prodSortBy').value;
+  var sorted = allProducts.slice();
+  if (sortBy === 'stock_asc') {
+    sorted.sort(function(a,b) { return (a.stock||0) - (b.stock||0); });
+  } else if (sortBy === 'stock_desc') {
+    sorted.sort(function(a,b) { return (b.stock||0) - (a.stock||0); });
+  } else if (sortBy === 'price_asc') {
+    sorted.sort(function(a,b) { return Number(a.price||0) - Number(b.price||0); });
+  } else if (sortBy === 'price_desc') {
+    sorted.sort(function(a,b) { return Number(b.price||0) - Number(a.price||0); });
+  } else {
+    sorted.sort(function(a,b) { return (a.name||'').localeCompare(b.name||''); });
+  }
 
-    el.innerHTML = '<div style="padding:60px;text-align:center;color:#999">No products found. Click "+ Add Product" to get started.</div>';
-
+  if (sorted.length === 0) {
+    el.innerHTML = '<div style="padding:60px;text-align:center;color:#999">No products match current filters.</div>';
     document.getElementById('inventorySummary').style.display = 'none';
-
+    document.getElementById('stockAlertBanner').style.display = 'none';
     return;
-
   }
 
   var html = '';
-
   var totalStock = 0;
-
+  var totalValue = 0;
   var lowStock = 0;
-
   var categories = {};
 
-  for (var i = 0; i < allProducts.length; i++) {
-
-    var p = allProducts[i];
-
+  for (var i = 0; i < sorted.length; i++) {
+    var p = sorted[i];
     totalStock += (p.stock || 0);
-
-    if (p.stock !== undefined && p.stock < 20) lowStock++;
-
+    totalValue += (p.stock || 0) * (p.price || 0);
+    if (p.stock !== undefined && p.stock > 0 && p.stock < STOCK_THRESHOLD) lowStock++;
     if (!categories[p.category]) categories[p.category] = 0;
-
     categories[p.category]++;
 
-    var stockClass = p.stock <= 0 ? 'stock-out' : p.stock < 20 ? 'stock-low' : 'stock-ok';
-
-    var stockLabel = p.stock <= 0 ? 'Out of stock' : p.stock + ' in stock';
+    var stockClass = p.stock <= 0 ? 'stock-out' : p.stock < STOCK_THRESHOLD ? 'stock-low' : 'stock-ok';
+    var stockLabel = p.stock <= 0 ? 'OUT OF STOCK' : p.stock + ' in stock';
 
     html += '<div class="product-card">' +
-
       '<div style="flex:1">' +
-
         '<div class="prod-name">' + p.name + '</div>' +
-
         '<div class="prod-cat">' + (p.category || '') + ' • ' + p.id + '</div>' +
-
         '<div style="font-size:11px;color:#555;margin-top:2px">' + (p.description ? p.description.substring(0,60) + (p.description.length > 60 ? '...' : '') : '') + '</div>' +
-
       '</div>' +
-
-      '<div style="text-align:center;min-width:90px">' +
-
+      '<div style="text-align:center;min-width:120px">' +
         '<div class="prod-price">KSh ' + Number(p.price).toLocaleString() + '</div>' +
-
         '<div class="prod-stock ' + stockClass + '">' + stockLabel + '</div>' +
-
+        '<div style="display:flex;gap:4px;justify-content:center;margin-top:4px">' +
+          '<button onclick="quickStock(\'' + p.id + '\',10)" style="font-size:10px;padding:2px 8px;background:#e8f5e9;color:#2e7d32;border:none;border-radius:3px;cursor:pointer;font-weight:600">+10</button>' +
+          '<button onclick="quickStock(\'' + p.id + '\',-5)" style="font-size:10px;padding:2px 8px;background:#ffebee;color:#c62828;border:none;border-radius:3px;cursor:pointer;font-weight:600">-5</button>' +
+        '</div>' +
       '</div>' +
-
       '<div style="display:flex;gap:4px">' +
-
         '<button class="btn btn-primary" onclick="showEditProduct(\'' + p.id + '\')" style="font-size:11px;padding:6px 12px">Edit</button>' +
-
         '<button class="btn" onclick="deleteProduct(\'' + p.id + '\',\'' + p.name.replace(/'/g,"\\'") + '\')" style="font-size:11px;padding:6px 12px;background:#ffebee;color:#c62828;border:none;border-radius:4px;cursor:pointer">Del</button>' +
-
       '</div></div>';
-
   }
 
   el.innerHTML = html;
 
-  
-
-  // Inventory summary
-
-  var catCount = Object.keys(categories).length;
-
+  // Inventory summary (global)
+  var globalTotalStock = 0;
+  var globalLow = 0;
+  var globalCats = {};
+  var globalValue = 0;
+  for (var i = 0; i < allProductsRaw.length; i++) {
+    var gp = allProductsRaw[i];
+    globalTotalStock += (gp.stock || 0);
+    globalValue += (gp.stock || 0) * (gp.price || 0);
+    if (gp.stock !== undefined && gp.stock > 0 && gp.stock < STOCK_THRESHOLD) globalLow++;
+    if (!globalCats[gp.category]) globalCats[gp.category] = 0;
+    globalCats[gp.category]++;
+  }
+  var globalCatCount = Object.keys(globalCats).length;
   document.getElementById('inventorySummary').style.display = 'block';
-
   document.getElementById('inventorySummary').innerHTML =
+    '<strong>📊 Inventory</strong> — ' + allProductsRaw.length + ' products, ' + globalCatCount + ' categories &nbsp;|&nbsp; ' +
+    '<span class="stock-ok">✅ ' + (allProductsRaw.length - globalLow) + ' in stock</span> &nbsp;|&nbsp; ' +
+    '<span class="stock-low">⚠️ ' + globalLow + ' low stock</span> &nbsp;|&nbsp; ' +
+    '📦 ' + globalTotalStock + ' units &nbsp;|&nbsp; ' +
+    '<strong>KSh ' + Number(globalValue).toLocaleString() + '</strong> total value';
 
-    '<strong>📊 Inventory Summary</strong> — ' + allProducts.length + ' products across ' + catCount + ' categories &nbsp;|&nbsp; ' +
-
-    '<span class="stock-ok">✅ ' + (allProducts.length - lowStock) + ' in stock</span> &nbsp;|&nbsp; ' +
-
-    '<span class="stock-low">⚠️ ' + lowStock + ' low stock</span> &nbsp;|&nbsp; ' +
-
-    '📦 ' + totalStock + ' total units';
-
+  // Stock alert banner
+  var banner = document.getElementById('stockAlertBanner');
+  var outOfStock = allProductsRaw.filter(function(p) { return p.stock <= 0; });
+  if (globalLow > 0 || outOfStock.length > 0) {
+    var msg = '';
+    if (globalLow > 0) msg += '⚠️ <strong>' + globalLow + ' items</strong> running low (under ' + STOCK_THRESHOLD + ')';
+    if (outOfStock.length > 0) {
+      if (msg) msg += ' &nbsp;|&nbsp; ';
+      msg += '🛑 <strong>' + outOfStock.length + ' item' + (outOfStock.length > 1 ? 's' : '') + '</strong> out of stock';
+    }
+    banner.style.display = 'block';
+    banner.innerHTML = '<div style="padding:12px 16px;background:#fff3e0;border:1px solid #ffcc80;border-radius:8px;margin-bottom:12px;font-size:13px;color:#e65100">' + msg + '</div>';
+  } else {
+    banner.style.display = 'none';
+  }
 }
 
 
@@ -951,6 +1066,76 @@ async function deleteProduct(id, name) {
 // Auto-refresh
 
 loadOrders();
+
+// ======== INVENTORY UPGRADES ========
+function quickStock(id, delta) {
+  var p = allProductsRaw.find(function(x) { return x.id === id; });
+  if (!p) return;
+  var newStock = Math.max(0, (p.stock || 0) + delta);
+  if (!confirm('Adjust "' + p.name + '": ' + (p.stock||0) + ' -> ' + newStock + ' (' + (delta > 0 ? '+' : '') + delta + ')')) return;
+  fetch('/api/products?id=' + id, {
+    method: 'PATCH',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ stock: newStock })
+  }).then(function(r) { return r.json(); }).then(function(d) {
+    if (d.success) { loadProducts(); }
+    else { alert('Error: ' + d.error); }
+  });
+}
+
+function showBulkStock() {
+  var html = '';
+  for (var i = 0; i < allProductsRaw.length; i++) {
+    var p = allProductsRaw[i];
+    var checked = (p.stock !== undefined && p.stock < STOCK_THRESHOLD) ? 'checked' : '';
+    html += '<label style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f0f0f0;cursor:pointer">' +
+      '<input type="checkbox" class="bulk-chk" value="' + p.id + '" ' + checked + '>' +
+      '<span style="flex:1;font-size:13px">' + p.name + '</span>' +
+      '<span class="' + (p.stock < STOCK_THRESHOLD ? 'stock-low' : 'stock-ok') + '" style="font-size:12px">' + (p.stock||0) + '</span>' +
+      '</label>';
+  }
+  html += '<div style="margin-top:8px;font-size:11px;color:#999;text-align:right"><span onclick="document.querySelectorAll('.bulk-chk').forEach(function(e){e.checked=true})" style="cursor:pointer;color:#1565c0;text-decoration:underline">Select all</span> | <span onclick="document.querySelectorAll('.bulk-chk').forEach(function(e){e.checked=false})" style="cursor:pointer;color:#1565c0;text-decoration:underline">Clear</span></div>';
+  document.getElementById('bulkProductList').innerHTML = html;
+  document.getElementById('bulkStockAdjust').value = '0';
+  document.getElementById('bulkStockModal').classList.add('open');
+}
+
+function closeBulkModal() {
+  document.getElementById('bulkStockModal').classList.remove('open');
+}
+
+async function applyBulkStock() {
+  var adjust = parseInt(document.getElementById('bulkStockAdjust').value) || 0;
+  if (adjust === 0) { alert('Enter a stock adjustment value first.'); return; }
+  var checked = document.querySelectorAll('.bulk-chk:checked');
+  if (checked.length === 0) { alert('Select at least one product.'); return; }
+  var updates = [];
+  for (var i = 0; i < checked.length; i++) {
+    var id = checked[i].value;
+    var p = allProductsRaw.find(function(x) { return x.id === id; });
+    if (!p) continue;
+    var newStock = Math.max(0, (p.stock || 0) + adjust);
+    updates.push({ id: id, stock: newStock, name: p.name });
+  }
+  var confirmMsg = 'Apply ' + (adjust > 0 ? '+' : '') + adjust + ' to ' + updates.length + ' products?';
+  if (!confirm(confirmMsg)) return;
+  var ok = 0, fail = 0;
+  for (var i = 0; i < updates.length; i++) {
+    try {
+      var r = await fetch('/api/products?id=' + updates[i].id, {
+        method: 'PATCH',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ stock: updates[i].stock })
+      });
+      var d = await r.json();
+      if (d.success) ok++;
+      else { fail++; }
+    } catch(e) { fail++; }
+  }
+  alert('Updated ' + ok + ' products' + (fail ? ' (' + fail + ' failed)' : '') + '.');
+  closeBulkModal();
+  loadProducts();
+}
 
 setInterval(loadOrders, 60000);
 
