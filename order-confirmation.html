@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Order Confirmed — Obwocha's Pharmacy</title>
+<meta name="description" content="Your order has been confirmed at Obwocha's Pharmacy. Thank you for shopping with us.">
+<meta property="og:title" content="Order Confirmed — Obwocha's Pharmacy">
+<meta property="og:url" content="https://obwochas-pharmacy.vercel.app/order-confirmation.html">
+<meta property="og:type" content="website">
+<meta name="robots" content="noindex">
+<link rel="preload" href="css/style.css" as="style">
+  <link rel="stylesheet" href="css/style.css">
+<link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#1a5c2e"></head>
+<body>
+<div class="top-bar"><div class="left"><span>🚚 Free Delivery For orders above KSh 2,500/=</span></div><div class="right"><a href="about.html">About Us</a><a href="blog.html">Blog</a><a href="faq.html">FAQ</a><a href="contact.html">Contact</a></div></div>
+<div class="header-nav-wrap">
+<header>
+  <button class="mobile-menu-toggle" onclick="document.querySelector('.main-nav').classList.toggle('open')">&#9776; Menu</button>
+  <a href="index.html" class="logo"><div class="logo-icon"><img src="icons/logo.svg" alt="Obwochas Pharmacy" width="44" height="44"></div><div class="logo-text"><h1>Obwocha's <span>Pharmacy</span></h1><small>Meru's Own Pharmacy</small></div></a>
+  <div class="search-bar"><input type="text" placeholder="Search products..."><button>Search</button></div>
+  <div class="header-icons"><a href="https://wa.me/+254727747699" target="_blank" class="whatsapp-btn">📱 0727747699</a><a href="account.html">👤 Account</a><a href="cart.html" class="cart-icon">🛒 <span class="badge">0</span></a></div>
+</header>
+<nav class="main-nav"><ul><li><a href="index.html">Home</a></li><li><a href="shop.html">Shop</a></li><li><a href="about.html">About</a></li><li><a href="services.html">Health Services</a></li><li><a href="contact.html">Contact</a></li></ul></nav>
+</div>
+<div class="page-header"><h2>✅ Order Confirmed!</h2><p>Thank you for shopping at Obwocha's Pharmacy</p><div class="breadcrumb"><a href="index.html">Home</a> / <span>Order Confirmation</span></div></div>
+<div class="about-content" style="text-align:center;padding:60px 20px;">
+  <div style="font-size:72px;margin-bottom:20px;">✅</div>
+  <h3 style="color:var(--primary);margin-bottom:8px;">Your order has been placed successfully!</h3>
+  <p style="color:#666;max-width:500px;margin:0 auto 24px;">We've received your order and will begin processing it right away. You'll receive an email confirmation shortly with your order details.</p>
+  <div style="background:#f0fdf4;border-radius:12px;padding:24px;max-width:400px;margin:0 auto 30px;">
+    <p style="margin:0 0 8px 0;font-size:13px;color:#666;">Order tracking available soon via:</p>
+    <p style="font-size:18px;font-weight:600;margin:0;">📞 0727747699</p>
+    <p style="font-size:13px;color:#666;">📧 info@obwochaspharmacy.co.ke</p>
+  </div>
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+    <a href="shop.html" class="btn btn-primary">Continue Shopping →</a>
+    <a href="index.html" class="btn" style="background:#fff;border:1px solid #ddd;padding:10px 24px;border-radius:8px;text-decoration:none;color:var(--text);">Back to Home</a>
+  </div>
+</div>
+<section class="newsletter"><h3>📬 Stay in the Know</h3><p>Get health tips and exclusive offers.</p><div class="newsletter-form"><input type="email" placeholder="Enter your email"><button>Subscribe</button></div></section>
+<footer>
+  <div class="footer-grid">
+    <div><h4>About</h4><a href="about.html">About Obwocha</a><a href="careers.html">Careers</a><a href="blog.html">Blog</a></div>
+    <div><h4>Shop</h4><a href="shop.html">All Products</a></div>
+    <div><h4>Support</h4><a href="faq.html">FAQ</a><a href="delivery.html">Delivery</a><a href="privacy.html">Privacy</a></div>
+    <div class="contact-info"><h4>Contact</h4><p>📞 0727747699</p><p>📧 info@obwochaspharmacy.co.ke</p></div>
+  </div>
+  <div class="footer-bottom"><p>Copyright © 2026 Obwocha's Pharmacy</p></div>
+</footer>
+<script>
+if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(e){console.log("SW registration failed:",e)})}
+</script></body>
+</html>
