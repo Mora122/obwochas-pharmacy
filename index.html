@@ -1,21 +1,9 @@
 <!DOCTYPE html>
-
-
 <html lang="en">
-
-
 <head>
-
-
 <meta charset="UTF-8">
-
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
 <title>Obwocha's Pharmacy — Meru's Own Pharmacy</title>
-
-
 <meta name="description" content="Meru's own trusted pharmacy. Order medicines, OTC products, beauty items and supplements online with express 3-hour delivery in select areas.">
 <meta property="og:title" content="Obwocha's Pharmacy — Meru's Own Pharmacy">
 <meta property="og:description" content="Meru's own trusted pharmacy. Order medicines, OTC products, beauty items and supplements online with express 3-hour delivery in select areas.">
@@ -24,21 +12,18 @@
 <meta property="og:image" content="https://obwochas-pharmacy.vercel.app//icons/icon-192.svg">
 <meta name="twitter:card" content="summary_large_image">
 
-
 <link rel="preload" href="css/style.css" as="style">
-  <link rel="stylesheet" href="css/style.css">
-
+<link rel="stylesheet" href="css/style.css">
 
 <script src="js/cart.js" defer></script>
 <script src="js/products.js" defer></script>
-
-
 
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1a5c2e">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="ObwochaRx"><script type="application/ld+json">
+<meta name="apple-mobile-web-app-title" content="ObwochaRx">
+<script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Pharmacy",
@@ -64,911 +49,396 @@
     "closes": "20:00"
   }
 }
-</script></head>
+</script>
+<!-- Bootstrap 5 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-
+<!-- Bootstrap override: Obwocha brand -->
+<style>
+:root{--bs-primary:#1a5c2e;--bs-primary-rgb:26,92,46;--bs-link-color:#1a5c2e;--bs-link-hover-color:#2d8a4a;--bs-btn-bg:#1a5c2e;--bs-btn-border-color:#1a5c2e;--bs-btn-hover-bg:#12401f;--bs-btn-hover-border-color:#12401f}
+.navbar{background:#fff!important;border-bottom:1px solid #e0e0e0;padding:8px 0}
+.navbar-brand{font-weight:800;color:#1a5c2e!important}
+.navbar .nav-link{color:#333!important;font-weight:600;font-size:14px;padding:10px 16px!important}
+.navbar .nav-link:hover,.navbar .nav-link.active{color:#1a5c2e!important;background:#f0f8f0;border-radius:6px}
+.header-top-bar{background:#12401f;color:rgba(255,255,255,0.85);font-size:13px;padding:6px 20px}
+.header-top-bar a{color:rgba(255,255,255,0.85);text-decoration:none;font-size:12px}
+.header-top-bar a:hover{color:#ffd700}
+.hero-section{background:linear-gradient(rgba(0,0,0,0.47),rgba(0,0,0,0.47)),#1a5c2e;min-height:360px;display:flex;align-items:center;color:#fff}
+.hero-section h1{font-size:2.5rem;font-weight:800}
+.hero-section p{font-size:1.1rem;opacity:0.92}
+.btn-obwocha{background:#ffd700;color:#12401f;font-weight:700;padding:13px 32px;border:none;border-radius:4px;transition:0.2s ease}
+.btn-obwocha:hover{background:#ffed4a;color:#12401f;transform:translateY(-2px)}
+.btn-outline-obwocha{background:transparent;border:2px solid #fff;color:#fff;padding:11px 30px;font-weight:700;border-radius:4px}
+.btn-outline-obwocha:hover{background:#fff;color:#1a5c2e}
+.section-title{font-size:1.5rem;font-weight:800;color:#1a5c2e;margin-bottom:1.5rem;text-align:center}
+.section-title span{color:#2d8a4a}
+.card{border:1px solid #e0e0e0;border-radius:8px;transition:0.2s ease;height:100%}
+.card:hover{box-shadow:0 4px 20px rgba(0,0,0,0.08);transform:translateY(-2px)}
+.footer{background:#12401f;color:rgba(255,255,255,0.85);padding:40px 0 20px}
+.footer h5{color:#fff;font-weight:700;font-size:1rem;margin-bottom:1rem}
+.footer a{color:rgba(255,255,255,0.7);text-decoration:none;font-size:14px}
+.footer a:hover{color:#ffd700}
+.whatsapp-float{background:#25D366;color:#fff;padding:8px 18px;border-radius:4px;font-weight:600;font-size:13px;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.whatsapp-float:hover{background:#1da851;color:#fff}
+.cart-badge{position:absolute;top:-4px;right:-8px;background:#c00;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.bg-accent{background:#ffd700;color:#12401f}
+.text-accent{color:#ffd700}
+.hero-section .btn-obwocha{padding:13px 32px;font-size:1.1rem}
+.cat-link{display:inline-block;background:#f0f8f0;color:#1a5c2e;padding:8px 18px;border-radius:20px;font-size:14px;font-weight:600;margin:4px;text-decoration:none;border:1px solid #1a5c2e20;transition:0.2s ease}
+.cat-link:hover{background:#1a5c2e;color:#fff;transform:translateY(-2px)}
+.promo-banner{background:linear-gradient(135deg,#1a5c2e,#2d8a4a);color:#fff;text-align:center;padding:10px 20px;font-size:14px;font-weight:600}
+.feature-icon{font-size:2rem;margin-bottom:8px}
+</style>
+</head>
 <body>
 
-
-
-
-
 <!-- Top Bar -->
-
-
-<div class="top-bar">
-
-
-  <div class="left">
-
-
-    <span>🚚 Free Delivery For orders above KSh 2,500/=</span>
-
-
+<div class="header-top-bar d-flex justify-content-between align-items-center flex-wrap px-3">
+  <span>🚚 Free Delivery For orders above KSh 2,500/=</span>
+  <div>
+    <a href="membership.html" class="ms-2">Health Club</a>
+    <a href="wellness.html" class="ms-2">Wellness</a>
+    <a href="about.html" class="ms-2">About</a>
+    <a href="blog.html" class="ms-2">Blog</a>
+    <a href="faq.html" class="ms-2">FAQ</a>
+    <a href="contact.html" class="ms-2">Contact</a>
   </div>
-
-
-  <div class="right">
-
-
-    <a href="membership.html">Health Club</a>
-
-
-    <a href="wellness.html">Wellness</a>
-
-
-    <a href="about.html">About</a>
-
-
-    <a href="blog.html">Blog</a>
-
-
-    <a href="faq.html">FAQ</a>
-
-
-    <a href="contact.html">Contact</a>
-
-
-  </div>
-
-
 </div>
 
+<!-- Bootstrap Navbar -->
+<nav class="navbar navbar-expand-lg sticky-top">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+      <img src="icons/logo.svg" alt="Obwocha's Pharmacy" width="44" height="44">
+      <div>
+        <div style="font-size:1.25rem;font-weight:800;color:#1a5c2e;line-height:1.1">Obwocha's <span style="color:#2d8a4a">Pharmacy</span></div>
+        <small class="text-muted" style="font-size:10px;display:block;line-height:1">Meru's Own Pharmacy</small>
+      </div>
+    </a>
 
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-
-
-<!-- Header -->
-
-
-<div class="header-nav-wrap">
-
-
-<header>
-
-
-  <button class="mobile-menu-toggle" onclick="document.querySelector('.main-nav').classList.toggle('open')">&#9776; Menu</button>
-
-
-  <a href="index.html" class="logo">
-
-
-    <div class="logo-icon"><img src="icons/logo.svg" alt="Obwocha's Pharmacy" width="44" height="44"></div>
-
-
-    <div class="logo-text">
-
-
-      <h1>Obwocha's <span>Pharmacy</span></h1>
-
-
-      <small>Meru's Own Pharmacy</small>
-
-
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="shop.html">Shop By Category</a></li>
+        <li class="nav-item"><a class="nav-link" href="health-conditions.html">Shop By Condition</a></li>
+        <li class="nav-item"><a class="nav-link" href="brands.html">Shop By Brand</a></li>
+        <li class="nav-item"><a class="nav-link" href="shop.html?sale=1">Sale & Offers</a></li>
+        <li class="nav-item"><a class="nav-link" href="prescription.html">Submit Prescription</a></li>
+        <li class="nav-item"><a class="nav-link" href="ederma.html">Skin Test</a></li>
+        <li class="nav-item"><a class="nav-link" href="services.html">Health Services</a></li>
+        <li class="nav-item"><a class="nav-link" href="store-locator.html">Store Locator</a></li>
+      </ul>
+      <div class="d-flex align-items-center gap-2">
+        <form class="d-flex" role="search" action="shop.html" method="GET">
+          <input class="form-control form-control-sm me-1" type="search" name="q" placeholder="Search products..." aria-label="Search" style="border:2px solid #1a5c2e;border-radius:4px;">
+          <button class="btn btn-sm" style="background:#1a5c2e;color:#fff;border-radius:4px;font-weight:600;" type="submit">Search</button>
+        </form>
+        <a href="https://wa.me/+254727747699" target="_blank" class="whatsapp-float text-decoration-none">📱 0727747699</a>
+        <a href="account.html" class="text-decoration-none" style="color:#333;font-size:14px;font-weight:600;">👤 Account</a>
+        <a href="cart.html" class="position-relative text-decoration-none" style="color:#333;font-size:20px;">
+          🛒<span class="cart-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cartCount">0</span>
+        </a>
+      </div>
     </div>
-
-
-  </a>
-
-
-  <div class="search-bar">
-
-
-    <input type="text" placeholder="Search products...">
-
-
-    <button>Search</button>
-
-
   </div>
-
-
-  <div class="header-icons">
-
-
-    <a href="https://wa.me/+254727747699" target="_blank" class="whatsapp-btn">📱 0727747699</a>
-
-
-    <a href="account.html">👤 Account</a>
-
-
-    <a href="cart.html" class="cart-icon">🛒 <span class="badge">0</span></a>
-
-
-  </div>
-
-
-</header>
-
-<!-- Navigation -->
-<nav class="main-nav">
-
-
-  <ul>
-
-
-    <li><a href="index.html" class="active">Home</a></li>
-
-
-    <li><a href="shop.html">Shop By Category</a></li>
-
-
-    <li><a href="health-conditions.html">Shop By Condition</a></li>
-
-
-    <li><a href="brands.html">Shop By Brand</a></li>
-
-
-    <li><a href="shop.html?sale=1">Sale & Offers</a></li>
-
-
-    <li><a href="prescription.html">Submit Prescription</a></li>
-
-
-    <li><a href="ederma.html">Skin Test</a></li>
-
-
-    <li><a href="services.html">Health Services</a></li>
-
-
-    <li><a href="store-locator.html">Store Locator</a></li>
-
-
-  </ul>
-
-
 </nav>
 
-
-</div>
-
-
-
-
-
 <!-- Promo Banner -->
-
-
 <div class="promo-banner">
-
-
-  ☀️ Summer Sale — Up to <span>40% OFF</span> on Sun Care & Beauty Products. <a href="shop.html?sale=1" style="color:#fff;text-decoration:underline;">Shop Now →</a>
-
-
+  ☀️ Summer Sale — Up to <span style="color:#ffd700;font-weight:700;">40% OFF</span> on Sun Care & Beauty Products.
+  <a href="shop.html?sale=1" style="color:#fff;text-decoration:underline;font-weight:600">Shop Now →</a>
 </div>
 
-
-
-
-
-<!-- Hero -->
-
-
-<section class="hero">
-
-
-  <div class="hero-content">
-
-
-    <h2>Your Health, Our Priority</h2>
-
-
-    <p>Kenya's largest pharmacy chain with <strong>150+ stores</strong> nationwide. Order medicines, OTC products, beauty items &amp; supplements online with <strong>express 3-hour delivery</strong> available in select areas.</p>
-
-
-    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-
-
-      <a href="shop.html" class="btn">🛍️ Shop Now</a>
-
-
-      <a href="prescription.html" class="btn btn-outline">📋 Submit Prescription</a>
-
-
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="container text-center py-5">
+    <h1 class="display-4 fw-bold mb-3">Your Health, Our Priority</h1>
+    <p class="lead mb-4 mx-auto" style="max-width:700px;">Kenya's largest pharmacy chain with <strong>150+ stores</strong> nationwide. Order medicines, OTC products, beauty items &amp; supplements online with <strong>express 3-hour delivery</strong> available in select areas.</p>
+    <div class="d-flex gap-3 justify-content-center flex-wrap">
+      <a href="shop.html" class="btn-obwocha text-decoration-none">🛍️ Shop Now</a>
+      <a href="prescription.html" class="btn-outline-obwocha text-decoration-none">📋 Submit Prescription</a>
     </div>
-
-
   </div>
-
-
 </section>
 
-
-
-
-
-<!-- Features -->
-
-
-<section class="features">
-
-
-  <div class="feature-card">
-
-
-    <div class="feature-icon">🚚</div>
-
-
-    <h3>Express Delivery</h3>
-
-
-    <p>Same day delivery if ordered by 7 pm. Get your essentials fast, right to your doorstep.</p>
-
-
+<!-- Features Section -->
+<section class="py-5" style="background:#f5f8f5;">
+  <div class="container">
+    <div class="row g-3">
+      <div class="col-6 col-md-3">
+        <div class="card border-0 bg-transparent text-center h-100">
+          <div class="card-body"><div class="feature-icon">🚚</div><h6 class="fw-bold">Express Delivery</h6><p class="small text-muted mb-0">Same day delivery if ordered by 7 pm.</p></div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card border-0 bg-transparent text-center h-100">
+          <div class="card-body"><div class="feature-icon">📍</div><h6 class="fw-bold">Nationwide Delivery</h6><p class="small text-muted mb-0">140+ stores across 47 counties.</p></div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card border-0 bg-transparent text-center h-100">
+          <div class="card-body"><div class="feature-icon">💬</div><h6 class="fw-bold">24/7 Support</h6><p class="small text-muted mb-0">Via phone, WhatsApp, or email.</p></div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card border-0 bg-transparent text-center h-100">
+          <div class="card-body"><div class="feature-icon">✅</div><h6 class="fw-bold">100% Genuine</h6><p class="small text-muted mb-0">Authentic products, direct from distributors.</p></div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card border-0 bg-transparent text-center h-100">
+          <div class="card-body"><div class="feature-icon">📦</div><h6 class="fw-bold">Free Delivery</h6><p class="small text-muted mb-0">Free on orders above KSh 2,500.</p></div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card border-0 bg-transparent text-center h-100">
+          <div class="card-body"><div class="feature-icon">💳</div><h6 class="fw-bold">Easy Payments</h6><p class="small text-muted mb-0">M-Pesa, Visa, MasterCard, Cash.</p></div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card border-0 bg-transparent text-center h-100">
+          <div class="card-body"><div class="feature-icon">💊</div><h6 class="fw-bold">Online Consultation</h6><p class="small text-muted mb-0">Expert pharmacy advice via chat.</p></div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card border-0 bg-transparent text-center h-100">
+          <div class="card-body"><div class="feature-icon">🧴</div><h6 class="fw-bold">Skin Consultation</h6><p class="small text-muted mb-0">Personalized skincare from home.</p></div>
+        </div>
+      </div>
+    </div>
   </div>
-
-
-  <div class="feature-card">
-
-
-    <div class="feature-icon">📍</div>
-
-
-    <h3>Nationwide Delivery</h3>
-
-
-    <p>From a network of over 140+ stores across all 47 counties in Kenya.</p>
-
-
-  </div>
-
-
-  <div class="feature-card">
-
-
-    <div class="feature-icon">💬</div>
-
-
-    <h3>24/7 Customer Support</h3>
-
-
-    <p>Available 7 days a week via phone, WhatsApp, email, or live chat. We're always here.</p>
-
-
-  </div>
-
-
-  <div class="feature-card">
-
-
-    <div class="feature-icon">✅</div>
-
-
-    <h3>100% Genuine Products</h3>
-
-
-    <p>All our products are 100% authentic, sourced directly from manufacturers and authorized distributors.</p>
-
-
-  </div>
-
-
-  <div class="feature-card">
-
-
-    <div class="feature-icon">📦</div>
-
-
-    <h3>Free Delivery</h3>
-
-
-    <p>Free delivery on orders above KSh 2,500 to any location in Kenya.</p>
-
-
-  </div>
-
-
-  <div class="feature-card">
-
-
-    <div class="feature-icon">💳</div>
-
-
-    <h3>Easy Payment Options</h3>
-
-
-    <p>Pay conveniently via M-Pesa, Visa, MasterCard, or Cash-on-Delivery.</p>
-
-
-  </div>
-
-
-  <div class="feature-card">
-
-
-    <div class="feature-icon">💊</div>
-
-
-    <h3>Online Consultation</h3>
-
-
-    <p>Expert pharmacy advice from qualified pharmacists, anytime via chat or video call.</p>
-
-
-  </div>
-
-
-  <div class="feature-card">
-
-
-    <div class="feature-icon">🧴</div>
-
-
-    <h3>Online Skin Consultation</h3>
-
-
-    <p>Personalized skincare consultation with our dermatology specialists from home.</p>
-
-
-  </div>
-
-
 </section>
 
-
-
-
-
-<!-- Categories -->
-
-
-<section class="categories-strip">
-
-
-  <div class="section-title">
-
-
-    <h2>Shop by Category</h2>
-
-
-    <p>Browse our wide range of healthcare and wellness products</p>
-
-
+<!-- Shop by Category -->
+<section class="py-5">
+  <div class="container">
+    <div class="section-title">
+      <h2>Shop by Category</h2>
+      <p class="text-muted small">Browse our wide range of healthcare and wellness products</p>
+    </div>
+    <div class="text-center">
+      <a href="shop.html?cat=vitamins" class="cat-link">💊 Vitamins & Supplements</a>
+      <a href="shop.html?cat=skincare" class="cat-link">🧴 Skin Care</a>
+      <a href="shop.html?cat=prescription" class="cat-link">🏥 Prescription Medicines</a>
+      <a href="shop.html?cat=baby" class="cat-link">🤱 Baby & Maternity</a>
+      <a href="shop.html?cat=beauty" class="cat-link">💄 Beauty & Cosmetics</a>
+      <a href="shop.html?cat=firstaid" class="cat-link">🩹 First Aid</a>
+      <a href="shop.html?cat=herbal" class="cat-link">🌿 Herbal & Natural</a>
+      <a href="shop.html?cat=oral" class="cat-link">🦷 Oral Care</a>
+      <a href="shop.html?cat=eye" class="cat-link">👁️ Eye Care</a>
+      <a href="shop.html?cat=heart" class="cat-link">❤️ Heart Health</a>
+      <a href="shop.html?cat=diabetes" class="cat-link">🩸 Diabetes Care</a>
+      <a href="shop.html?cat=digestive" class="cat-link">🫁 Digestive Health</a>
+      <a href="shop.html?cat=pain" class="cat-link">⚡ Pain Relief</a>
+      <a href="shop.html?cat=allergies" class="cat-link">🤧 Allergy & Sinus</a>
+    </div>
   </div>
-
-
-  <div class="cat-grid">
-
-
-    <a href="shop.html?cat=vitamins" class="cat-tag">💊 Vitamins &amp; Supplements</a>
-
-
-    <a href="shop.html?cat=skincare" class="cat-tag">🧴 Skin Care</a>
-
-
-    <a href="shop.html?cat=prescription" class="cat-tag">🏥 Prescription Medicines</a>
-
-
-    <a href="shop.html?cat=baby" class="cat-tag">🤱 Baby &amp; Maternity</a>
-
-
-    <a href="shop.html?cat=beauty" class="cat-tag">💄 Beauty &amp; Cosmetics</a>
-
-
-    <a href="shop.html?cat=firstaid" class="cat-tag">🩹 First Aid</a>
-
-
-    <a href="shop.html?cat=herbal" class="cat-tag">🌿 Herbal &amp; Natural</a>
-
-
-    <a href="shop.html?cat=oral" class="cat-tag">🦷 Oral Care</a>
-
-
-    <a href="shop.html?cat=eye" class="cat-tag">👁️ Eye Care</a>
-
-
-    <a href="shop.html?cat=heart" class="cat-tag">❤️ Heart Health</a>
-
-
-    <a href="shop.html?cat=diabetes" class="cat-tag">🩸 Diabetes Care</a>
-
-
-    <a href="shop.html?cat=digestive" class="cat-tag">🫁 Digestive Health</a>
-
-
-    <a href="shop.html?cat=pain" class="cat-tag">⚡ Pain Relief</a>
-
-
-    <a href="shop.html?cat=allergies" class="cat-tag">🤧 Allergy &amp; Sinus</a>
-
-
-  </div>
-
-
 </section>
-
-
-
-
 
 <!-- Featured Products -->
-
-
-<section style="padding:50px 20px;max-width:1200px;margin:0 auto;">
-
-
-  <div class="section-title">
-
-
-    <h2>Featured Products</h2>
-
-
-    <p>Best-selling healthcare essentials at the best prices</p>
-
-
+<section class="py-5" style="background:#f5f8f5;">
+  <div class="container">
+    <div class="section-title">
+      <h2>Featured Products</h2>
+      <p class="text-muted small">Best-selling healthcare essentials at the best prices</p>
+    </div>
+    <div class="row g-3" id="featuredProductGrid">
+      <div class="col-12 text-center py-5 text-muted">Loading products...</div>
+    </div>
+    <div class="text-center mt-4">
+      <a href="shop.html" class="btn btn-primary px-4 py-2 fw-bold">View All Products →</a>
+    </div>
   </div>
-
-
-  <div class="product-grid" id="featuredProductGrid">
-    <div style="grid-column:1/-1;text-align:center;padding:40px;color:#999">Loading products...</div>
-  </div>
-
-
-  <div style="text-align:center;margin-top:24px;">
-
-
-    <a href="shop.html" class="btn btn-primary">View All Products →</a>
-
-
-  </div>
-
-
 </section>
-
-
-
-
 
 <!-- Special Offers -->
-
-
-<section class="categories-strip" style="background:linear-gradient(135deg,#f5f8f5,#e8f5e9);">
-
-
-  <div class="section-title">
-
-
-    <h2>🔥 Special Offers</h2>
-
-
-    <p>Don't miss out on these amazing deals</p>
-
-
+<section class="py-5" style="background:linear-gradient(135deg,#f5f8f5,#e8f5e9);">
+  <div class="container">
+    <div class="section-title">
+      <h2>🔥 Special Offers</h2>
+      <p class="text-muted small">Don't miss out on these amazing deals</p>
+    </div>
+    <div class="row g-3" id="specialOfferGrid">
+      <div class="col-12 text-center py-5 text-muted">Loading offers...</div>
+    </div>
   </div>
-
-
-  <div class="product-grid" id="specialOfferGrid" style="max-width:1200px;margin:0 auto;">
-    <div style="grid-column:1/-1;text-align:center;padding:40px;color:#999">Loading offers...</div>
-  </div>
-
-
 </section>
 
-
-
-
-
-<!-- Customer Reviews / Testimonials -->
-<section class="testimonials">
-
-
-  <div class="section-title">
-
-
-    <h2>💬 What Our Customers Say</h2>
-
-
-    <p>Join 10,000+ happy customers across Kenya</p>
-
-
+<!-- Testimonials -->
+<section class="py-5">
+  <div class="container">
+    <div class="section-title">
+      <h2>💬 What Our Customers Say</h2>
+      <p class="text-muted small">Join 10,000+ happy customers across Kenya</p>
+    </div>
+    <div class="row g-3">
+      <div class="col-md-4">
+        <div class="card border-0 h-100 p-3" style="background:#f9fafb;">
+          <div class="card-body">
+            <div class="mb-2" style="color:#ffd700;">★★★★★</div>
+            <p class="small mb-3">"I've been ordering my monthly medications from Obwocha's for over a year now. The express delivery never disappoints — ordered at 6pm and it was at my door by 8pm."</p>
+            <div class="d-flex align-items-center gap-2">
+              <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:36px;height:36px;font-weight:700;">M</div>
+              <div><strong class="small">Margaret W.</strong><br><small class="text-muted">Nairobi — Verified Buyer</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card border-0 h-100 p-3" style="background:#f9fafb;">
+          <div class="card-body">
+            <div class="mb-2" style="color:#ffd700;">★★★★★</div>
+            <p class="small mb-3">"The CeraVe products are genuine and prices beat the supermarkets. I save about 15% on my skincare routine ordering here. My dermatologist recommended them."</p>
+            <div class="d-flex align-items-center gap-2">
+              <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:36px;height:36px;font-weight:700;">J</div>
+              <div><strong class="small">James K.</strong><br><small class="text-muted">Mombasa — Verified Buyer</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card border-0 h-100 p-3" style="background:#f9fafb;">
+          <div class="card-body">
+            <div class="mb-2" style="color:#ffd700;">★★★★☆</div>
+            <p class="small mb-3">"Fast delivery to Meru! Got my baby's diapers and vitamins the same day. The WhatsApp support is very responsive. Only wish they had more stock of premium formulas."</p>
+            <div class="d-flex align-items-center gap-2">
+              <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:36px;height:36px;font-weight:700;">A</div>
+              <div><strong class="small">Ann M.</strong><br><small class="text-muted">Meru — Verified Buyer</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-
-
-  <div class="testimonial-grid">
-
-
-    <div class="testimonial-card">
-
-
-      <div class="stars"><span class="filled">★</span><span class="filled">★</span><span class="filled">★</span><span class="filled">★</span><span class="filled">★</span></div>
-
-
-      <p>"I've been ordering my monthly medications from Obwocha's for over a year now. The express delivery never disappoints — ordered at 6pm and it was at my door by 8pm. Highly recommend!"</p>
-
-
-      <div class="testimonial-author">
-
-
-        <div class="avatar">M</div>
-
-
-        <div class="info"><strong>Margaret W.</strong><small>Nairobi — Verified Buyer</small></div>
-
-
-      </div>
-
-
-    </div>
-
-
-    <div class="testimonial-card">
-
-
-      <div class="stars"><span class="filled">★</span><span class="filled">★</span><span class="filled">★</span><span class="filled">★</span><span class="filled">★</span></div>
-
-
-      <p>"The CeraVe products are genuine and prices beat the supermarkets. I save about 15% on my skincare routine ordering here. My dermatologist recommended them and I'm glad I switched."</p>
-
-
-      <div class="testimonial-author">
-
-
-        <div class="avatar">J</div>
-
-
-        <div class="info"><strong>James K.</strong><small>Mombasa — Verified Buyer</small></div>
-
-
-      </div>
-
-
-    </div>
-
-
-    <div class="testimonial-card">
-
-
-      <div class="stars"><span class="filled">★</span><span class="filled">★</span><span class="filled">★</span><span class="filled">★</span><span>★</span></div>
-
-
-      <p>"Fast delivery to Meru! Got my baby's diapers and vitamins the same day. The WhatsApp support is very responsive. Only wish they had more stock of the premium formula brands."</p>
-
-
-      <div class="testimonial-author">
-
-
-        <div class="avatar">A</div>
-
-
-        <div class="info"><strong>Ann M.</strong><small>Meru — Verified Buyer</small></div>
-
-
-      </div>
-
-
-    </div>
-
-
-  </div>
-
-
 </section>
-
-
-
-
 
 <!-- Health Services -->
-
-
-<section style="padding:50px 20px;max-width:1200px;margin:0 auto;">
-
-
-  <div class="section-title">
-
-
-    <h2>Our Health Services</h2>
-
-
-    <p>Professional healthcare services beyond just dispensing medicine</p>
-
-
+<section class="py-5" style="background:#f5f8f5;">
+  <div class="container">
+    <div class="section-title">
+      <h2>Our Health Services</h2>
+      <p class="text-muted small">Professional healthcare services beyond just dispensing medicine</p>
+    </div>
+    <div class="row g-3">
+      <div class="col-6 col-md-3">
+        <div class="card border-0 bg-transparent text-center h-100">
+          <div class="card-body"><div class="feature-icon">💉</div><h6 class="fw-bold">Vaccinations</h6><p class="small text-muted mb-0">Travel vaccines, flu shots at select branches.</p></div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card border-0 bg-transparent text-center h-100">
+          <div class="card-body"><div class="feature-icon">🩺</div><h6 class="fw-bold">Health Screening</h6><p class="small text-muted mb-0">BP, blood sugar, BMI checks at any store.</p></div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card border-0 bg-transparent text-center h-100">
+          <div class="card-body"><div class="feature-icon">📋</div><h6 class="fw-bold">Prescription Services</h6><p class="small text-muted mb-0">Submit online, collect in-store or delivered.</p></div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card border-0 bg-transparent text-center h-100">
+          <div class="card-body"><div class="feature-icon">🧬</div><h6 class="fw-bold">Wellness Programs</h6><p class="small text-muted mb-0">Weight management & nutrition advice.</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="text-center mt-4">
+      <a href="services.html" class="btn btn-primary px-4 py-2 fw-bold">View All Services →</a>
+    </div>
   </div>
-
-
-  <div class="features" style="padding:0;">
-
-
-    <div class="feature-card">
-
-
-      <div class="feature-icon">💉</div>
-
-
-      <h3>Vaccinations</h3>
-
-
-      <p>Travel vaccines, flu shots, and routine immunizations at select branches.</p>
-
-
-    </div>
-
-
-    <div class="feature-card">
-
-
-      <div class="feature-icon">🩺</div>
-
-
-      <h3>Health Screening</h3>
-
-
-      <p>Blood pressure, blood sugar, BMI, and cholesterol checks at any store.</p>
-
-
-    </div>
-
-
-    <div class="feature-card">
-
-
-      <div class="feature-icon">📋</div>
-
-
-      <h3>Prescription Services</h3>
-
-
-      <p>Submit your prescription online and we'll prepare it for collection or delivery.</p>
-
-
-    </div>
-
-
-    <div class="feature-card">
-
-
-      <div class="feature-icon">🧬</div>
-
-
-      <h3>Wellness Programs</h3>
-
-
-      <p>Personalized wellness plans including weight management and nutrition advice.</p>
-
-
-    </div>
-
-
-  </div>
-
-
-  <div style="text-align:center;margin-top:20px;">
-
-
-    <a href="services.html" class="btn btn-primary">View All Services →</a>
-
-
-  </div>
-
-
 </section>
-
-
-
-
 
 <!-- Newsletter -->
-
-
-<section class="newsletter">
-
-
-  <h3>📬 Stay in the Know</h3>
-
-
-  <p>Sign up for the latest deals, product news, health tips, and exclusive offers from Obwocha's Pharmacy.</p>
-
-
-  <div class="newsletter-form">
-
-
-    <input type="email" placeholder="Enter your email address">
-
-
-    <button>Subscribe</button>
-
-
+<section class="py-5 text-center" style="background:#12401f;color:#fff;">
+  <div class="container" style="max-width:600px;">
+    <h3 class="fw-bold mb-2">📬 Stay in the Know</h3>
+    <p class="small mb-3 opacity-75">Sign up for the latest deals, product news, health tips, and exclusive offers from Obwocha's Pharmacy.</p>
+    <form class="d-flex gap-2 justify-content-center">
+      <input type="email" class="form-control" placeholder="Enter your email address" style="max-width:350px;border-radius:4px;">
+      <button class="btn btn-warning fw-bold text-dark" type="submit" style="background:#ffd700;border:none;">Subscribe</button>
+    </form>
   </div>
-
-
 </section>
 
-
-
-
-
 <!-- Footer -->
-
-
-<footer>
-
-
-  <div class="footer-grid">
-
-
-    <div>
-
-
-      <h4>Shop By Category</h4>
-
-
-      <a href="shop.html?cat=vitamins">Vitamin &amp; Supplements</a>
-
-
-      <a href="shop.html?cat=skincare">Skin Care</a>
-
-
-      <a href="brands.html">All Brands</a>
-
-
-      <a href="prescription.html">Prescription Services</a>
-
-
-      <a href="services.html">The Health Hub</a>
-
-
-    </div>
-
-
-    <div>
-
-
-      <h4>About Us</h4>
-
-
-      <a href="about.html">About Obwocha</a>
-
-
-      <a href="health-conditions.html">Health Conditions</a>
-
-
-      <a href="team.html">The Team</a>
-
-
-      <a href="services.html">Services</a>
-
-
-      <a href="blog.html">Blog</a>
-
-
-      <a href="privacy.html">Privacy Policy</a>
-
-
-      <a href="terms.html">Terms &amp; Conditions</a>
-
-
-    </div>
-
-
-    <div>
-
-
-      <h4>Our Service</h4>
-
-
-      <a href="brands.html">A-Z Brands</a>
-
-
-      <a href="store-locator.html">Store Locator</a>
-
-
-      <a href="services.html">Health Services</a>
-
-
-      <a href="prescription.html">Prescription Advice</a>
-
-
-    </div>
-
-
-    <div>
-
-
-      <h4>Customer Care</h4>
-
-
-      <a href="returns.html">Delivery &amp; Returns</a>
-
-
-      <a href="account.html">My Account</a>
-
-
-      <a href="faq.html">FAQ's</a>
-
-
-      <a href="sitemap.html">Sitemap</a>
-
-
-    </div>
-
-
-    <div class="contact-info">
-
-
-      <h4>Contact Us</h4>
-
-
-      <p>📞 Phone: <a href="tel:0727747699">0727747699</a></p>
-
-
-      <p>📱 WhatsApp: <a href="https://wa.me/+254727747699">0727747699</a></p>
-
-
-      <p>📧 <a href="mailto:info@obwochaspharmacy.co.ke">info@obwochaspharmacy.co.ke</a></p>
-
-
-      <p><strong>Postal Address:</strong><br>P.O. Box 1852-00621 Nairobi, Kenya</p>
-
-
-      <div class="social-links">
-
-
-        <a href="https://facebook.com/obwochaspharmacy" target="_blank" title="Facebook">f</a>
-
-
-        <a href="https://instagram.com/obwochaspharmacy" target="_blank" title="Instagram">📷</a>
-
-
-        <a href="https://twitter.com/obwochaspharmacy" target="_blank" title="Twitter">𝕏</a>
-
-
-        <a href="https://linkedin.com/company/obwochas-pharmacy" target="_blank" title="LinkedIn">in</a>
-
-
-        <a href="https://youtube.com/channel/UCSjKFmnurK8VCBact1TschQ" target="_blank" title="YouTube">▶</a>
-
-
-        <a href="https://threads.net/@obwochaspharmacy" target="_blank" title="Threads">◎</a>
-
-
+<footer class="footer">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-6 col-md-3">
+        <h5>Shop By Category</h5>
+        <div class="d-flex flex-column gap-1">
+          <a href="shop.html?cat=vitamins">Vitamin &amp; Supplements</a>
+          <a href="shop.html?cat=skincare">Skin Care</a>
+          <a href="brands.html">All Brands</a>
+          <a href="prescription.html">Prescription Services</a>
+          <a href="services.html">The Health Hub</a>
+        </div>
       </div>
-
-
+      <div class="col-6 col-md-3">
+        <h5>About Us</h5>
+        <div class="d-flex flex-column gap-1">
+          <a href="about.html">About Obwocha</a>
+          <a href="health-conditions.html">Health Conditions</a>
+          <a href="team.html">The Team</a>
+          <a href="services.html">Services</a>
+          <a href="blog.html">Blog</a>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms &amp; Conditions</a>
+        </div>
+      </div>
+      <div class="col-6 col-md-2">
+        <h5>Our Service</h5>
+        <div class="d-flex flex-column gap-1">
+          <a href="brands.html">A-Z Brands</a>
+          <a href="store-locator.html">Store Locator</a>
+          <a href="services.html">Health Services</a>
+          <a href="prescription.html">Prescription Advice</a>
+        </div>
+      </div>
+      <div class="col-6 col-md-2">
+        <h5>Customer Care</h5>
+        <div class="d-flex flex-column gap-1">
+          <a href="returns.html">Delivery &amp; Returns</a>
+          <a href="account.html">My Account</a>
+          <a href="faq.html">FAQ's</a>
+          <a href="sitemap.html">Sitemap</a>
+        </div>
+      </div>
+      <div class="col-12 col-md-2">
+        <h5>Contact Us</h5>
+        <div class="d-flex flex-column gap-1 small">
+          <p class="mb-1">📞 <a href="tel:0727747699">0727747699</a></p>
+          <p class="mb-1">📱 <a href="https://wa.me/+254727747699">0727747699</a></p>
+          <p class="mb-1">📧 <a href="mailto:info@obwochaspharmacy.co.ke">Email</a></p>
+          <p class="mb-1 small opacity-75">P.O. Box 1852-00621<br>Nairobi, Kenya</p>
+          <div class="d-flex gap-2 mt-1">
+            <a href="https://facebook.com/obwochaspharmacy" target="_blank" style="font-size:18px;">f</a>
+            <a href="https://instagram.com/obwochaspharmacy" target="_blank" style="font-size:18px;">📷</a>
+            <a href="https://twitter.com/obwochaspharmacy" target="_blank" style="font-size:18px;">𝕏</a>
+          </div>
+        </div>
+      </div>
     </div>
-
-
-  </div>
-
-
-  <div class="footer-bottom">
-
-
-    <div>
-
-
-      <a href="terms.html">Terms &amp; Conditions</a> |
-
-
-      <a href="privacy.html">Privacy Policy</a> |
-
-
-      <a href="cookies.html">Cookie Policy</a>
-
-
+    <hr class="my-3" style="border-color:rgba(255,255,255,0.15);">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+      <div>
+        <a href="terms.html" class="small">Terms &amp; Conditions</a>
+        <span class="mx-1 opacity-50">|</span>
+        <a href="privacy.html" class="small">Privacy Policy</a>
+        <span class="mx-1 opacity-50">|</span>
+        <a href="cookies.html" class="small">Cookie Policy</a>
+      </div>
+      <div class="small opacity-75">Copyright © 2026 <a href="index.html" style="color:#ffd700;">Obwocha's Pharmacy</a>. All Rights Reserved.</div>
+      <div class="small opacit-75">💳 M-Pesa | Visa | MasterCard | Cash-on-Delivery</div>
     </div>
-
-
-    <p style="margin-top:8px;">Copyright © 2026 <a href="index.html">Obwocha's Pharmacy</a>. All Rights Reserved.</p>
-
-
-    <div class="payment-icons">💳 M-Pesa &nbsp;|&nbsp; Visa &nbsp;|&nbsp; MasterCard &nbsp;|&nbsp; Cash-on-Delivery</div>
-
-
   </div>
-
-
 </footer>
 
-
-
-
-
-<a href="https://wa.me/+254727747699" target="_blank" class="whatsapp-float" title="Chat on WhatsApp">💬</a>
-
-
-
-
-
+<!-- WhatsApp FAB -->
+<a href="https://wa.me/+254727747699" target="_blank" class="whatsapp-float position-fixed bottom-0 end-0 m-3 text-decoration-none shadow" style="z-index:999;border-radius:50%;width:56px;height:56px;display:flex;align-items:center;justify-content:center;font-size:28px;" title="Chat on WhatsApp">💬</a>
 
 <script>
 if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(e){console.log("SW registration failed:",e)})}
@@ -976,7 +446,6 @@ if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-work
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   loadFeaturedProducts(6);
-  // Also load special offers (last 3 cheapest products)
   fetchProducts({limit:50}).then(function(prods) {
     var sorted = prods.slice().sort(function(a,b){return a.price - b.price});
     var cheap = sorted.slice(0,3);
@@ -984,9 +453,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (grid) renderProducts(cheap, grid);
   });
 });
-</script></body>
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-
+</body>
 </html>
-
-
