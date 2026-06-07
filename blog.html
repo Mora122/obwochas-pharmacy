@@ -1,9 +1,5 @@
-<!DOCTYPE html>
-
-
-<html lang="en">
-
-
+<!DOCTYPE html>
+<html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Blog — Obwocha's Pharmacy</title>
 <meta name="description" content="Health tips, wellness advice, and pharmacy news from Obwocha's Pharmacy. Stay informed about your health.">
 <meta property="og:title" content="Blog — Obwocha's Pharmacy">
@@ -43,411 +39,104 @@
     "closes": "20:00"
   }
 }
-</script>
-<!-- Bootstrap 5 -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<!-- Bootstrap override: Obwocha brand -->
-<style>
-:root{--bs-primary:#1a5c2e;--bs-primary-rgb:26,92,46;--bs-link-color:#1a5c2e;--bs-link-hover-color:#2d8a4a;--bs-btn-bg:#1a5c2e;--bs-btn-border-color:#1a5c2e;--bs-btn-hover-bg:#12401f;--bs-btn-hover-border-color:#12401f}
-.navbar{background:#fff!important;border-bottom:1px solid #e0e0e0;padding:8px 0}
-.navbar-brand{font-weight:800;color:#1a5c2e!important}
-.navbar .nav-link{color:#333!important;font-weight:600;font-size:14px;padding:10px 16px!important}
-.navbar .nav-link:hover,.navbar .nav-link.active{color:#1a5c2e!important;background:#f0f8f0;border-radius:6px}
-.header-top-bar{background:#12401f;color:rgba(255,255,255,0.85);font-size:13px;padding:6px 20px}
-.header-top-bar a{color:rgba(255,255,255,0.85);text-decoration:none;font-size:12px}
-.header-top-bar a:hover{color:#ffd700}
-.hero-section{background:linear-gradient(rgba(0,0,0,0.47),rgba(0,0,0,0.47)),#1a5c2e;min-height:360px;display:flex;align-items:center;color:#fff}
-.hero-section h1{font-size:2.5rem;font-weight:800}
-.hero-section p{font-size:1.1rem;opacity:0.92}
-.btn-obwocha{background:#ffd700;color:#12401f;font-weight:700;padding:13px 32px;border:none;border-radius:4px;transition:0.2s ease}
-.btn-obwocha:hover{background:#ffed4a;color:#12401f;transform:translateY(-2px)}
-.btn-outline-obwocha{background:transparent;border:2px solid #fff;color:#fff;padding:11px 30px;font-weight:700;border-radius:4px}
-.btn-outline-obwocha:hover{background:#fff;color:#1a5c2e}
-.section-title{font-size:1.5rem;font-weight:800;color:#1a5c2e;margin-bottom:1.5rem}
-.section-title span{color:#2d8a4a}
-.card{border:1px solid #e0e0e0;border-radius:8px;transition:0.2s ease;height:100%}
-.card:hover{box-shadow:0 4px 20px rgba(0,0,0,0.08);transform:translateY(-2px)}
-.footer{background:#12401f;color:rgba(255,255,255,0.85);padding:40px 0 20px}
-.footer h5{color:#fff;font-weight:700;font-size:1rem;margin-bottom:1rem}
-.footer a{color:rgba(255,255,255,0.7);text-decoration:none;font-size:14px}
-.footer a:hover{color:#ffd700}
-.whatsapp-float{background:#25D366;color:#fff;padding:8px 18px;border-radius:4px;font-weight:600;font-size:13px;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
-.whatsapp-float:hover{background:#1da851;color:#fff}
-.cart-badge{position:absolute;top:-4px;right:-8px;background:#c00;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:700}
-.bg-accent{background:#ffd700;color:#12401f}
-.text-accent{color:#ffd700}
-</style>
-
-</head>
-
-
-<body>
-
-
-<div class="header-top-bar d-flex justify-content-between align-items-center flex-wrap px-3">
-  <span>Free Delivery For orders above KSh 2,500/=</span>
-  <div>
-    <a href="membership.html" class="ms-2">Health Club</a>
-    <a href="wellness.html" class="ms-2">Wellness</a>
-    <a href="about.html" class="ms-2">About</a>
-    <a href="blog.html" class="ms-2">Blog</a>
-    <a href="faq.html" class="ms-2">FAQ</a>
-    <a href="contact.html" class="ms-2">Contact</a>
-  </div>
-</div>
-<div class="right"><a href="about.html">About</a><a href="blog.html">Blog</a><a href="faq.html">FAQ</a><a href="contact.html">Contact</a></div></div>
-
-
-<nav class="navbar navbar-expand-lg sticky-top">
-  <div class="container">
-    <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-      <img src="icons/logo.svg" alt="Obwocha's Pharmacy" width="44" height="44">
-      <div>
-        <div style="font-size:1.25rem;font-weight:800;color:#1a5c2e;line-height:1.1">Obwocha's <span style="color:#2d8a4a">Pharmacy</span></div>
-        <small class="text-muted" style="font-size:10px;display:block;line-height:1">Meru's Own Pharmacy</small>
-      </div>
-    </a>
-    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="mainNav">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="shop.html">Shop By Category</a></li>
-        <li class="nav-item"><a class="nav-link" href="health-conditions.html">Shop By Condition</a></li>
-        <li class="nav-item"><a class="nav-link" href="brands.html">Shop By Brand</a></li>
-        <li class="nav-item"><a class="nav-link" href="shop.html?sale=1">Sale & Offers</a></li>
-        <li class="nav-item"><a class="nav-link" href="prescription.html">Submit Prescription</a></li>
-        <li class="nav-item"><a class="nav-link" href="ederma.html">Skin Test</a></li>
-        <li class="nav-item"><a class="nav-link" href="services.html">Health Services</a></li>
-        <li class="nav-item"><a class="nav-link" href="store-locator.html">Store Locator</a></li>
-      </ul>
-      <div class="d-flex align-items-center gap-2 flex-wrap">
-        <form class="d-flex" role="search" action="shop.html" method="GET">
-          <input class="form-control form-control-sm me-1" type="search" name="q" placeholder="Search..." aria-label="Search" style="border:2px solid #1a5c2e;border-radius:4px;">
-          <button class="btn btn-sm" style="background:#1a5c2e;color:#fff;border-radius:4px;font-weight:600;" type="submit">Search</button>
-        </form>
-        <a href="https://wa.me/+254727747699" target="_blank" class="whatsapp-float text-decoration-none">📱 0727747699</a>
-        <a href="account.html" class="text-decoration-none" style="color:#333;font-size:14px;font-weight:600;">👤 Account</a>
-        <a href="cart.html" class="position-relative text-decoration-none" style="color:#333;font-size:20px;">🛒<span class="cart-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cartCount">0</span></a>
-      </div>
-    </div>
-  </div>
-</nav>
-<div class="logo-text"><h1>Obwocha's <span>Pharmacy</span></h1><small>Meru's Own Pharmacy</small></div></a>
-
-
-  <div class="search-bar"><input type="text" placeholder="Search articles..."><button>Search</button></div>
-
-
-  <div class="header-icons"><a href="https://wa.me/+254727747699" target="_blank" class="whatsapp-btn">📱 0727747699</a><a href="account.html">👤 Account</a><a href="cart.html" class="cart-icon">🛒 <span class="badge">0</span></a></div>
-
-
+</script></head>
+<body>
+<div class="top-bar"><div class="left"><span>🚚 Free Delivery For orders above KSh 2,500/=</span></div><div class="right"><a href="about.html">About</a><a href="blog.html">Blog</a><a href="faq.html">FAQ</a><a href="contact.html">Contact</a></div></div>
+<div class="header-nav-wrap">
+<header>
+  <button class="mobile-menu-toggle" onclick="document.querySelector('.main-nav').classList.toggle('open')">&#9776; Menu</button>
+  <a href="index.html" class="logo"><div class="logo-icon"><img src="icons/logo.svg" alt="Obwochas Pharmacy" width="44" height="44"></div><div class="logo-text"><h1>Obwocha's <span>Pharmacy</span></h1><small>Meru's Own Pharmacy</small></div></a>
+  <div class="search-bar"><input type="text" placeholder="Search articles..."><button>Search</button></div>
+  <div class="header-icons"><a href="https://wa.me/+254727747699" target="_blank" class="whatsapp-btn">📱 0727747699</a><a href="account.html">👤 Account</a><a href="cart.html" class="cart-icon">🛒 <span class="badge">0</span></a></div>
 </header>
 
 <!-- Navigation -->
-<nav class="main-nav"><ul><li><a href="index.html">Home</a></li><li><a href="shop.html">Shop</a></li><li><a href="health-conditions.html">Health Conditions</a></li><li><a href="blog.html" class="active">Blog</a></li><li><a href="about.html">About</a></li></ul></nav>
-
-</div>
-
-
-
-
-
-
-
-
-
-<div class="page-header"><h2>📝 Obwocha's Health Blog</h2><p>Health tips, wellness advice, and pharmacy insights from our experts</p><div class="breadcrumb"><a href="index.html">Home</a> / <span>Blog</span></div></div>
-
-
-
-
-
-<div class="container">
-
-
-  <div class="blog-grid">
-
-
-    <article class="blog-card">
-
-
-      <div class="blog-card-img">💊</div>
-
-
-      <div class="blog-card-body">
-
-
-        <div class="date">📅 May 28, 2026 | 🏷️ Vitamins</div>
-
-
-        <h3><a href="blog-post.html">5 Essential Vitamins Every Kenyan Should Take</a></h3>
-
-
-        <p>Discover the key vitamins your body needs to stay healthy in Kenya's unique climate and lifestyle conditions.</p>
-
-
-        <a href="blog-post.html" class="read-more">Read More →</a>
-
-
-      </div>
-
-
-    </article>
-
-
-    <article class="blog-card">
-
-
-      <div class="blog-card-img">🧴</div>
-
-
-      <div class="blog-card-body">
-
-
-        <div class="date">📅 May 22, 2026 | 🏷️ Skin Care</div>
-
-
-        <h3><a href="blog-post.html">Skincare Routine for Kenya's Sunny Climate</a></h3>
-
-
-        <p>Protect your skin from harsh UV rays with our dermatologist-approved daily skincare guide.</p>
-
-
-        <a href="blog-post.html" class="read-more">Read More →</a>
-
-
-      </div>
-
-
-    </article>
-
-
-    <article class="blog-card">
-
-
-      <div class="blog-card-img">🤧</div>
-
-
-      <div class="blog-card-body">
-
-
-        <div class="date">📅 May 15, 2026 | 🏷️ Allergies</div>
-
-
-        <h3><a href="blog-post.html">Managing Seasonal Allergies Naturally</a></h3>
-
-
-        <p>Tips and remedies to help you cope with common allergies without always reaching for medication.</p>
-
-
-        <a href="blog-post.html" class="read-more">Read More →</a>
-
-
-      </div>
-
-
-    </article>
-
-
-    <article class="blog-card">
-
-
-      <div class="blog-card-img">🤱</div>
-
-
-      <div class="blog-card-body">
-
-
-        <div class="date">📅 May 10, 2026 | 🏷️ Maternity</div>
-
-
-        <h3><a href="blog-post.html">Prenatal Care: What Every Expectant Mom Should Know</a></h3>
-
-
-        <p>A comprehensive guide to prenatal supplements, check-ups, and preparing for a healthy pregnancy.</p>
-
-
-        <a href="blog-post.html" class="read-more">Read More →</a>
-
-
-      </div>
-
-
-    </article>
-
-
-    <article class="blog-card">
-
-
-      <div class="blog-card-img">❤️</div>
-
-
-      <div class="blog-card-body">
-
-
-        <div class="date">📅 May 3, 2026 | 🏷️ Heart Health</div>
-
-
-        <h3><a href="blog-post.html">Heart Health: Simple Lifestyle Changes That Save Lives</a></h3>
-
-
-        <p>Learn how small daily habits can dramatically reduce your risk of heart disease.</p>
-
-
-        <a href="blog-post.html" class="read-more">Read More →</a>
-
-
-      </div>
-
-
-    </article>
-
-
-    <article class="blog-card">
-
-
-      <div class="blog-card-img">🩸</div>
-
-
-      <div class="blog-card-body">
-
-
-        <div class="date">📅 April 28, 2026 | 🏷️ Diabetes</div>
-
-
-        <h3><a href="blog-post.html">Living Well with Diabetes: Diet, Exercise & Medication</a></h3>
-
-
-        <p>Practical advice for managing diabetes while still enjoying a full and active life.</p>
-
-
-        <a href="blog-post.html" class="read-more">Read More →</a>
-
-
-      </div>
-
-
-    </article>
-
-
-  </div>
-
-
-  <div style="text-align:center;margin:24px 0 40px;">
-
-
-    <div style="display:inline-flex;gap:6px;">
-
-
-      <a href="#" style="padding:8px 14px;border:1px solid var(--border);border-radius:4px;background:var(--primary);color:#fff;">1</a>
-
-
-      <a href="#" style="padding:8px 14px;border:1px solid var(--border);border-radius:4px;">2</a>
-
-
-      <a href="#" style="padding:8px 14px;border:1px solid var(--border);border-radius:4px;">3</a>
-
-
-      <a href="#" style="padding:8px 14px;border:1px solid var(--border);border-radius:4px;">→</a>
-
-
-    </div>
-
-
-  </div>
-
-
-</div>
-
-
-
-
-
-<section class="py-5 text-center" style="background:#12401f;color:#fff;">
-  <div class="container" style="max-width:600px;">
-    <h3 class="fw-bold mb-2">Stay in the Know</h3>
-    <p class="small mb-3 opacity-75">Sign up for the latest deals, product news, health tips, and exclusive offers from Obwocha's Pharmacy.</p>
-    <form class="d-flex gap-2 justify-content-center">
-      <input type="email" class="form-control" placeholder="Enter your email address" style="max-width:350px;border-radius:4px;">
-      <button class="btn btn-warning fw-bold text-dark" type="submit" style="background:#ffd700;border:none;">Subscribe</button>
-    </form>
-  </div>
-</section>
-
-
-<footer class="footer">
-  <div class="container">
-    <div class="row g-4">
-      <div class="col-6 col-md-3">
-        <h5>Shop By Category</h5>
-        <div class="d-flex flex-column gap-1">
-          <a href="shop.html?cat=vitamins">Vitamin &amp; Supplements</a>
-          <a href="shop.html?cat=skincare">Skin Care</a>
-          <a href="brands.html">All Brands</a>
-          <a href="prescription.html">Prescription Services</a>
-          <a href="services.html">The Health Hub</a>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <h5>About Us</h5>
-        <div class="d-flex flex-column gap-1">
-          <a href="about.html">About Obwocha</a>
-          <a href="health-conditions.html">Health Conditions</a>
-          <a href="blog.html">Blog</a>
-          <a href="privacy.html">Privacy Policy</a>
-          <a href="terms.html">Terms &amp; Conditions</a>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <h5>Customer Care</h5>
-        <div class="d-flex flex-column gap-1">
-          <a href="returns.html">Delivery &amp; Returns</a>
-          <a href="account.html">My Account</a>
-          <a href="faq.html">FAQ's</a>
-          <a href="sitemap.html">Sitemap</a>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <h5>Contact Us</h5>
-        <div class="d-flex flex-column gap-1 small">
-          <p class="mb-1">📞 <a href="tel:0727747699">0727747699</a></p>
-          <p class="mb-1">📱 <a href="https://wa.me/+254727747699">0727747699</a></p>
-          <p class="mb-1">📧 <a href="mailto:info@obwochaspharmacy.co.ke">Email</a></p>
-          <p class="mb-1 small opacity-75">P.O. Box 1852-00621<br>Nairobi, Kenya</p>
-        </div>
-      </div>
-    </div>
-    <hr class="my-3" style="border-color:rgba(255,255,255,0.15);">
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
-      <div>
-        <a href="terms.html" class="small">Terms &amp; Conditions</a>
-        <span class="mx-1 opacity-50">|</span>
-        <a href="privacy.html" class="small">Privacy Policy</a>
-        <span class="mx-1 opacity-50">|</span>
-        <a href="cookies.html" class="small">Cookie Policy</a>
-      </div>
-      <div class="small opacity-75">Copyright &copy; 2026 <a href="index.html" style="color:#ffd700;">Obwocha's Pharmacy</a>. All Rights Reserved.</div>
-      <div class="small opacity-75">M-Pesa | Visa | MasterCard | Cash-on-Delivery</div>
-    </div>
-  </div>
-</footer>
-
-
-<a href="https://wa.me/+254727747699" target="_blank" class="whatsapp-float position-fixed bottom-0 end-0 m-3 text-decoration-none shadow" style="z-index:999;border-radius:50%;width:56px;height:56px;display:flex;align-items:center;justify-content:center;font-size:28px;" title="Chat on WhatsApp">💬</a>
-
-
+<nav class="main-nav"><ul><li><a href="index.html">Home</a></li><li><a href="shop.html">Shop</a></li><li><a href="health-conditions.html">Health Conditions</a></li><li><a href="blog.html" class="active">Blog</a></li><li><a href="about.html">About</a></li></ul></nav>
+</div>
+
+
+
+<div class="page-header"><h2>📝 Obwocha's Health Blog</h2><p>Health tips, wellness advice, and pharmacy insights from our experts</p><div class="breadcrumb"><a href="index.html">Home</a> / <span>Blog</span></div></div>
+
+<div class="container">
+  <div class="blog-grid">
+    <article class="blog-card">
+      <div class="blog-card-img">💊</div>
+      <div class="blog-card-body">
+        <div class="date">📅 May 28, 2026 | 🏷️ Vitamins</div>
+        <h3><a href="blog-post.html">5 Essential Vitamins Every Kenyan Should Take</a></h3>
+        <p>Discover the key vitamins your body needs to stay healthy in Kenya's unique climate and lifestyle conditions.</p>
+        <a href="blog-post.html" class="read-more">Read More →</a>
+      </div>
+    </article>
+    <article class="blog-card">
+      <div class="blog-card-img">🧴</div>
+      <div class="blog-card-body">
+        <div class="date">📅 May 22, 2026 | 🏷️ Skin Care</div>
+        <h3><a href="blog-post.html">Skincare Routine for Kenya's Sunny Climate</a></h3>
+        <p>Protect your skin from harsh UV rays with our dermatologist-approved daily skincare guide.</p>
+        <a href="blog-post.html" class="read-more">Read More →</a>
+      </div>
+    </article>
+    <article class="blog-card">
+      <div class="blog-card-img">🤧</div>
+      <div class="blog-card-body">
+        <div class="date">📅 May 15, 2026 | 🏷️ Allergies</div>
+        <h3><a href="blog-post.html">Managing Seasonal Allergies Naturally</a></h3>
+        <p>Tips and remedies to help you cope with common allergies without always reaching for medication.</p>
+        <a href="blog-post.html" class="read-more">Read More →</a>
+      </div>
+    </article>
+    <article class="blog-card">
+      <div class="blog-card-img">🤱</div>
+      <div class="blog-card-body">
+        <div class="date">📅 May 10, 2026 | 🏷️ Maternity</div>
+        <h3><a href="blog-post.html">Prenatal Care: What Every Expectant Mom Should Know</a></h3>
+        <p>A comprehensive guide to prenatal supplements, check-ups, and preparing for a healthy pregnancy.</p>
+        <a href="blog-post.html" class="read-more">Read More →</a>
+      </div>
+    </article>
+    <article class="blog-card">
+      <div class="blog-card-img">❤️</div>
+      <div class="blog-card-body">
+        <div class="date">📅 May 3, 2026 | 🏷️ Heart Health</div>
+        <h3><a href="blog-post.html">Heart Health: Simple Lifestyle Changes That Save Lives</a></h3>
+        <p>Learn how small daily habits can dramatically reduce your risk of heart disease.</p>
+        <a href="blog-post.html" class="read-more">Read More →</a>
+      </div>
+    </article>
+    <article class="blog-card">
+      <div class="blog-card-img">🩸</div>
+      <div class="blog-card-body">
+        <div class="date">📅 April 28, 2026 | 🏷️ Diabetes</div>
+        <h3><a href="blog-post.html">Living Well with Diabetes: Diet, Exercise & Medication</a></h3>
+        <p>Practical advice for managing diabetes while still enjoying a full and active life.</p>
+        <a href="blog-post.html" class="read-more">Read More →</a>
+      </div>
+    </article>
+  </div>
+  <div style="text-align:center;margin:24px 0 40px;">
+    <div style="display:inline-flex;gap:6px;">
+      <a href="#" style="padding:8px 14px;border:1px solid var(--border);border-radius:4px;background:var(--primary);color:#fff;">1</a>
+      <a href="#" style="padding:8px 14px;border:1px solid var(--border);border-radius:4px;">2</a>
+      <a href="#" style="padding:8px 14px;border:1px solid var(--border);border-radius:4px;">3</a>
+      <a href="#" style="padding:8px 14px;border:1px solid var(--border);border-radius:4px;">→</a>
+    </div>
+  </div>
+</div>
+
+<section class="newsletter"><h3>📬 Subscribe to Our Blog</h3><p>Get health tips delivered to your inbox every week.</p><div class="newsletter-form"><input type="email" placeholder="Enter your email address"><button>Subscribe</button></div></section>
+<footer>
+  <div class="footer-grid">
+    <div><h4>Blog Categories</h4><a href="blog.html">All Articles</a><a href="blog.html?cat=vitamins">Vitamins</a><a href="blog.html?cat=skincare">Skin Care</a><a href="blog.html?cat=heart">Heart Health</a></div>
+    <div><h4>Company</h4><a href="about.html">About</a><a href="careers.html">Careers</a><a href="contact.html">Contact</a></div>
+    <div class="contact-info"><h4>Contact</h4><p>📞 <a href="tel:0727747699">0727747699</a></p><p>📧 <a href="mailto:info@obwochaspharmacy.co.ke">info@obwochaspharmacy.co.ke</a></p></div>
+  </div>
+  <div class="footer-bottom"><p>Copyright © 2026 Obwocha's Pharmacy</p></div>
+</footer>
+<a href="https://wa.me/+254727747699" target="_blank" class="whatsapp-float">💬</a>
 
 <script>
 if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(e){console.log("SW registration failed:",e)})}
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-</body>
-
-
-</html>
-
-
+</script></body>
+</html>
