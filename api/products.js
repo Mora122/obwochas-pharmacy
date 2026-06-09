@@ -89,7 +89,7 @@ module.exports = async (req, res) => {
 
     // DELETE — Delete product (admin)
     if (req.method === 'DELETE') {
-      const productId = req.query.id;
+      const productId = req.query.id || req.query._id;
       if (!productId) {
         return res.status(400).json({ success: false, error: 'Product ID required' });
       }
