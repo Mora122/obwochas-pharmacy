@@ -456,33 +456,13 @@ function renderOrders() {
 
   if (filtered.length === 0) {
 
-    el.innerHTML = '<div style="padding:60px;text-align:center;color:#999">No orders found</div>';
-
-    return;
-
-  }
-
-  var html = '';
-
-  for (var i = 0; i < filtered.length; i++) {
-
-    var o = filtered[i];
-
-    var c = o.customer || {};
-
-    var sc = 'status-' + (o.status || 'pending');
-
-    var t = o.total || (o.totals ? o.totals.total : 0);
-
-    var ic = o.items ? o.items.length : 0;
-
-    var dt = o.createdAt ? new Date(o.createdAt).toLocaleString('en-KE', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '';
-
-    html += '<div class="order-card" onclick="showOrderDetail(\'' + o._id + '\')">' +
-
-      '<div><div class="order-id">#' + (o.id || o._id) + '</div><div style="font-size:13px;color:#333">' + (c.name || 'Guest') + '<br><small style="color:#888">' + (c.phone || '') + '</small></div></div>' +
-
-      '<div style="text-align:center"><span class="status-badge ' + sc + '">' + (o.status || 'pending') + '</span><br><span style="font-size:12px;color:#666">' + ic + ' item' + (ic !== 1 ? 's' : '') + '</span></div>' +
+    el.innerHTML = '<div style="flex:1;display:flex;gap:10px">' +
+        (p.image ? '<div style="width:44px;height:44px;flex-shrink:0;border-radius:6px;overflow:hidden;background:#f0f0f0"><img src="' + p.image + '" alt="' + p.name + '" style="width:100%;height:100%;object-fit:cover" onerror="this.remove()"></div>' : '') +
+        '<div style="min-width:0">' +
+        '<div class="prod-name">' + p.name + '</div>' +
+        '<div class="prod-cat">' + (p.category || '') + ' • ' + p.id + '</div>' +
+        '<div style="font-size:11px;color:#555;margin-top:2px">' + (p.description ? p.description.substring(0,60) + (p.description.length > 60 ? '...' : '') : '') + '</div>' +
+      '</div>' +'<div style="text-align:center"><span class="status-badge ' + sc + '">' + (o.status || 'pending') + '</span><br><span style="font-size:12px;color:#666">' + ic + ' item' + (ic !== 1 ? 's' : '') + '</span></div>' +
 
       '<div style="text-align:right"><div class="total">KSh ' + Number(t).toLocaleString() + '</div><div class="date">' + dt + '</div></div></div>';
 
@@ -748,11 +728,13 @@ function renderProducts() {
 
     html += '<div class="product-card">' +
 
-      '<div style="flex:1">' +
-
+      '<div style="flex:1;display:flex;gap:10px">' +
+        (p.image ? '<div style="width:44px;height:44px;flex-shrink:0;border-radius:6px;overflow:hidden;background:#f0f0f0"><img src="' + p.image + '" alt="' + p.name + '" style="width:100%;height:100%;object-fit:cover" onerror="this.remove()"></div>' : '') +
+        '<div style="min-width:0">' +
         '<div class="prod-name">' + p.name + '</div>' +
-
         '<div class="prod-cat">' + (p.category || '') + ' • ' + p.id + '</div>' +
+        '<div style="font-size:11px;color:#555;margin-top:2px">' + (p.description ? p.description.substring(0,60) + (p.description.length > 60 ? '...' : '') : '') + '</div>' +
+      '</div>' +'<div class="prod-cat">' + (p.category || '') + ' • ' + p.id + '</div>' +
 
         '<div style="font-size:11px;color:#555;margin-top:2px">' + (p.description ? p.description.substring(0,60) + (p.description.length > 60 ? '...' : '') : '') + '</div>' +
 
