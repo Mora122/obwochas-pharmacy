@@ -1,0 +1,35 @@
+
+async function giveDiscount(orderId) {
+  var type = prompt('Discount type? Enter "%" for percentage or "KSh" for fixed amount:', '%');
+  if (type === null) return;
+  var isPercent = type.trim() === '%';
+  var val = prompt('Discount value' + (isPercent ? ' (e.g., 10 for 10% off):' : ' (e.g., 500 for KSh 500 off):'));
+  if (val === null) return;
+  var numVal = parseFloat(val);
+  if (isNaN(numVal) || numVal <= 0) { alert('Invalid value'); return; }
+  var reason = prompt('Reason for discount (optional):', '');
+  if (reason === null) return;
+  try {
+    var r = await fetch(API + '/order?id=' + orderId, {
+      method: 'PATCH',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        discount: {
+          type: isPercent ? 'percentage' : 'fixed',
+          value: numVal,
+          reason: reason.trim() || 'Admin discount'
+        }
+      })
+    });
+    var d = await r.json();
+    if (d.success) {
+      loadOrders();
+      showOrderDetail(orderId);
+    } else {
+      alert('Error: ' + d.error);
+    }
+  } catch(e) {
+    alert('Error: ' + e.message);
+  }
+}
+

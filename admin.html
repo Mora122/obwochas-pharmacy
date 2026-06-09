@@ -576,13 +576,13 @@ async function showOrderDetail(id) {
 
       '<div class="detail-grid">' +
 
-        '<div class="detail-section"><h4>Totals</h4><p><strong>Subtotal:</strong> KSh ' + Number(t.subtotal || 0).toLocaleString() + '</p><p><strong>Shipping:</strong> ' + (t.shipping === 0 ? 'FREE' : 'KSh ' + Number(t.shipping).toLocaleString()) + '</p><p><strong style="font-size:16px">Total:</strong> <strong style="color:var(--primary);font-size:18px">KSh ' + Number(t.total || 0).toLocaleString() + '</strong></p></div>' +
+        '<div class="detail-section"><h4>Totals</h4><p><strong>Subtotal:</strong> KSh ' + Number(t.subtotal || 0).toLocaleString() + '</p><p><strong>Shipping:</strong> ' + (t.shipping === 0 ? 'FREE' : 'KSh ' + Number(t.shipping).toLocaleString()) + '</p>' + (o.discount ? '<p><strong>Discount:</strong> <span style="color:#c62828">-' + (o.discount.type === 'percentage' ? o.discount.value + '%' : 'KSh ' + Number(o.discount.value).toLocaleString()) + '</span> <span style="font-size:11px;color:#888">(' + (o.discount.reason || '') + ')</span></p>' : '') + '<p><strong style="font-size:16px">Total:</strong> <strong style="color:var(--primary);font-size:18px">KSh ' + Number(t.total || 0).toLocaleString() + '</strong></p></div>' +
 
         '<div class="detail-section"><h4>Timeline</h4><p><strong>Created:</strong> ' + (o.createdAt ? new Date(o.createdAt).toLocaleString('en-KE') : '') + '</p><p><strong>Updated:</strong> ' + (o.updatedAt ? new Date(o.updatedAt).toLocaleString('en-KE') : '') + '</p></div>' +
 
       '</div>' +
 
-      '<div class="status-update"><strong style="font-size:13px">Update Status:</strong> <select id="statusSelect">' + selHtml + '</select> <button class="btn btn-primary" onclick="updateOrderStatus(\'' + (o.id || id) + '\')" style="font-size:12px">Update</button> <button class="btn" onclick="document.getElementById(\'orderDetail\').classList.remove(\'active\')" style="font-size:12px">Close</button></div>';
+      '<div class="status-update"><strong style="font-size:13px">Update Status:</strong> <select id="statusSelect">' + selHtml + '</select> <button class="btn btn-primary" onclick="updateOrderStatus(\'' + (o.id || id) + '\')" style="font-size:12px">Update</button> <button class="btn btn-secondary" onclick="giveDiscount(\'' + (o.id || id) + '\')" style="font-size:12px;background:#fff3e0;color:#e65100;border:1px solid #e65100">🎁 Discount</button> <button class="btn" onclick="document.getElementById(\'orderDetail\').classList.remove(\'active\')" style="font-size:12px">Close</button></div>';
 
     panel.classList.add('active');
 
@@ -629,6 +629,41 @@ async function updateOrderStatus(id) {
   }
 
 }
+async function giveDiscount(orderId) {
+  var type = prompt('Discount type? Enter "%" for percentage or "KSh" for fixed amount:', '%');
+  if (type === null) return;
+  var isPercent = type.trim() === '%';
+  var val = prompt('Discount value' + (isPercent ? ' (e.g., 10 for 10% off):' : ' (e.g., 500 for KSh 500 off):'));
+  if (val === null) return;
+  var numVal = parseFloat(val);
+  if (isNaN(numVal) || numVal <= 0) { alert('Invalid value'); return; }
+  var reason = prompt('Reason for discount (optional):', '');
+  if (reason === null) return;
+  try {
+    var r = await fetch(API + '/order?id=' + orderId, {
+      method: 'PATCH',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        discount: {
+          type: isPercent ? 'percentage' : 'fixed',
+          value: numVal,
+          reason: reason.trim() || 'Admin discount'
+        }
+      })
+    });
+    var d = await r.json();
+    if (d.success) {
+      loadOrders();
+      showOrderDetail(orderId);
+    } else {
+      alert('Error: ' + d.error);
+    }
+  } catch(e) {
+    alert('Error: ' + e.message);
+  }
+}
+
+
 
 
 

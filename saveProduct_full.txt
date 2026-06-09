@@ -1,0 +1,160 @@
+async function saveProduct() {
+
+  var id = document.getElementById('editProductId').value;
+
+  var data = {
+
+    name: document.getElementById('prodName').value.trim(),
+
+    category: document.getElementById('prodCategory').value,
+
+    price: document.getElementById('prodPrice').value,
+
+    stock: document.getElementById('prodStock').value || 0,
+
+    description: document.getElementById('prodDesc').value.trim(),
+
+    image: document.getElementById('prodImage').value.trim()
+
+  };
+
+  if (!data.name || !data.price) { alert('Name and price are required'); return; }
+
+  
+
+  try {
+
+    var r;
+
+    if (id) {
+
+      r = await fetch(API + '/products?id=' + id, {method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+
+    } else {
+
+      r = await fetch(API + '/products', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+
+    }
+
+    var d = await r.json();
+
+    if (d.success) {
+
+      closeModal();
+
+      loadProducts();
+
+    } else {
+
+      alert('Error: ' + d.error);
+
+    }
+
+  } catch(e) {
+
+    alert('Error: ' + e.message);
+
+  }
+
+}
+
+
+
+async function toggleFeatured(id, value) {
+  try {
+    var r = await fetch(API + "/products?id=" + id, {method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({featured:value})});
+    var d = await r.json();
+    if (d.success) { loadProducts(); }
+  } catch(e) { alert("Error: " + e.message); }
+}
+
+async function toggleSpecial(id, value) {
+  try {
+    var r = await fetch(API + "/products?id=" + id, {method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({specialOffer:value})});
+    var d = await r.json();
+    if (d.success) { loadProducts(); }
+  } catch(e) { alert("Error: " + e.message); }
+}
+
+async function quickStock(id, change) {
+
+  var reason = prompt('Stock change: ' + (change > 0 ? '+' : '') + change + ' units. Reason:', '');
+
+  if (reason === null) return;
+
+  if (reason.trim() === '') reason = 'Quick stock ' + (change > 0 ? 'addition' : 'removal');
+
+  var btn = event && event.target ? event.target : null;
+
+  if (btn) { btn.disabled = true; btn.textContent = '...'; }
+
+  fetch(API + '/products?id=' + id + '&action=stock', {
+
+    method: 'PATCH',
+
+    headers: { 'Content-Type': 'application/json' },
+
+    body: JSON.stringify({ change: change, reason: reason.trim() })
+
+  })
+
+  .then(function(r){ return r.json(); })
+
+  .then(function(res){
+
+    if (res.success) {
+
+      loadProducts();
+
+    } else {
+
+      alert('Stock error: ' + (res.error || 'Unknown'));
+
+      if (btn) { btn.disabled = false; btn.textContent = change > 0 ? '+' + change : '' + change; }
+
+    }
+
+  })
+
+  .catch(function(e){
+
+    alert('Connection error: ' + e.message);
+
+    if (btn) { btn.disabled = false; btn.textContent = change > 0 ? '+' + change : '' + change; }
+
+  });
+
+}
+
+async function deleteProduct(id, name) {
+
+  if (!confirm('Delete "' + name + '" permanently?')) return;
+
+  try {
+
+    var r = await fetch(API + '/products?id=' + id, {method:'DELETE'});
+
+    var d = await r.json();
+
+    if (d.success) {
+
+      loadProducts();
+
+    } else {
+
+      alert('Error: ' + d.error);
+
+    }
+
+  } catch(e) {
+
+    alert('Error: ' + e.message);
+
+  }
+
+}
+
+
+
+// Auto-refresh
+

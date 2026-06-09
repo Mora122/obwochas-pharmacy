@@ -1,0 +1,81 @@
+function showOrderDetail(id) {
+
+  var panel = document.getElementById('orderDetail');
+
+  try {
+
+    var r = await fetch(API + '/order?id=' + id);
+
+    var d = await r.json();
+
+    if (!d.success || !d.order) {
+
+      panel.innerHTML = '<div class="error">Order not found</div>';
+
+      panel.classList.add('active');
+
+      return;
+
+    }
+
+    var o = d.order;
+
+    var c = o.customer || {};
+
+    var p = o.payment || {};
+
+    var t = o.totals || {};
+
+    var sc = 'status-' + (o.status || 'pending');
+
+    var itemsHtml = '';
+
+    var items = o.items || [];
+
+    for (var i = 0; i < items.length; i++) {
+
+      var item = items[i];
+
+      var lineTotal = (item.price || 0) * (item.quantity || 1);
+
+      itemsHtml += '<tr><td>' + (item.name || '') + '</td><td>' + (item.quantity || 1) + '</td><td>KSh ' + Number(item.price || 0).toLocaleString() + '</td><td>KSh ' + Number(lineTotal).toLocaleString() + '</td></tr>';
+
+    }
+
+    var statusOpts = ['pending','confirmed','processing','shipped','delivered','cancelled'];
+
+    var selHtml = '';
+
+    for (var i = 0; i < statusOpts.length; i++) {
+
+      selHtml += '<option value="' + statusOpts[i] + '"' + (o.status === statusOpts[i] ? ' selected' : '') + '>' + statusOpts[i].charAt(0).toUpperCase() + statusOpts[i].slice(1) + '</option>';
+
+    }
+
+    var oid = o.id || id;
+
+    panel.innerHTML =
+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">' +
+
+        '<h3 style="margin:0;color:var(--primary)">Order #' + oid + '</h3>' +
+
+        '<span class="status-badge ' + sc + '" style="font-size:14px;padding:6px 16px">' + (o.status || '') + '</span>' +
+
+      '</div>' +
+
+      '<div class="detail-grid">' +
+
+        '<div class="detail-section"><h4>Customer</h4><p><strong>Name:</strong> ' + (c.name || '') + '</p><p><strong>Phone:</strong> ' + (c.phone || '') + '</p><p><strong>Email:</strong> ' + (c.email || '') + '</p><p><strong>Address:</strong> ' + (c.address || '') + '</p></div>' +
+
+        '<div class="detail-section"><h4>Payment</h4><p><strong>Method:</strong> ' + (p.method || '') + '</p><p><strong>Status:</strong> ' + (p.status || '') + '</p></div>' +
+
+      '</div>' +
+
+      '<div class="detail-section"><h4>Items (' + items.length + ')</h4><table class="order-items-table"><tr><th>Product</th><th>Qty</th><th>Price</th><th>Total</th></tr>' + itemsHtml + '</table></div>' +
+
+      '<div class="detail-grid">' +
+
+        '<div class="detail-section"><h4>Totals</h4><p><strong>Subtotal:</strong> KSh ' + Number(t.subtotal || 0).toLocaleString() + '</p><p><strong>Shipping:</strong> ' + (t.shipping === 0 ? 'FREE' : 'KSh ' + Number(t.shipping).toLocaleString()) + '</p><p><strong style="font-size:16px">Total:</strong> <strong style="color:var(--primary);font-size:18px">KSh ' + Number(t.total || 0).toLocaleString() + '</strong></p></div>' +
+
+        '<div class="detail-section"><h4>Timeline</h4><p><strong>Created:</strong> ' + (o.createdAt ? new Date(o.createdAt).toLocaleString('en-

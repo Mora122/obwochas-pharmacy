@@ -1,0 +1,43 @@
+renderOrders();
+
+  } catch(e) {
+
+    document.getElementById('orderList').innerHTML = '<div class="error">Connection error</div>';
+
+  }
+
+}
+
+
+
+function renderOrders() {
+
+  var sf = document.getElementById('statusFilter').value;
+
+  var sq = document.getElementById('searchBox').value.toLowerCase();
+
+  var filtered = allOrders;
+
+  if (sf) filtered = filtered.filter(function(o) { return o.status === sf; });
+
+  if (sq) filtered = filtered.filter(function(o) {
+
+    var c = o.customer || {};
+
+    return (c.name + ' ' + c.phone + ' ' + c.email + ' ' + o.id).toLowerCase().includes(sq);
+
+  });
+
+  updateOrderStats();
+
+  var el = document.getElementById('orderList');
+
+  if (filtered.length === 0) {
+
+    el.innerHTML = '<div style="flex:1;display:flex;gap:10px">' +
+        (p.image ? '<div style="width:44px;height:44px;flex-shrink:0;border-radius:6px;overflow:hidden;background:#f0f0f0"><img src="' + p.image + '" alt="' + p.name + '" style="width:100%;height:100%;object-fit:cover" onerror="this.remove()"></div>' : '') +
+        '<div style="min-width:0">' +
+        '<div class="prod-name">' + p.name + '</div>' +
+        '<div class="prod-cat">' + (p.category || '') + ' • ' + p.id + '</div>' +
+        '<div style="font-size:11px;color:#555;margin-top:2px">' + (p.description ? p.description.substring(0,60) + (p.description.length > 60 ? '...' : '') : '') + '</div>' +
+      '</div>' +'<div style="text-align:center"><span class="status-badge ' + sc + '">' + (o.status || 'pending') + '</span><br

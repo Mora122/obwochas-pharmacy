@@ -1,0 +1,32 @@
+function loadOrders() {
+
+  document.getElementById('orderList').innerHTML = '<div class="loading">Loading...</div>';
+
+  try {
+
+    var r = await fetch(API + '/orders');
+
+    var d = await r.json();
+
+    if (!d.success) {
+
+      document.getElementById('orderList').innerHTML = '<div class="error">' + d.error + '</div>';
+
+      return;
+
+    }
+
+    allOrders = d.orders || [];
+
+    renderOrders();
+
+  } catch(e) {
+
+    document.getElementById('orderList').innerHTML = '<div class="error">Connection error</div>';
+
+  }
+
+}
+
+
+

@@ -1,0 +1,45 @@
+var html = '';
+
+  var totalStock = 0;
+
+  var lowStock = 0;
+
+  var lowStockItems = [];
+
+  var categories = {};
+
+  for (var i = 0; i < allProducts.length; i++) {
+
+    var p = allProducts[i];
+
+    totalStock += (p.stock || 0);
+
+    if (p.stock !== undefined && p.stock < 20) { lowStock++; lowStockItems.push(p.name + ' (' + p.stock + ')'); }
+
+    if (!categories[p.category]) categories[p.category] = 0;
+
+    categories[p.category]++;
+
+    var stockClass = p.stock <= 0 ? 'stock-out' : p.stock < 20 ? 'stock-low' : 'stock-ok';
+
+    var stockLabel = p.stock <= 0 ? 'Out of stock' : p.stock + ' in stock';
+
+    html += '<div class="product-card">' +
+
+      '<div style="flex:1;display:flex;gap:10px">' +
+        (p.image ? '<div style="width:44px;height:44px;flex-shrink:0;border-radius:6px;overflow:hidden;background:#f0f0f0"><img src="' + p.image + '" alt="' + p.name + '" style="width:100%;height:100%;object-fit:cover" onerror="this.remove()"></div>' : '') +
+        '<div style="min-width:0">' +
+        '<div class="prod-name">' + p.name + '</div>' +
+        '<div class="prod-cat">' + (p.category || '') + ' • ' + p.id + '</div>' +
+        '<div style="font-size:11px;color:#555;margin-top:2px">' + (p.description ? p.description.substring(0,60) + (p.description.length > 60 ? '...' : '') : '') + '</div>' +
+      '</div>' +
+
+      '<div style="text-align:center;min-width:100px;position:relative">' +
+
+        '<div class="prod-price">KSh ' + Number(p.price).toLocaleString() + '</div>' +
+
+        '<div class="prod-stock ' + stockClass + '">' + stockLabel + '</div>' +
+
+        '<div style="display:flex;gap:2px;justify-content:center;margin-top:4px">' +
+          '<button onclick="quickStock(\'' + p.id + '\',-1)" title="Remove 1" style="padding:2px 6px;font-size:11px;background:#ffebee;color:#c62828;border:1px solid #ef9a9a;border-radius:3px;cursor:pointer">-1</button>' +
+          '<button onclick="quickStock(\'' + p.id + '\',-5)" title="Remove 5" style="padding:2px 6px;font-size:11px;ba

@@ -23,8 +23,24 @@ module.exports = async (req, res) => {
     }
 
     if (req.method === 'PATCH') {
-      const { status } = req.body;
-      if (!status) return res.status(400).json({ error: 'Missing status field' });
+      const { status, discount } = req.body;
+      
+      if (discount) {
+        if (!discount.type || !discount.value) {
+          return res.status(400).json({ error: 'Discount needs type (percentage/fixed) and value' });
+        }
+        if (!['percentage', 'fixed'].includes(discount.type)) {
+          return res.status(400).json({ error: 'Discount type must be percentage or fixed' });
+        }
+        if (discount.value <= 0) {
+          return res.status(400).json({ error: 'Discount value must be positive' });
+        }
+        const updated = await db.applyDiscount(orderId, discount);
+        if (!updated) return res.status(404).json({ error: 'Order not found' });
+        return res.json({ success: true, order: updated });
+      }
+      
+      if (!status) return res.status(400).json({ error: 'Missing status or discount field' });
       
       const updated = await db.updateOrderStatus(orderId, status);
       if (!updated) return res.status(404).json({ error: 'Order not found' });
