@@ -1,0 +1,9 @@
+var catCount = Object.keys(categories).length;
+
+  document.getElementById('inventorySummary').style.display = 'block';
+
+  document.getElementById('inventorySummary').innerHTML =
+
+    '<strong>📊 Inventory Summary</strong> — ' + allProducts.length + ' products across ' + catCount + ' categories &nbsp;|&nbsp; ' +
+
+    '<span class="stock-ok">✅ ' + (al

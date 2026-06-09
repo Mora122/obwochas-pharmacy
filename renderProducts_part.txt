@@ -1,0 +1,77 @@
+function renderProducts() {
+
+  var el = document.getElementById('productList');
+
+  if (allProducts.length === 0) {
+
+    el.innerHTML = '<div style="padding:60px;text-align:center;color:#999">No products found. Click "+ Add Product" to get started.</div>';
+
+    document.getElementById('inventorySummary').style.display = 'none';
+
+    return;
+
+  }
+
+  var html = '';
+
+  var totalStock = 0;
+
+  var lowStock = 0;
+
+  var categories = {};
+
+  for (var i = 0; i < allProducts.length; i++) {
+
+    var p = allProducts[i];
+
+    totalStock += (p.stock || 0);
+
+    if (p.stock !== undefined && p.stock < 20) lowStock++;
+
+    if (!categories[p.category]) categories[p.category] = 0;
+
+    categories[p.category]++;
+
+    var stockClass = p.stock <= 0 ? 'stock-out' : p.stock < 20 ? 'stock-low' : 'stock-ok';
+
+    var stockLabel = p.stock <= 0 ? 'Out of stock' : p.stock + ' in stock';
+
+    html += '<div class="product-card">' +
+
+      '<div style="flex:1">' +
+
+        '<div class="prod-name">' + p.name + '</div>' +
+
+        '<div class="prod-cat">' + (p.category || '') + ' • ' + p.id + '</div>' +
+
+        '<div style="font-size:11px;color:#555;margin-top:2px">' + (p.description ? p.description.substring(0,60) + (p.description.length > 60 ? '...' : '') : '') + '</div>' +
+
+      '</div>' +
+
+      '<div style="text-align:center;min-width:90px">' +
+
+        '<div class="prod-price">KSh ' + Number(p.price).toLocaleString() + '</div>' +
+
+        '<div class="prod-stock ' + stockClass + '">' + stockLabel + '</div>' +
+
+      '</div>' +
+
+      '<div style="display:flex;gap:4px">' +
+
+        '<button class="btn btn-primary" onclick="showEditProduct(\'' + p.id + '\')" style="font-size:11px;padding:6px 12px">Edit</button>' +
+
+        (p.featured ? '<button onclick="toggleFeatured(\'' + p.id + '\',false)" style="font-size:11px;padding:6px 10px;background:#e8f5e9;color:#2e7d32;border:1px solid #2e7d32;border-radius:4px;cursor:pointer">\u2b50 Featured</button>' : '<button onclick="toggleFeatured(\'' + p.id + '\',true)" style="font-size:11px;padding:6px 10px;background:#f5f5f5;color:#888;border:1px solid #ddd;border-radius:4px;cursor:pointer">\u2b50 Feature</button>') +
+
+        (p.specialOffer ? '<button onclick="toggleSpecial(\'' + p.id + '\',false)" style="font-size:11px;padding:6px 10px;background:#fff3e0;color:#e65100;border:1px solid #e65100;border-radius:4px;cursor:pointer">\ud83d\udd25 On Sale</button>' : '<button onclick="toggleSpecial(\'' + p.id + '\',true)" style="font-size:11px;padding:6px 10px;background:#f5f5f5;color:#888;border:1px solid #ddd;border-radius:4px;cursor:pointer">\ud83d\udd25 Offer</button>') +
+
+        '<button class="btn" onclick="deleteProduct(\'' + p.id + '\',\'' + p.name.replace(/'/g,"\\'") + '\')" style="font-size:11px;padding:6px 12px;background:#ffebee;color:#c62828;border:none;border-radius:4px;cursor:pointer">Del</button>' +
+
+      '</div></div>';
+
+  }
+
+  el.innerHTML = html;
+
+  
+
+  

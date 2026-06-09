@@ -1,0 +1,12 @@
+renderProducts();
+
+  } catch(e) {
+
+    document.getElementById('productList').innerHTML = '<div class="error">Connection error</div>';
+
+  }
+
+}
+
+
+
