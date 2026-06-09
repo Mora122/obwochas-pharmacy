@@ -1,1 +1,0 @@
-    html += '<div class="order-card" onclick="showOrderDetail(' + "'" + oid + "'" + ')">' +
