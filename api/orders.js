@@ -1,6 +1,6 @@
 // POST /api/orders → create order
 // GET  /api/orders → list orders (optional ?status= filter)
-const db = require('./db');
+const db = require('../lib/db');
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');

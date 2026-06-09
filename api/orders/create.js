@@ -1,5 +1,5 @@
 // POST /api/orders/create — Create a new order from checkout
-const db = require('./db');
+const db = require('../../lib/db');
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');

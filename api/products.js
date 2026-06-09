@@ -1,6 +1,6 @@
 // Products API — GET /api/products, POST /api/products, PATCH /api/products, DELETE /api/products
-const { connect } = require('./db');
-const productsDb = require('./products_db');
+const { connect } = require('../lib/db');
+const productsDb = require('../lib/products_db');
 
 module.exports = async (req, res) => {
   // Set CORS headers
@@ -48,6 +48,24 @@ module.exports = async (req, res) => {
       }
       const product = await productsDb.createProduct(conn, { name, category, price: Number(price), stock: Number(stock || 0), description: description || '', image: image || '' });
       return res.json({ success: true, product });
+    }
+
+    // PATCH — Stock adjustment (dedicated endpoint)
+    if (req.method === 'PATCH' && req.query.action === 'stock') {
+      const productId = req.query.id;
+      if (!productId) {
+        return res.status(400).json({ success: false, error: 'Product ID required' });
+      }
+      const change = parseInt(req.body.change);
+      if (isNaN(change) || change === 0) {
+        return res.status(400).json({ success: false, error: 'Change must be a non-zero integer' });
+      }
+      const reason = req.body.reason || 'Stock adjustment';
+      const result = await productsDb.adjustStock(conn, productId, change, reason);
+      if (!result.success) {
+        return res.status(404).json(result);
+      }
+      return res.json(result);
     }
 
     // PATCH — Update product (admin)

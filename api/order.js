@@ -1,6 +1,6 @@
 // GET  /api/order?id=xxx — Get single order details
 // PATCH /api/order?id=xxx — Update order status (admin)
-const db = require('./db');
+const db = require('../lib/db');
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
