@@ -1,0 +1,93 @@
+function renderProducts() {
+
+  var el = document.getElementById('productList');
+
+  if (allProducts.length === 0) {
+
+    el.innerHTML = '<div style="padding:60px;text-align:center;color:#999">No products found. Click "+ Add Product" to get started.</div>';
+
+    document.getElementById('inventorySummary').style.display = 'none';
+
+    return;
+
+  }
+
+  // Sort alphabetically by name
+  var sorted = allProducts.slice().sort(function(a, b) {
+    var na = (a.name || '').toLowerCase();
+    var nb = (b.name || '').toLowerCase();
+    if (na < nb) return -1;
+    if (na > nb) return 1;
+    return 0;
+  });
+
+  var html = '';
+  var totalStock = 0;
+  var lowStock = 0;
+  var lowStockItems = [];
+  var categories = {};
+
+  for (var i = 0; i < sorted.length; i++) {
+
+    var p = sorted[i];
+    totalStock += (p.stock || 0);
+    if (p.stock !== undefined && p.stock < 20) { lowStock++; lowStockItems.push(p.name + ' (' + p.stock + ')'); }
+    if (!categories[p.category]) categories[p.category] = 0;
+    categories[p.category]++;
+    var stockClass = p.stock <= 0 ? 'stock-out' : p.stock < 20 ? 'stock-low' : 'stock-ok';
+    var stockLabel = p.stock <= 0 ? 'Out of stock' : p.stock + ' in stock';
+
+    html += '<div class="product-card">' +
+      '<div style="display:flex;gap:10px;flex:1;min-width:0">' +
+
+        (p.image ? '<div style="width:44px;height:44px;flex-shrink:0;border-radius:6px;overflow:hidden;background:#f0f0f0"><img src="' + p.image + '" alt="' + p.name + '" style="width:100%;height:100%;object-fit:cover" onerror="this.remove()"></div>' : '') +
+
+        '<div style="min-width:0;flex:1">' +
+        '<div class="prod-name">' + p.name + '</div>' +
+        '<div class="prod-cat">' + (p.category || '') + ' \u2022 ' + (p.id || '') + '</div>' +
+        '<div style="font-size:11px;color:#555;margin-top:2px">' + (p.description ? p.description.substring(0,60) + (p.description.length > 60 ? '...' : '') : '') + '</div>' +
+      '</div>' +
+
+      '<div style="display:flex;align-items:center;gap:8px">' +
+
+        '<div style="text-align:right;min-width:80px">' +
+          '<div class="prod-price">KSh ' + Number(p.price).toLocaleString() + '</div>' +
+          '<div class="prod-stock ' + stockClass + '">' + stockLabel + '</div>' +
+        '</div>' +
+
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;width:80px">' +
+          '<button onclick="quickStock(' + "'" + p.id + "'" + ',-1)" title="Remove 1" style="padding:2px 6px;font-size:11px;background:#ffebee;color:#c62828;border:1px solid #ef9a9a;border-radius:3px;cursor:pointer">-1</button>' +
+        '</div>' +
+
+      '</div>' +
+
+      '<div style="display:flex;gap:4px">' +
+
+        '<button class="btn btn-primary" onclick="showEditProduct(' + "'" + p.id + "'" + ')" style="font-size:11px;padding:6px 12px">Edit</button>' +
+
+        (p.featured ? '<button onclick="toggleFeatured(' + "'" + p.id + "'" + ',false)" style="font-size:11px;padding:6px 10px;background:#e8f5e9;color:#2e7d32;border:1px solid #2e7d32;border-radius:4px;cursor:pointer" title="Click to unfeature">\u2b50 Featured</button>' : '<button onclick="toggleFeatured(' + "'" + p.id + "'" + ',true)" style="font-size:11px;padding:6px 10px;background:#f5f5f5;color:#888;border:1px solid #ddd;border-radius:4px;cursor:pointer">\u2b50 Feature</button>') +
+
+        (p.specialOffer ? '<button onclick="toggleSpecial(' + "'" + p.id + "'" + ',false)" style="font-size:11px;padding:6px 10px;background:#fff3e0;color:#e65100;border:1px solid #e65100;border-radius:4px;cursor:pointer" title="Click to remove sale">\ud83d\udd25 On Sale</button>' : '<button onclick="toggleSpecial(' + "'" + p.id + "'" + ',true)" style="font-size:11px;padding:6px 10px;background:#f5f5f5;color:#888;border:1px solid #ddd;border-radius:4px;cursor:pointer">\ud83d\udd25 Offer</button>') +
+
+        '<button class="btn" onclick="deleteProduct(' + "'" + p.id + "'" + ',' + "'" + p.name.replace(/'/g, "\\'") + "'" + ')" style="font-size:11px;padding:6px 12px;background:#ffebee;color:#c62828;border:none;border-radius:4px;cursor:pointer">Del</button>' +
+
+      '</div></div>';
+
+  }
+
+  el.innerHTML = html;
+
+  // Inventory summary
+  var catCount = Object.keys(categories).length;
+  document.getElementById('inventorySummary').style.display = 'block';
+  document.getElementById('inventorySummary').innerHTML =
+    '<strong>\ud83d\udcca Inventory Summary</strong> \u2014 ' + sorted.length + ' products across ' + catCount + ' categories &nbsp;|&nbsp; ' +
+    '<span class="stock-ok">\u2705 ' + (sorted.length - lowStock) + ' in stock</span> &nbsp;|&nbsp; ' +
+    '<span class="stock-low">\u26a0\ufe0f ' + lowStock + ' low stock</span> &nbsp;|&nbsp; ' +
+    '\ud83d\udce6 ' + totalStock + ' total units' +
+    (lowStockItems.length > 0 ? '<div style="margin-top:10px;font-size:12px;line-height:1.6">' +
+      '<strong style="color:#c62828">\u26a0\ufe0f Low Stock Items:</strong> ' +
+      lowStockItems.join(' &nbsp;|&nbsp; ') +
+    '</div>' : '');
+
+}

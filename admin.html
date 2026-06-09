@@ -99,6 +99,38 @@ body{background:#f0f2f5}
 
 .product-card .prod-stock{font-size:12px}
 
+.prod-thumb{width:44px;height:44px;flex-shrink:0;border-radius:8px;overflow:hidden;background:#f5f5f5;border:1px solid #e0e0e0}
+
+.prod-thumb img{width:100%;height:100%;object-fit:cover}
+
+.stock-btns{display:flex;gap:3px}
+
+.stock-btns .sb{padding:2px 7px;font-size:11px;border-radius:4px;cursor:pointer;font-weight:600;min-width:28px;text-align:center;border:1px solid}
+
+.stock-btns .sb--{background:#ffebee;color:#c62828;border-color:#ef9a9a}
+
+.stock-btns .sb--:hover{background:#ffcdd2}
+
+.stock-btns .sb+{background:#e8f5e9;color:#2e7d32;border-color:#a5d6a7}
+
+.stock-btns .sb+:hover{background:#c8e6c9}
+
+.action-btns{display:flex;gap:4px;flex-wrap:wrap}
+
+.action-btns .btn{font-size:11px;padding:6px 10px;border-radius:4px;cursor:pointer;border:none;font-weight:600}
+
+.action-btns .btn-primary{padding:6px 12px;font-size:11px}
+
+.action-btns .btn-feat{background:#f5f5f5;color:#888;border:1px solid #ddd}
+
+.action-btns .btn-feat.on{background:#e8f5e9;color:#2e7d32;border:1px solid #2e7d32}
+
+.action-btns .btn-offer{background:#f5f5f5;color:#888;border:1px solid #ddd}
+
+.action-btns .btn-offer.on{background:#fff3e0;color:#e65100;border:1px solid #e65100}
+
+.action-btns .btn-del{background:#ffebee;color:#c62828;border:none;padding:6px 12px}
+
 .stock-low{color:#c62828;font-weight:600}
 
 .stock-ok{color:#2e7d32}
@@ -769,10 +801,18 @@ function renderProducts() {
   var lowStockItems = [];
 
   var categories = {};
+  // Sort alphabetically by name
+  var sorted = allProducts.slice().sort(function(a, b) {
+    var na = (a.name || "").toLowerCase();
+    var nb = (b.name || "").toLowerCase();
+    if (na < nb) return -1;
+    if (na > nb) return 1;
+    return 0;
+  });
 
-  for (var i = 0; i < allProducts.length; i++) {
+  for (var i = 0; i < sorted.length; i++) {
 
-    var p = allProducts[i];
+    var p = sorted[i];
 
     totalStock += (p.stock || 0);
 
@@ -837,7 +877,7 @@ function renderProducts() {
 
   document.getElementById('inventorySummary').innerHTML =
 
-    '<strong>📊 Inventory Summary</strong> — ' + allProducts.length + ' products across ' + catCount + ' categories &nbsp;|&nbsp; ' +
+    '<strong>📊 Inventory Summary</strong> — ' + sorted.length + ' products across ' + catCount + ' categories &nbsp;|&nbsp; ' +
 
     '<span class="stock-ok">✅ ' + (allProducts.length - lowStock) + ' in stock</span> &nbsp;|&nbsp; ' +
 
