@@ -956,7 +956,7 @@ async function loadFeaturedProducts() {
         '<div class="price">KSh ' + Number(p.price).toLocaleString() + '</div>' +
         '<div class="product-actions">' +
         '<a href="product.html?id=' + (p.id || i) + '" class="btn btn-sm">View</a>' +
-        '<a href="#" onclick="addToCart(' + (p.id || i) + ',1);return false;" class="btn btn-primary btn-sm">Add to Cart</a>' +
+        '<a href="#" onclick="addToCart(\'" + (p.id || i) + "\',1);return false;" class="btn btn-primary btn-sm">Add to Cart</a>' +
         '</div></div></div>';
     }
     grid.innerHTML = html;
@@ -989,7 +989,7 @@ async function loadSpecialOffers() {
         '<div class="price">KSh ' + Number(p.price).toLocaleString() + '</div>' +
         '<div class="product-actions">' +
         '<a href="product.html?id=' + (p.id || i) + '" class="btn btn-sm">View</a>' +
-        '<a href="#" onclick="addToCart(' + (p.id || i) + ',1);return false;" class="btn btn-primary btn-sm">Shop Now</a>' +
+        '<a href="#" onclick="addToCart(\'" + (p.id || i) + "\',1);return false;" class="btn btn-primary btn-sm">Shop Now</a>' +
         '</div></div></div>';
     }
     grid.innerHTML = html;
