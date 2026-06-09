@@ -385,6 +385,8 @@ function renderProducts() {
       '</div>' +
       '<div style="display:flex;gap:4px">' +
         '<button class="btn btn-primary" onclick="showEditProduct(\'' + p.id + '\')" style="font-size:11px;padding:6px 12px">Edit</button>' +
+        (p.featured ? '<button onclick="toggleFeatured(\'' + p.id + '\',false)" style="font-size:11px;padding:6px 10px;background:#e8f5e9;color:#2e7d32;border:1px solid #2e7d32;border-radius:4px;cursor:pointer">\u2b50 Featured</button>' : '<button onclick="toggleFeatured(\'' + p.id + '\',true)" style="font-size:11px;padding:6px 10px;background:#f5f5f5;color:#888;border:1px solid #ddd;border-radius:4px;cursor:pointer">\u2b50 Feature</button>') +
+        (p.specialOffer ? '<button onclick="toggleSpecial(\'' + p.id + '\',false)" style="font-size:11px;padding:6px 10px;background:#fff3e0;color:#e65100;border:1px solid #e65100;border-radius:4px;cursor:pointer">\ud83d\udd25 On Sale</button>' : '<button onclick="toggleSpecial(\'' + p.id + '\',true)" style="font-size:11px;padding:6px 10px;background:#f5f5f5;color:#888;border:1px solid #ddd;border-radius:4px;cursor:pointer">\ud83d\udd25 Offer</button>') +
         '<button class="btn" onclick="deleteProduct(\'' + p.id + '\',\'' + p.name.replace(/'/g,"\\'") + '\')" style="font-size:11px;padding:6px 12px;background:#ffebee;color:#c62828;border:none;border-radius:4px;cursor:pointer">Del</button>' +
       '</div></div>';
   }
@@ -461,6 +463,22 @@ async function saveProduct() {
   }
 }
 
+async function toggleFeatured(id, value) {
+  try {
+    var r = await fetch(API + "/products?id=" + id, {method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({featured:value})});
+    var d = await r.json();
+    if (d.success) { loadProducts(); }
+  } catch(e) { alert("Error: " + e.message); }
+}
+
+async function toggleSpecial(id, value) {
+  try {
+    var r = await fetch(API + "/products?id=" + id, {method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({specialOffer:value})});
+    var d = await r.json();
+    if (d.success) { loadProducts(); }
+  } catch(e) { alert("Error: " + e.message); }
+}
+
 async function deleteProduct(id, name) {
   if (!confirm('Delete "' + name + '" permanently?')) return;
   try {
