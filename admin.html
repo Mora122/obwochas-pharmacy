@@ -734,10 +734,6 @@ function renderProducts() {
         '<div class="prod-name">' + p.name + '</div>' +
         '<div class="prod-cat">' + (p.category || '') + ' • ' + p.id + '</div>' +
         '<div style="font-size:11px;color:#555;margin-top:2px">' + (p.description ? p.description.substring(0,60) + (p.description.length > 60 ? '...' : '') : '') + '</div>' +
-      '</div>' +'<div class="prod-cat">' + (p.category || '') + ' • ' + p.id + '</div>' +
-
-        '<div style="font-size:11px;color:#555;margin-top:2px">' + (p.description ? p.description.substring(0,60) + (p.description.length > 60 ? '...' : '') : '') + '</div>' +
-
       '</div>' +
 
       '<div style="text-align:center;min-width:100px;position:relative">' +
