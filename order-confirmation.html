@@ -180,11 +180,21 @@ async function loadOrder() {
     }
     document.getElementById('orderItems').innerHTML = itemsHtml;
 
-    // Totals
+    // Calculate real subtotal from items (source of truth)
+    var itemsSubtotal = 0;
+    if (order.items && order.items.length > 0) {
+      for (var i = 0; i < order.items.length; i++) {
+        itemsSubtotal += (order.items[i].price || 0) * (order.items[i].qty || order.items[i].quantity || 1);
+      }
+    }
     var totals = order.totals || {};
-    document.getElementById('subtotalAmount').textContent = 'KSh ' + Number(totals.subtotal || 0).toLocaleString();
-    document.getElementById('totalAmount').textContent = 'KSh ' + Number(totals.total || 0).toLocaleString();
-    document.getElementById('deliveryStatus').textContent = totals.shipping > 0 ? 'KSh ' + Number(totals.shipping).toLocaleString() : 'Free';
+    // Use items-based subtotal, fall back to stored totals
+    var displaySubtotal = itemsSubtotal > 0 ? itemsSubtotal : (totals.subtotal || 0);
+    var displayTotal = totals.total || displaySubtotal;
+    var displayShipping = totals.shipping > 0 ? 'KSh ' + Number(totals.shipping).toLocaleString() : 'Free';
+    document.getElementById('subtotalAmount').textContent = 'KSh ' + Number(displaySubtotal).toLocaleString();
+    document.getElementById('totalAmount').textContent = 'KSh ' + Number(displayTotal).toLocaleString();
+    document.getElementById('deliveryStatus').textContent = displayShipping;
 
     // Delivery
     var cust = order.customer || {};

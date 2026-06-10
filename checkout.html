@@ -686,6 +686,7 @@ function showConfirmation(method) {
 async function saveOrder(method) {
   try {
     const cart = JSON.parse(localStorage.getItem('obwocha_cart') || '[]');
+    const total = cart.reduce(function(s,i){ return s + (i.price||0)*(i.qty||0); }, 0);
     const resp = await fetch(PAYMENT_API + '/orders', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
