@@ -151,7 +151,7 @@
 
         <div style="display:flex;gap:10px;margin-top:16px;">
           <button class="btn" onclick="goToStep(1)" style="flex:1;">← Back</button>
-          <button class="btn btn-primary" onclick="processPayment()" style="flex:2;">Pay Now — <span class="checkout-total-display" style="display:inline">KSh 0</span> →</button>
+          <button class="btn btn-primary" onclick="processPayment()" style="flex:2;">Pay Now — <span class="checkout-total-display">KSh 0 →</button>
         </div>
       </div>
       <div>
@@ -696,7 +696,6 @@ function closeStkPush() {
 }
 
 function showConfirmation(method) {
-  updateCheckoutTotal();
   document.getElementById('confirmPayment').textContent = method;
   const now = new Date();
   const orderSeq = String(Math.floor(Math.random() * 9000) + 1000);
