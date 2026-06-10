@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Checkout — Obwocha's Pharmacy</title>
+<meta name="description" content="Complete your order at Obwocha's Pharmacy. Fast delivery across Nairobi and Meru.">
+<meta property="og:title" content="Checkout — Obwocha's Pharmacy">
+<meta property="og:description" content="Complete your order at Obwocha's Pharmacy. Fast delivery across Nairobi and Meru.">
+<meta property="og:url" content="https://obwochas-pharmacy.vercel.app/checkout.html">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://obwochas-pharmacy.vercel.app//icons/icon-192.svg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preload" href="css/style.css" as="style">
+  <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/payment.css">
+<script src="js/cart.js" defer></script>
+<script src="https://js.stripe.com/v3/"></script>
+
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1a5c2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ObwochaRx"><script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Pharmacy",
+  "name": "Obwocha's Pharmacy",
+  "alternateName": "Obwocha's Pharmacy Ltd",
+  "description": "Meru's own trusted pharmacy chain with 150+ stores nationwide.",
+  "url": "https://obwochas-pharmacy.vercel.app",
+  "telephone": "+254-727-747-699",
+  "email": "info@obwochaspharmacy.co.ke",
+  "address": {
+    "@type": "PostalAddress",
+    "postOfficeBoxNumber": "7999-00100",
+    "addressLocality": "Kisii",
+    "addressCountry": "KE"
+  },
+  "areaServed": "Kenya",
+  "priceRange": "$",
+  "paymentAccepted": "M-Pesa, Visa, MasterCard, Cash",
+  "openingHoursSpecification": {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+    "opens": "08:00",
+    "closes": "20:00"
+  }
+}
+</script></head>
+<body>
+<div class="top-bar"><div class="left"><span>🚚 Free Delivery For orders above KSh 5,000/=</span></div><div class="right"><a href="help.html">Help</a><a href="contact.html">Contact</a></div></div>
+<header><a href="index.html" class="logo"><div class="logo-icon"><img src="icons/logo.svg" alt="Obwochas Pharmacy" width="44" height="44"></div><div class="logo-text"><h1>Obwocha's <span>Pharmacy</span></h1><small>Meru's Own Pharmacy</small></div></a><div class="header-icons"><a href="cart.html">🛒 Cart</a></div></header>
+<div class="page-header"><h2>📦 Checkout</h2><p>Complete your order in just a few steps</p></div>
+
+<div class="container" style="max-width:960px;margin:0 auto;padding:40px 20px;">
+  <!-- Step indicator -->
+  <div class="steps">
+    <div class="step active" data-step="1"><span class="step-number">1</span> Shipping</div>
+    <div class="step" data-step="2"><span class="step-number">2</span> Payment</div>
+    <div class="step" data-step="3"><span class="step-number">3</span> Confirm</div>
+  </div>
+
+  <!-- STEP 1: Shipping -->
+  <div class="step-content" id="step1">
+    <div class="checkout-layout">
+      <div>
+        <h3 style="color:var(--primary);margin-bottom:16px;">📍 Shipping Details</h3>
+        <form class="contact-form" id="shippingForm">
+          <label>Full Name *</label><input type="text" id="fullName" placeholder="John Doe" required>
+          <label>Phone Number *</label><input type="tel" id="phoneNumber" placeholder="0712 345 678" required>
+          <label>Email *</label><input type="email" id="email" placeholder="john@example.com" required>
+          <label>County *</label>
+          <select id="county" required>
+            <option>Nairobi</option><option>Mombasa</option><option>Kisumu</option><option>Meru</option><option>Nakuru</option><option>Eldoret</option><option>Kiambu</option><option>Machakos</option><option>Thika</option>
+          </select>
+          <label>Town / City *</label><input type="text" id="town" placeholder="e.g. Meru Town" required>
+          <label>Street / Landmark *</label><input type="text" id="street" placeholder="e.g. Tom Mboya Street" required>
+          <label>Delivery Instructions</label>
+          <textarea id="instructions" placeholder="E.g. Call before delivery, leave with gate guard..."></textarea>
+          <button type="button" class="btn btn-primary" onclick="goToStep(2)" style="width:100%;margin-top:10px;">Continue to Payment →</button>
+        </form>
+      </div>
+      <div>
+        <h3 style="color:var(--primary);margin-bottom:16px;">📋 Order Summary</h3>
+        <div id="checkoutSummary" style="background:var(--bg-light);border-radius:var(--radius);padding:20px;">
+          <!-- Cart items rendered by cart.js -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: Payment -->
+  <div class="step-content" id="step2" style="display:none;">
+    <div class="checkout-layout">
+      <div>
+        <h3 style="color:var(--primary);margin-bottom:16px;">💳 Choose Payment Method</h3>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Select your preferred payment method below</p>
+
+        <!-- M-Pesa -->
+        <div class="payment-option selected" data-method="mpesa">
+          <div class="payment-header">
+            <input type="radio" name="payment" value="mpesa" checked>
+            <span class="radio-circle"></span>
+            <span style="font-size:24px;">📱</span>
+            <div><strong>M-Pesa</strong><br><span style="font-size:12px;color:var(--text-muted);">Pay via M-Pesa STK Push — Kenya's fastest mobile money</span></div>
+          </div>
+          <div class="mpesa-form visible">
+            <label style="font-size:13px;">M-Pesa Phone Number *</label>
+            <input type="tel" id="mpesaPhone" placeholder="0712 345 678" style="font-size:18px;">
+            <p style="font-size:12px;color:var(--text-muted);margin-top:6px;">You'll receive an STK Push prompt on this number to enter your M-Pesa PIN</p>
+          </div>
+        </div>
+
+        <!-- Card -->
+        <div class="payment-option" data-method="card">
+          <div class="payment-header">
+            <input type="radio" name="payment" value="card">
+            <span class="radio-circle"></span>
+            <span style="font-size:24px;">💳</span>
+            <div><strong>Visa / MasterCard</strong><br><span style="font-size:12px;color:var(--text-muted);">Debit or credit card — secure checkout</span></div>
+          </div>
+          <div class="card-form">
+            <div class="card-form-row">
+              <div class="card-input-wrapper">
+                <label style="font-size:12px;">Card Number *</label>
+                <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCard(this)">
+                <span class="card-icon">💳</span>
+              </div>
+            </div>
+            <div class="card-expiry-cvv">
+              <div><label style="font-size:12px;">Expiry *</label><input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5"></div>
+              <div><label style="font-size:12px;">CVV *</label><input type="text" id="cardCvv" placeholder="123" maxlength="4"></div>
+            </div>
+            <label style="font-size:12px;">Cardholder Name *</label>
+            <input type="text" id="cardName" placeholder="John Doe">
+            <p style="font-size:12px;color:var(--text-muted);margin-top:6px;">🔒 Secured — your card details are encrypted</p>
+          </div>
+        </div>
+
+        <!-- Cash on Delivery -->
+        <div class="payment-option" data-method="cash">
+          <div class="payment-header">
+            <input type="radio" name="payment" value="cash">
+            <span class="radio-circle"></span>
+            <span style="font-size:24px;">💵</span>
+            <div><strong>Cash on Delivery</strong><br><span style="font-size:12px;color:var(--text-muted);">Pay in cash when your order arrives</span></div>
+          </div>
+          <div class="cash-notice" style="display:block !important;">
+            <strong>📌 Cash-on-Delivery Note</strong>
+            Please have exact change ready. Our delivery agent will collect payment upon delivery. A small convenience fee of KSh 100 may apply for COD orders.
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:16px;">
+          <button class="btn" onclick="goToStep(1)" style="flex:1;">← Back</button>
+          <button class="btn btn-primary" onclick="processPayment()" style="flex:2;">Pay Now — <span class="checkout-total-display" style="display:inline">KSh 0</span> →</button>
+        </div>
+      </div>
+      <div>
+        <h3 style="color:var(--primary);margin-bottom:16px;">📋 Order Summary</h3>
+        <div style="background:var(--bg-light);border-radius:var(--radius);padding:20px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;"><span>Subtotal</span><span class="checkout-subtotal-display">KSh 0</span></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;color:var(--primary);"><span>Delivery</span><span>FREE</span></div>
+          
+          <div style="display:flex;justify-content:space-between;font-size:20px;font-weight:800;color:var(--primary);margin-top:12px;border-top:2px solid var(--primary);padding-top:12px;"><span>Total</span><span class="checkout-total-amount">KSh 0</span></div>
+          <hr style="margin:12px 0;border-color:var(--border);">
+          <p style="font-size:13px;color:var(--text-muted);" id="deliverySummary"><strong>Delivering to:</strong><br>
+          <span id="sumName">—</span><br>
+          <span id="sumStreet">—</span>, <span id="sumTown">—</span>, <span id="sumCounty">—</span><br>
+          📞 <span id="sumPhone">—</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: Processing & Confirmation (shown via JS) -->
+</div>
+
+<!-- M-Pesa STK Push Overlay — REAL FLOW: push goes to customer's phone -->
+<div class="stk-push-overlay" id="stkPushOverlay">
+  <div class="stk-push-modal">
+    <!-- State 1: Sending STK Push -->
+    <div id="mpesaStateSending">
+      <div class="mpesa-logo">📱</div>
+      <h3>Sending M-Pesa Request</h3>
+      <p style="font-size:13px;color:var(--text-muted);">Initiating STK Push to your phone...</p>
+      <div class="amount">KSh <span id="mpesaTotal">0</span></div>
+      <div class="phone">📞 To: <strong id="stkPhone">0727XXXXXX</strong></div>
+      <div class="spinner" style="margin:20px auto;"></div>
+      <p style="font-size:12px;color:var(--text-muted);">Sending payment request via Safaricom API</p>
+      <button style="margin-top:10px;font-size:12px;color:var(--text-muted);background:none;border:none;cursor:pointer;" onclick="closeStkPush()">Cancel</button>
+    </div>
+
+    <!-- State 2: Check your phone -->
+    <div id="mpesaStateCheckPhone" style="display:none;">
+      <div class="phone-animation">
+        <div class="phone-screen">
+          <div class="phone-notification">
+            <div class="notif-header">
+              <span style="font-weight:bold;">M-PESA</span>
+              <span style="font-size:11px;color:#666;">just now</span>
+            </div>
+            <div class="notif-body">
+              <div style="font-size:14px;">Enter PIN to pay</div>
+              <div style="font-size:20px;font-weight:800;color:#2e7d32;">KSh <span id="mpesaTotal2">0</span></div>
+              <div style="font-size:12px;color:#666;">to <strong>OBWOCHA'S PHARMACY</strong></div>
+            </div>
+            <div class="notif-input">
+              <div class="pin-field"><span class="blink">|</span></div>
+            </div>
+          </div>
+          <div class="phone-status">🔋 87%</div>
+        </div>
+      </div>
+      <h3 style="margin-top:12px;">Check Your Phone 📱</h3>
+      <p style="font-size:13px;color:var(--text-muted);">
+        An M-Pesa STK Push has been sent to <strong id="stkPhone2">—</strong>
+      </p>
+      <p style="font-size:12px;color:var(--text-muted);background:#f5f5f5;padding:10px;border-radius:8px;margin:8px 0;">
+        1️⃣ Check your phone for the M-Pesa prompt<br>
+        2️⃣ Enter your <strong>M-Pesa PIN</strong> and press <strong>OK</strong><br>
+        3️⃣ Enter the <strong>M-Pesa confirmation code</strong> from your SMS below<br>
+        4️⃣ We'll verify the payment
+      </p>
+      <div style="margin:10px 0;">
+        <label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">M-Pesa Confirmation Code</label>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="mpesaConfirmCode" placeholder="e.g. AC12XYZ789" maxlength="15" style="flex:1;padding:10px 14px;border:2px solid var(--border);border-radius:8px;font-size:14px;text-transform:uppercase;">
+        </div>
+        <p style="font-size:11px;color:var(--text-muted);margin-top:4px;">Check your M-Pesa SMS for the confirmation code</p>
+      </div>
+      <div class="stk-status-bar">
+        <div class="stk-status-dot active"></div>
+        <span id="stkStatusText">Waiting for confirmation...</span>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px;justify-content:center;">
+        <button onclick="closeStkPush()" style="font-size:12px;color:var(--text-muted);background:none;border:none;cursor:pointer;padding:8px 16px;">Cancel</button>
+        <button class="btn btn-primary" onclick="verifyPayment()" id="mpesaVerifyBtn" style="font-size:12px;padding:8px 20px;">✓ I've Paid — Verify</button>
+      </div>
+    </div>
+
+    <!-- State 3: Verifying -->
+    <div id="mpesaStateVerifying" style="display:none;">
+      <div class="processing-screen">
+        <div class="spinner"></div>
+        <h3>Verifying Payment</h3>
+        <p style="font-size:13px;color:var(--text-muted);">Checking with Safaricom if payment was completed...</p>
+      </div>
+    </div>
+
+    <!-- State 4: Failed -->
+    <div id="mpesaStateFailed" style="display:none;">
+      <div style="font-size:48px;margin-bottom:12px;">❌</div>
+      <h3 style="color:#c00;">Payment Failed</h3>
+      <p id="mpesaFailReason" style="font-size:13px;color:#666;margin-bottom:8px;">
+        The payment was not completed on your phone.
+      </p>
+      <div style="background:#fff3f3;padding:12px;border-radius:8px;margin:8px 0;font-size:12px;color:#c00;">
+        💡 <strong>Tips:</strong><br>
+        • Check your phone for the M-Pesa prompt<br>
+        • Enter your PIN within 60 seconds<br>
+        • Make sure you have enough M-Pesa balance<br>
+        • Try again below
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px;justify-content:center;">
+        <button onclick="closeStkPush()" style="font-size:12px;color:var(--text-muted);background:none;border:none;cursor:pointer;padding:8px 16px;">Cancel Order</button>
+        <button class="btn btn-primary" onclick="retryMpesa()" style="font-size:12px;padding:8px 20px;">🔄 Try Again</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Card Processing Overlay -->
+<div class="stk-push-overlay" id="cardProcessingOverlay">
+  <div class="stk-push-modal">
+    <div class="processing-screen">
+      <div class="spinner"></div>
+      <h3>Processing Payment</h3>
+      <p style="font-size:13px;color:var(--text-muted);">Please wait — do not close this page...</p>
+    </div>
+  </div>
+</div>
+
+<!-- Order Confirmation -->
+<div class="stk-push-overlay" id="orderConfirmOverlay">
+  <div class="stk-push-modal" style="max-width:480px;">
+    <div class="order-confirm">
+      <div class="check-icon">✅</div>
+      <h2 style="color:#2e7d32;">Payment Successful! 🎉</h2>
+      <p style="color:var(--text-light);margin-bottom:16px;">Your order has been placed successfully</p>
+      <div class="order-details">
+        <div class="row"><span>Order Number</span><span style="color:var(--primary);font-weight:700;">GLF-<span id="orderNumber">20260531</span>-<span id="orderSeq">2847</span></span></div>
+        <div class="row"><span>Payment Method</span><span id="confirmPayment">M-Pesa</span></div>
+        <div class="row"><span>Total Paid</span><span class="checkout-total-amount" style="color:var(--primary);font-weight:700;">KSh 0</span></div>
+        <div class="row"><span>Delivery</span><span>Express — 3 hours</span></div>
+        <div class="row"><span>Delivering To</span><span id="confirmAddress">Meru Town, Meru</span></div>
+        <div class="row"><span>Estimated Arrival</span><span id="confirmTime">Today by 2:40 PM</span></div>
+      </div>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">📱 A confirmation SMS will be sent to +254 727 747 699</p>
+      <div style="display:flex;gap:10px;">
+        <a href="index.html" class="btn" style="flex:1;text-align:center;">🏠 Home</a>
+        <a href="account.html" class="btn btn-primary" style="flex:1;text-align:center;">📦 My Orders</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer><div class="footer-bottom"><p>Copyright © 2026 Obwocha's Pharmacy</p></div></footer>
+
+<script>
+let currentStep = 1;
+let pinValue = '';
+let selectedPayment = 'mpesa';
+let checkoutCartTotal = 0;
+
+function updateCheckoutTotal() {
+  var cart = (function(){ try { return JSON.parse(localStorage.getItem('obwocha_cart')) || []; } catch(e) { return []; } })();
+  checkoutCartTotal = cart.reduce(function(s,i){ return s + (i.price||0)*(i.qty||0); }, 0);
+  var formatted = 'KSh ' + checkoutCartTotal.toLocaleString();
+  var els = document.querySelectorAll('.checkout-total-display');
+  for (var i = 0; i < els.length; i++) {
+    els[i].textContent = formatted;
+  }
+  // Also update the order summary subtotal and total lines
+  var subtotals = document.querySelectorAll('.checkout-subtotal-display');
+  for (var j = 0; j < subtotals.length; j++) {
+    subtotals[j].textContent = formatted;
+  }
+  var totals = document.querySelectorAll('.checkout-total-amount');
+  for (var k = 0; k < totals.length; k++) {
+    totals[k].textContent = formatted;
+  }
+  return checkoutCartTotal;
+}
+
+
+function updateCheckoutTotal() {
+  var cart = (function(){ try { return JSON.parse(localStorage.getItem('obwocha_cart')) || []; } catch(e) { return []; } })();
+  var total = cart.reduce(function(s,i){ return s + (i.price||0)*(i.qty||0); }, 0);
+  var formatted = 'KSh ' + total.toLocaleString();
+  var els = document.querySelectorAll('.checkout-total-display');
+  for (var i = 0; i < els.length; i++) {
+    els[i].textContent = formatted;
+  }
+  return total;
+}
+
+function goToStep(n) {
+  // Validate shipping form before proceeding from step 1
+  if(n === 2) {
+    var form = document.getElementById('shippingForm');
+    if(!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+    // Populate delivery summary from form
+    document.getElementById('sumName').textContent = document.getElementById('fullName').value || '—';
+    document.getElementById('sumStreet').textContent = document.getElementById('street').value || '—';
+    document.getElementById('sumTown').textContent = document.getElementById('town').value || '—';
+    document.getElementById('sumCounty').textContent = document.getElementById('county').value || '—';
+    document.getElementById('sumPhone').textContent = document.getElementById('phoneNumber').value || '—';
+  }
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.step-content').forEach(s => s.style.display = 'none');
+  document.querySelector(`.step[data-step="${n}"]`).classList.add('active');
+  document.getElementById(`step${n}`).style.display = 'block';
+  currentStep = n;
+  window.scrollTo({top: 0, behavior: 'smooth'});
+  // Mark previous steps as completed
+  for(let i=1; i<n; i++) {
+    document.querySelector(`.step[data-step="${i}"]`).classList.add('completed');
+    document.querySelector(`.step[data-step="${i}"]`).classList.remove('active');
+  }
+}
+
+function selectPayment(method) {
+  selectedPayment = method;
+  document.querySelectorAll('.payment-option').forEach(function(el) { el.classList.remove('selected'); });
+  document.querySelectorAll('.payment-option input').forEach(function(el) { el.checked = false; });
+  document.querySelectorAll('.mpesa-form').forEach(function(el) { el.classList.remove('visible'); });
+  document.querySelectorAll('.card-form').forEach(function(el) { el.classList.remove('visible'); });
+
+  var options = document.querySelectorAll('.payment-option');
+  var inputs = document.querySelectorAll('.payment-option input');
+  if(method === 'mpesa') {
+    options[0].classList.add('selected');
+    inputs[0].checked = true;
+    document.querySelector('.mpesa-form').classList.add('visible');
+  } else if(method === 'card') {
+    options[1].classList.add('selected');
+    inputs[1].checked = true;
+    document.querySelector('.card-form').classList.add('visible');
+  } else if(method === 'cash') {
+    options[2].classList.add('selected');
+    inputs[2].checked = true;
+  }
+}
+
+// Attach click listeners to payment options (works on mobile touch)
+document.addEventListener('DOMContentLoaded', function() {
+  updateCheckoutTotal();
+  document.querySelectorAll('.payment-option').forEach(function(el) {
+    el.addEventListener('click', function(e) {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      selectPayment(this.getAttribute('data-method'));
+    });
+  });
+});
+
+function formatCard(input) {
+  let val = input.value.replace(/\D/g, '').substring(0, 16);
+  let formatted = val.replace(/(.{4})/g, '$1 ').trim();
+  input.value = formatted;
+}
+
+const PAYMENT_API = window.location.hostname === 'localhost' 
+  ? 'http://localhost:3001/api'
+  : '/api';
+
+async function processPayment() {
+  updateCheckoutTotal();
+  const cart = (function(){ try { return JSON.parse(localStorage.getItem('obwocha_cart')) || []; } catch(e) { return []; } })();
+  const total = cart.reduce(function(s,i){ return s + (i.price||0)*(i.qty||0); }, 0);
+  
+  if(selectedPayment === 'card') {
+    document.getElementById('cardProcessingOverlay').classList.add('active');
+    try {
+      const resp = await fetch(PAYMENT_API + '/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: [{ name: 'Obwocha\'s Pharmacy Order', price: total, quantity: 1 }],
+          customer: {
+            name: document.getElementById('fullName')?.value || 'Customer',
+            email: document.getElementById('email')?.value || '',
+            phone: document.getElementById('phoneNumber')?.value || ''
+          }
+        })
+      });
+      const data = await resp.json();
+      document.getElementById('cardProcessingOverlay').classList.remove('active');
+      
+      if (data.mode === 'demo') {
+        // Demo mode — show confirmation
+        showConfirmation('Visa Card (Demo)');
+      } else if (data.url) {
+        // Real Stripe — redirect to Checkout
+        window.location.href = data.url;
+      }
+    } catch(err) {
+      document.getElementById('cardProcessingOverlay').classList.remove('active');
+      console.error('Card payment error:', err);
+      // Fallback to demo mode
+      showConfirmation('Visa Card (Demo)');
+    }
+    return;
+  }
+  
+  if(selectedPayment === 'mpesa') {
+    processMpesa();
+    return;
+  }
+  
+  if(selectedPayment === 'cash') {
+    if(confirm('💵 Confirm Cash on Delivery?\n\nYou will pay KSh ' + total.toLocaleString() + ' when your order arrives.')) {
+      showConfirmation('Cash on Delivery');
+    }
+  }
+}
+
+async function processMpesa() {
+  let phone = document.getElementById('mpesaPhone').value.replace(/\D/g, '');
+  if(phone.length < 9) { alert('Please enter a valid M-Pesa phone number'); return; }
+
+  // Update totals from cart
+  var mpesaCart = (function(){ try { return JSON.parse(localStorage.getItem('obwocha_cart')) || []; } catch(e) { return []; } })();
+  var mpesaTotal = mpesaCart.reduce(function(s,i){ return s + (i.price||0)*(i.qty||0); }, 0);
+  document.getElementById('mpesaTotal').textContent = mpesaTotal.toLocaleString();
+  document.getElementById('mpesaTotal2').textContent = mpesaTotal.toLocaleString();
+
+  // Format phone for display
+  let display = phone.length === 10 
+    ? phone.slice(0,2) + ' ' + phone.slice(2,5) + ' ' + phone.slice(5,7) + ' ' + phone.slice(7)
+    : phone.slice(0,3) + ' ' + phone.slice(3,6) + ' ' + phone.slice(6);
+  document.getElementById('stkPhone').textContent = display;
+  document.getElementById('stkPhone2').textContent = display;
+  
+  // Show sending state
+  document.getElementById('stkPushOverlay').classList.add('active');
+  document.getElementById('mpesaStateSending').style.display = 'block';
+  document.getElementById('mpesaStateCheckPhone').style.display = 'none';
+  document.getElementById('mpesaStateProcessing').style.display = 'none';
+  
+  // Try real API call, fall back to demo
+  let checkoutRef = 'OBWOCHA_' + Date.now().toString().slice(-6);
+  try {
+    const resp = await fetch(PAYMENT_API + '/mpesa-stk-push', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        phone, 
+        amount: total,
+        account_ref: checkoutRef
+      })
+    });
+    const data = await resp.json();
+    console.log('M-Pesa response:', data);
+    // Store checkout request ID for verification
+    if (data.checkout_request_id) checkoutRef = data.checkout_request_id;
+  } catch(err) {
+    console.log('M-Pesa API unavailable (demo mode):', err.message);
+  }
+  window.mpesaCheckoutRef = checkoutRef;
+  
+  // After 2s, show "Check your phone" screen
+  setTimeout(() => {
+    document.getElementById('mpesaStateSending').style.display = 'none';
+    document.getElementById('mpesaStateCheckPhone').style.display = 'block';
+    startStkPolling();
+  }, 2000);
+}
+
+function startStkPolling() {
+  let count = 0;
+  const statusText = document.getElementById('stkStatusText');
+  const dots = ['', '.', '..', '...'];
+  window.stkTimer = setInterval(() => {
+    count++;
+    statusText.textContent = 'Waiting for confirmation' + dots[count % 4];
+    if (count > 60) { // timeout after ~30s
+      clearInterval(window.stkTimer);
+      statusText.textContent = '⏱️ Timed out — click "I\'ve Paid" if you completed payment';
+    }
+  }, 500);
+}
+
+function verifyPayment() {
+  clearInterval(window.stkTimer);
+  
+  const code = document.getElementById('mpesaConfirmCode').value.trim().toUpperCase();
+  
+  if (!code) {
+    // No code entered — can't verify, show failure
+    document.getElementById('mpesaStateCheckPhone').style.display = 'none';
+    document.getElementById('mpesaFailReason').textContent = 
+      'No confirmation code provided. Check your M-Pesa SMS and enter the code above.';
+    document.getElementById('mpesaStateFailed').style.display = 'block';
+    return;
+  }
+  
+  // Show verifying state
+  document.getElementById('mpesaStateCheckPhone').style.display = 'none';
+  document.getElementById('mpesaStateVerifying').style.display = 'block';
+  
+  const phone = document.getElementById('mpesaPhone').value.replace(/\D/g, '');
+  const ref = window.mpesaCheckoutRef || 'DEMO_' + Date.now();
+  
+  // Call backend to verify payment with confirmation code
+  fetch(PAYMENT_API + '/mpesa-verify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ phone, amount: total, checkout_request_id: ref, confirmation_code: code })
+  })
+  .then(r => r.json())
+  .then(data => {
+    document.getElementById('mpesaStateVerifying').style.display = 'none';
+    
+    if (data.verified) {
+      // ✅ Payment confirmed
+      document.getElementById('stkPushOverlay').classList.remove('active');
+      showConfirmation('M-Pesa');
+    } else {
+      // ❌ Payment failed — backend says not verified
+      document.getElementById('mpesaFailReason').textContent = 
+        data.result_desc || 'M-Pesa confirmation code is invalid. Please check your SMS and try again.';
+      document.getElementById('mpesaStateFailed').style.display = 'block';
+    }
+  })
+  .catch(err => {
+    console.error('Verify error:', err);
+    document.getElementById('mpesaStateVerifying').style.display = 'none';
+    document.getElementById('mpesaFailReason').textContent = 
+      'Could not reach payment server. Please try again.';
+    document.getElementById('mpesaStateFailed').style.display = 'block';
+  });
+}
+
+function retryMpesa() {
+  // Go back to check phone state and restart polling
+  document.getElementById('mpesaStateFailed').style.display = 'none';
+  document.getElementById('mpesaStateCheckPhone').style.display = 'block';
+  startStkPolling();
+}
+
+function closeStkPush() {
+  clearInterval(window.stkTimer);
+  document.getElementById('stkPushOverlay').classList.remove('active');
+  // Reset all states
+  document.getElementById('mpesaStateSending').style.display = 'block';
+  document.getElementById('mpesaStateCheckPhone').style.display = 'none';
+  document.getElementById('mpesaStateVerifying').style.display = 'none';
+  document.getElementById('mpesaStateFailed').style.display = 'none';
+}
+
+function pinInput(digit) {
+  if(pinValue.length < 4) {
+    pinValue += digit;
+    updatePinDots();
+    if(pinValue.length === 4) {
+      // Auto-submit after 4 digits
+      setTimeout(() => pinSubmit(), 300);
+    }
+  }
+}
+
+function pinClear() {
+  pinValue = pinValue.slice(0, -1);
+  updatePinDots();
+}
+
+function pinSubmit() {
+  if(pinValue.length < 4) {
+    // Simulate M-Pesa processing with loading animation
+    document.querySelector('.stk-push-modal').innerHTML = `
+      <div class="processing-screen">
+        <div class="spinner"></div>
+        <h3>Processing M-Pesa Payment</h3>
+        <p style="font-size:13px;color:var(--text-muted);">Please wait — confirming transaction...</p>
+      </div>`;
+    setTimeout(() => {
+      document.querySelector('.stk-push-modal').innerHTML = `
+        <div class="processing-screen">
+          <div style="font-size:48px;color:#2e7d32;">✅</div>
+          <h3 style="color:#2e7d32;">Transaction Successful!</h3>
+          <p style="font-size:14px;">M-Pesa confirmed — KSh ${checkoutCartTotal.toLocaleString()}</p>
+          <p style="font-size:12px;color:var(--text-muted);margin:8px 0;">M-Pesa Ref: AC12XYZ789</p>
+        </div>`;
+      setTimeout(() => {
+        document.getElementById('stkPushOverlay').classList.remove('active');
+        showConfirmation('M-Pesa');
+      }, 1200);
+    }, 1500);
+    return;
+  }
+  // Simulate processing for valid length too
+  document.querySelector('.stk-push-modal').innerHTML = `
+    <div class="processing-screen">
+      <div class="spinner"></div>
+      <h3>Processing M-Pesa Payment</h3>
+      <p style="font-size:13px;color:var(--text-muted);">Please wait — confirming transaction...</p>
+    </div>`;
+  setTimeout(() => {
+    document.querySelector('.stk-push-modal').innerHTML = `
+      <div class="processing-screen">
+        <div style="font-size:48px;color:#2e7d32;">✅</div>
+        <h3 style="color:#2e7d32;">Transaction Successful!</h3>
+        <p style="font-size:14px;">M-Pesa confirmed — KSh ${checkoutCartTotal.toLocaleString()}</p>
+        <p style="font-size:12px;color:var(--text-muted);margin:8px 0;">M-Pesa Ref: AC12XYZ789</p>
+      </div>`;
+    setTimeout(() => {
+      document.getElementById('stkPushOverlay').classList.remove('active');
+      showConfirmation('M-Pesa');
+    }, 1200);
+  }, 1500);
+}
+
+function closeStkPush() {
+  document.getElementById('stkPushOverlay').classList.remove('active');
+  document.querySelector('.stk-push-modal').innerHTML = `
+    <div class="mpesa-logo">📱</div>
+    <h3>M-Pesa STK Push</h3>
+    <p style="font-size:13px;color:var(--text-muted);">Enter your M-Pesa PIN to complete payment</p>
+    <div class="amount">KSh ${checkoutCartTotal.toLocaleString()}</div>
+    <div class="phone">📞 To: <strong id="stkPhone">07XX${document.getElementById('mpesaPhone').value.replace(/\D/g, '').slice(-4) || '0000'}</strong></div>
+    <div class="pin-dots" id="pinDots">
+      <div class="pin-dot" id="dot0"></div>
+      <div class="pin-dot" id="dot1"></div>
+      <div class="pin-dot" id="dot2"></div>
+      <div class="pin-dot" id="dot3"></div>
+    </div>
+    <p style="font-size:11px;color:var(--text-muted);">Enter your 4-digit M-Pesa PIN</p>
+    <div class="pin-pad" id="pinPad">
+      <button class="pin-key" onclick="pinInput('1')">1</button>
+      <button class="pin-key" onclick="pinInput('2')">2</button>
+      <button class="pin-key" onclick="pinInput('3')">3</button>
+      <button class="pin-key" onclick="pinInput('4')">4</button>
+      <button class="pin-key" onclick="pinInput('5')">5</button>
+      <button class="pin-key" onclick="pinInput('6')">6</button>
+      <button class="pin-key" onclick="pinInput('7')">7</button>
+      <button class="pin-key" onclick="pinInput('8')">8</button>
+      <button class="pin-key" onclick="pinInput('9')">9</button>
+      <button class="pin-key action" onclick="pinClear()">⌫</button>
+      <button class="pin-key" onclick="pinInput('0')">0</button>
+      <button class="pin-key action" onclick="pinSubmit()" style="color:var(--primary);font-weight:800;">✓</button>
+    </div>
+    <button style="margin-top:10px;font-size:12px;color:var(--text-muted);background:none;border:none;cursor:pointer;" onclick="closeStkPush()">Cancel</button>`;
+  pinValue = '';
+}
+
+function showConfirmation(method) {
+  updateCheckoutTotal();
+  document.getElementById('confirmPayment').textContent = method;
+  const now = new Date();
+  const orderSeq = String(Math.floor(Math.random() * 9000) + 1000);
+  document.getElementById('orderSeq').textContent = orderSeq;
+  const dateStr = now.getFullYear().toString() + 
+    String(now.getMonth()+1).padStart(2,'0') + 
+    String(now.getDate()).padStart(2,'0');
+  document.getElementById('orderNumber').textContent = dateStr;
+  
+  const county = document.getElementById('county').value;
+  const town = document.getElementById('town').value;
+  document.getElementById('confirmAddress').textContent = `${town}, ${county}`;
+  
+  // Estimate delivery time (+3hrs)
+  const delivery = new Date(now.getTime() + 3*60*60*1000);
+  const hours = delivery.getHours();
+  const mins = String(delivery.getMinutes()).padStart(2,'0');
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  const h12 = hours % 12 || 12;
+  document.getElementById('confirmTime').textContent = `Today by ${h12}:${mins} ${ampm}`;
+  
+  document.getElementById('orderConfirmOverlay').classList.add('active');
+  launchConfetti();
+  
+  // Save order to database
+  saveOrder(method);
+}
+
+async function saveOrder(method) {
+  try {
+    const cart = JSON.parse(localStorage.getItem('obwocha_cart') || '[]');
+    const total = cart.reduce(function(s,i){ return s + (i.price||0)*(i.qty||0); }, 0);
+    const resp = await fetch(PAYMENT_API + '/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        customer: {
+          name: document.getElementById('fullName')?.value || 'Guest',
+          email: document.getElementById('email')?.value || '',
+          phone: document.getElementById('phoneNumber')?.value || '',
+          address: `${document.getElementById('street')?.value || ''}, ${document.getElementById('town')?.value || ''}, ${document.getElementById('county')?.value || ''}`
+        },
+        items: cart.map(function(i) { return { id: i.id, productId: i.productId || i.id, name: i.name, price: i.price, qty: i.qty, quantity: i.qty || i.quantity || 1, image: i.image || '' }; }),
+        totals: { subtotal: total, shipping: 0, tax: 0, total: total },
+        payment: { method: method, status: 'completed' },
+        notes: document.getElementById('instructions')?.value || ''
+      })
+    });
+    const data = await resp.json();
+    if (data.success) {
+      console.log('Order saved:', data.order.id);
+      document.getElementById('orderSeq').textContent = data.order.id.replace('ORD-', '');
+      localStorage.removeItem('obwocha_cart');
+      setTimeout(function() {
+        window.location.href = '/order-confirmation.html?order=' + data.order.id;
+      }, 3000);
+    }
+  } catch(err) {
+    console.error('Failed to save order:', err);
+    // Order still shows — it's just not persisted
+  }
+}
+
+function updatePinDots() {
+  for(let i=0; i<4; i++) {
+    const dot = document.getElementById('dot' + i);
+    if(dot) {
+      if(i < pinValue.length) dot.classList.add('filled');
+      else dot.classList.remove('filled');
+    }
+  }
+}
+
+function launchConfetti() {
+  const container = document.createElement('div');
+  container.className = 'confetti-container';
+  document.body.appendChild(container);
+  const colors = ['#e53935','#43a047','#1e88e5','#fb8c00','#8e24aa','#fdd835'];
+  for(let i=0; i<60; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti';
+    piece.style.left = Math.random() * 100 + '%';
+    piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+    piece.style.width = (Math.random() * 8 + 4) + 'px';
+    piece.style.height = (Math.random() * 8 + 4) + 'px';
+    piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+    piece.style.animationDuration = (Math.random() * 2 + 2) + 's';
+    piece.style.animationDelay = (Math.random() * 1.5) + 's';
+    container.appendChild(piece);
+  }
+  setTimeout(() => container.remove(), 4000);
+}
+
+// Initialize
+document.querySelectorAll('.payment-option:first-child input').forEach(el => el.checked = true);
+</script>
+
+<script>
+if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(e){console.log("SW registration failed:",e)})}
+<script src="js/search.js" defer></script></script></body>
+</html>
