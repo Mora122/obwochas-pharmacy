@@ -8,7 +8,39 @@
 <meta name="robots" content="noindex">
 <link rel="preload" href="css/style.css" as="style">
   <link rel="stylesheet" href="css/style.css">
-<link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#1a5c2e"></head>
+<link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#1a5c2e">
+<style>
+  .oc-container { max-width: 700px; margin: 0 auto; padding: 40px 20px; }
+  .oc-header { text-align: center; margin-bottom: 30px; }
+  .oc-icon { font-size: 72px; margin-bottom: 16px; }
+  .oc-title { font-size: 24px; font-weight: 700; color: var(--primary); margin-bottom: 6px; }
+  .oc-subtitle { color: #666; font-size: 15px; }
+  .oc-card { background: #fff; border-radius: 12px; border: 1px solid #e8e8e8; padding: 24px; margin-bottom: 20px; }
+  .oc-card h3 { font-size: 15px; font-weight: 600; color: #333; margin: 0 0 16px 0; padding-bottom: 12px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; gap: 8px; }
+  .oc-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 14px; }
+  .oc-row .label { color: #888; }
+  .oc-row .value { font-weight: 500; color: #333; }
+  .oc-order-num { font-size: 20px; font-weight: 700; color: var(--primary); letter-spacing: 1px; }
+  .oc-status { display: inline-block; background: #e8f5e9; color: #2e7d32; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; }
+  .oc-item { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid #f5f5f5; }
+  .oc-item:last-child { border-bottom: none; }
+  .oc-item-img { width: 44px; height: 44px; border-radius: 8px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .oc-item-details { flex: 1; }
+  .oc-item-name { font-size: 14px; font-weight: 500; }
+  .oc-item-meta { font-size: 12px; color: #888; }
+  .oc-item-total { font-weight: 600; font-size: 14px; }
+  .oc-total-line { display: flex; justify-content: space-between; padding: 8px 0; font-size: 15px; }
+  .oc-grand-total { font-size: 18px; font-weight: 700; color: var(--primary); border-top: 2px solid var(--primary); padding-top: 12px; margin-top: 8px; }
+  .oc-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+  .oc-loading { text-align: center; padding: 60px; color: #888; }
+  .oc-error { text-align: center; padding: 60px; color: #c62828; }
+  .oc-error h3 { font-size: 20px; margin-bottom: 8px; }
+  @media (max-width: 600px) {
+    .oc-container { padding: 20px 12px; }
+    .oc-card { padding: 16px; }
+  }
+</style>
+</head>
 <body>
 <div class="top-bar"><div class="left"><span>🚚 Free Delivery For orders above KSh 2,500/=</span></div><div class="right"><a href="about.html">About Us</a><a href="blog.html">Blog</a><a href="faq.html">FAQ</a><a href="contact.html">Contact</a></div></div>
 <div class="header-nav-wrap">
@@ -20,21 +52,64 @@
 </header>
 <nav class="main-nav"><ul><li><a href="index.html">Home</a></li><li><a href="shop.html">Shop</a></li><li><a href="about.html">About</a></li><li><a href="services.html">Health Services</a></li><li><a href="contact.html">Contact</a></li></ul></nav>
 </div>
-<div class="page-header"><h2>✅ Order Confirmed!</h2><p>Thank you for shopping at Obwocha's Pharmacy</p><div class="breadcrumb"><a href="index.html">Home</a> / <span>Order Confirmation</span></div></div>
-<div class="about-content" style="text-align:center;padding:60px 20px;">
-  <div style="font-size:72px;margin-bottom:20px;">✅</div>
-  <h3 style="color:var(--primary);margin-bottom:8px;">Your order has been placed successfully!</h3>
-  <p style="color:#666;max-width:500px;margin:0 auto 24px;">We've received your order and will begin processing it right away. You'll receive an email confirmation shortly with your order details.</p>
-  <div style="background:#f0fdf4;border-radius:12px;padding:24px;max-width:400px;margin:0 auto 30px;">
-    <p style="margin:0 0 8px 0;font-size:13px;color:#666;">Order tracking available soon via:</p>
-    <p style="font-size:18px;font-weight:600;margin:0;">📞 0727747699</p>
-    <p style="font-size:13px;color:#666;">📧 info@obwochaspharmacy.co.ke</p>
+
+<div class="oc-container" id="app">
+  <div class="oc-loading" id="loadingState">
+    <div style="font-size:48px;margin-bottom:16px;">⏳</div>
+    <p>Loading your order details...</p>
   </div>
-  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-    <a href="shop.html" class="btn btn-primary">Continue Shopping →</a>
-    <a href="index.html" class="btn" style="background:#fff;border:1px solid #ddd;padding:10px 24px;border-radius:8px;text-decoration:none;color:var(--text);">Back to Home</a>
+
+  <div class="oc-error" id="errorState" style="display:none;">
+    <div style="font-size:48px;margin-bottom:16px;">❌</div>
+    <h3>Order Not Found</h3>
+    <p id="errorMessage" style="color:#888;">We couldn't find your order. Please check the order number and try again.</p>
+    <div class="oc-actions">
+      <a href="shop.html" class="btn btn-primary">Continue Shopping →</a>
+      <a href="index.html" class="btn" style="background:#fff;border:1px solid #ddd;padding:10px 24px;border-radius:8px;text-decoration:none;color:var(--text);">Back to Home</a>
+    </div>
+  </div>
+
+  <div id="orderContent" style="display:none;">
+    <div class="oc-header">
+      <div class="oc-icon">✅</div>
+      <div class="oc-title">Order Confirmed!</div>
+      <div class="oc-subtitle">Thank you for shopping at Obwocha's Pharmacy</div>
+    </div>
+
+    <!-- Order Status -->
+    <div class="oc-card">
+      <h3>📋 Order Summary</h3>
+      <div class="oc-row"><span class="label">Order Number</span><span class="oc-order-num" id="orderNumber">—</span></div>
+      <div class="oc-row"><span class="label">Date</span><span class="value" id="orderDate">—</span></div>
+      <div class="oc-row"><span class="label">Status</span><span class="oc-status" id="orderStatus">Processing</span></div>
+      <div class="oc-row"><span class="label">Payment</span><span class="value" id="orderPayment">—</span></div>
+    </div>
+
+    <!-- Items -->
+    <div class="oc-card">
+      <h3>🛍️ Items Ordered</h3>
+      <div id="orderItems"><p style="color:#888;font-size:13px;">Loading items...</p></div>
+      <div class="oc-total-line"><span>Subtotal</span><span id="subtotalAmount">—</span></div>
+      <div class="oc-total-line"><span>Delivery</span><span id="deliveryStatus">Free</span></div>
+      <div class="oc-total-line oc-grand-total"><span>Total</span><span id="totalAmount">—</span></div>
+    </div>
+
+    <!-- Delivery -->
+    <div class="oc-card">
+      <h3>📍 Delivery Details</h3>
+      <div class="oc-row"><span class="label">Name</span><span class="value" id="deliveryName">—</span></div>
+      <div class="oc-row"><span class="label">Phone</span><span class="value" id="deliveryPhone">—</span></div>
+      <div class="oc-row"><span class="label">Address</span><span class="value" id="deliveryAddress">—</span></div>
+      <div class="oc-row"><span class="label">Notes</span><span class="value" id="deliveryNotes">—</span></div>
+    </div>
+
+    <div class="oc-actions">
+      <a href="shop.html" class="btn btn-primary">Continue Shopping →</a>
+      <a href="index.html" class="btn" style="background:#fff;border:1px solid #ddd;padding:10px 24px;border-radius:8px;text-decoration:none;color:var(--text);">Back to Home</a>
+    </div>
   </div>
 </div>
+
 <section class="newsletter"><h3>📬 Stay in the Know</h3><p>Get health tips and exclusive offers.</p><div class="newsletter-form"><input type="email" placeholder="Enter your email"><button>Subscribe</button></div></section>
 <footer>
   <div class="footer-grid">
@@ -45,6 +120,89 @@
   </div>
   <div class="footer-bottom"><p>Copyright © 2026 Obwocha's Pharmacy</p></div>
 </footer>
+<script>
+const API = '/api';
+
+function getParam(name) {
+  var url = new URL(window.location.href);
+  return url.searchParams.get(name);
+}
+
+async function loadOrder() {
+  var orderId = getParam('order');
+  if (!orderId) {
+    // No order ID in URL - check if we came from checkout
+    var referrer = document.referrer || '';
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('errorState').style.display = 'block';
+    document.getElementById('errorMessage').textContent = 'No order number provided. If you just placed an order, your order details will appear here.';
+    return;
+  }
+
+  try {
+    var resp = await fetch(API + '/order?id=' + encodeURIComponent(orderId));
+    var data = await resp.json();
+
+    if (!data.success || !data.order) {
+      throw new Error('Order not found');
+    }
+
+    var order = data.order;
+
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('orderContent').style.display = 'block';
+
+    // Basic info
+    document.getElementById('orderNumber').textContent = order.id || orderId;
+    document.getElementById('orderDate').textContent = order.createdAt ? new Date(order.createdAt).toLocaleString('en-KE', { dateStyle: 'long', timeStyle: 'short' }) : '—';
+    document.getElementById('orderStatus').textContent = order.status || 'Processing';
+    document.getElementById('orderPayment').textContent = (order.payment && order.payment.method) || '—';
+
+    // Items
+    var itemsHtml = '';
+    if (order.items && order.items.length > 0) {
+      for (var i = 0; i < order.items.length; i++) {
+        var item = order.items[i];
+        var imgItem = item.image
+          ? '<img src="' + item.image + '" alt="' + (item.name || 'Item') + '" style="width:44px;height:44px;object-fit:cover;border-radius:8px;">'
+          : '📦';
+        itemsHtml += '<div class="oc-item">' +
+          '<div class="oc-item-img">' + imgItem + '</div>' +
+          '<div class="oc-item-details">' +
+            '<div class="oc-item-name">' + (item.name || 'Product') + '</div>' +
+            '<div class="oc-item-meta">Qty: ' + (item.qty || 1) + ' × KSh ' + Number(item.price || 0).toLocaleString() + '</div>' +
+          '</div>' +
+          '<div class="oc-item-total">KSh ' + Number((item.price || 0) * (item.qty || 1)).toLocaleString() + '</div>' +
+        '</div>';
+      }
+    } else {
+      itemsHtml = '<p style="color:#888;font-size:13px;">Order items not available.</p>';
+    }
+    document.getElementById('orderItems').innerHTML = itemsHtml;
+
+    // Totals
+    var totals = order.totals || {};
+    document.getElementById('subtotalAmount').textContent = 'KSh ' + Number(totals.subtotal || 0).toLocaleString();
+    document.getElementById('totalAmount').textContent = 'KSh ' + Number(totals.total || 0).toLocaleString();
+    document.getElementById('deliveryStatus').textContent = totals.shipping > 0 ? 'KSh ' + Number(totals.shipping).toLocaleString() : 'Free';
+
+    // Delivery
+    var cust = order.customer || {};
+    document.getElementById('deliveryName').textContent = cust.name || '—';
+    document.getElementById('deliveryPhone').textContent = cust.phone || '—';
+    document.getElementById('deliveryNotes').textContent = order.notes || 'None';
+    document.getElementById('deliveryAddress').textContent = cust.address || (cust.town ? cust.town + ', ' + (cust.county || '') : '—');
+
+  } catch(e) {
+    console.error('Failed to load order:', e);
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('errorState').style.display = 'block';
+    document.getElementById('errorMessage').textContent = e.message || 'Could not load order details.';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', loadOrder);
+</script>
 <script>
 if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(e){console.log("SW registration failed:",e)})}
 </script></body>
