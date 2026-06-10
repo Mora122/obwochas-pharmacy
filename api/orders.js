@@ -28,7 +28,7 @@ module.exports = async (req, res) => {
         items: items.map(item => ({
           productId: item.id || item.productId,
           name: item.name,
-          quantity: item.quantity || 1,
+          quantity: item.quantity || item.qty || 1,
           price: item.price || 0,
           image: item.image || ''
         })),
