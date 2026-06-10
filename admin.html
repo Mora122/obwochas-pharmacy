@@ -87,31 +87,74 @@ body{background:#f0f2f5}
 
 .tab-content.active{display:block}
 
-.product-card{background:#fff;border-radius:10px;padding:14px 18px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,0.08);display:flex;justify-content:space-between;align-items:center;gap:12px}
+.product-card{background:#fff;border-radius:12px;padding:16px 20px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,0.06);display:flex;gap:16px;align-items:stretch;border:1px solid #f0f0f0;transition:box-shadow 0.2s}
 
-.product-card:hover{box-shadow:0 3px 12px rgba(0,0,0,0.12)}
+.product-card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.10);border-color:#e0e0e0}
 
-.product-card .prod-name{font-weight:600;font-size:14px;color:#333}
+.product-card .prod-thumb{width:70px;height:70px;flex-shrink:0;border-radius:10px;overflow:hidden;background:#f8f8f8;border:1px solid #eee;display:flex;align-items:center;justify-content:center}
 
-.product-card .prod-cat{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:0.5px}
+.product-card .prod-thumb img{width:100%;height:100%;object-fit:cover}
 
-.product-card .prod-price{font-weight:700;color:var(--primary);font-size:15px}
+.product-card .prod-thumb .no-img{font-size:28px;color:#ccc}
 
-.product-card .prod-stock{font-size:12px}
+.product-card .prod-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
 
-.prod-thumb{width:44px;height:44px;flex-shrink:0;border-radius:8px;overflow:hidden;background:#f5f5f5;border:1px solid #e0e0e0}
+.product-card .prod-name{font-weight:600;font-size:15px;color:#222}
 
-.prod-thumb img{width:100%;height:100%;object-fit:cover}
+.product-card .prod-cat{font-size:11px;color:#999;text-transform:uppercase;letter-spacing:0.5px;display:flex;align-items:center;gap:6px}
 
-.stock-btns{display:flex;gap:3px}
+.product-card .prod-cat .cat-badge{background:#e3f2fd;color:#1565c0;padding:1px 8px;border-radius:3px;font-size:10px;font-weight:600}
 
-.stock-btns .sb{padding:2px 7px;font-size:11px;border-radius:4px;cursor:pointer;font-weight:600;min-width:28px;text-align:center;border:1px solid}
+.product-card .prod-desc{font-size:12px;color:#777;line-height:1.4;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+.product-card .prod-stock-section{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:110px;padding:0 8px;border-left:1px solid #f0f0f0;border-right:1px solid #f0f0f0}
+
+.product-card .prod-price{font-weight:700;font-size:17px;color:var(--primary)}
+
+.product-card .prod-stock-badge{font-size:11px;font-weight:600;padding:2px 10px;border-radius:10px;margin:4px 0}
+
+.product-card .stock-ok{background:#e8f5e9;color:#2e7d32}
+
+.product-card .stock-low{background:#fff3e0;color:#e65100}
+
+.product-card .stock-out{background:#ffebee;color:#c62828}
+
+.stock-btns{display:flex;gap:2px;margin-top:4px}
+
+.stock-btns .sb{padding:2px 6px;font-size:10px;border-radius:3px;cursor:pointer;font-weight:700;min-width:26px;text-align:center;border:1px solid;transition:background 0.15s}
 
 .stock-btns .sb--{background:#ffebee;color:#c62828;border-color:#ef9a9a}
-
 .stock-btns .sb--:hover{background:#ffcdd2}
 
 .stock-btns .sb+{background:#e8f5e9;color:#2e7d32;border-color:#a5d6a7}
+.stock-btns .sb+:hover{background:#c8e6c9}
+
+.product-card .prod-actions{display:flex;flex-direction:column;gap:5px;justify-content:center;min-width:90px}
+
+.product-card .prod-actions .pa-btn{padding:5px 10px;font-size:11px;border-radius:5px;cursor:pointer;font-weight:600;text-align:center;transition:all 0.15s}
+
+.product-card .prod-actions .pa-edit{background:#e3f2fd;color:#1565c0;border:1px solid #90caf9}
+.product-card .prod-actions .pa-edit:hover{background:#bbdefb}
+
+.product-card .prod-actions .pa-feat{background:#fff8e1;color:#f57f17;border:1px solid #ffe082}
+.product-card .prod-actions .pa-feat.active{background:#fff3e0;color:#e65100;border-color:#ffb74d}
+.product-card .prod-actions .pa-sale{background:#fce4ec;color:#c62828;border:1px solid #f48fb1}
+.product-card .prod-actions .pa-sale.active{background:#fce4ec;color:#ad1457;border-color:#f06292;font-weight:700}
+
+.product-card .prod-actions .pa-del{background:#fafafa;color:#999;border:1px solid #e0e0e0}
+.product-card .prod-actions .pa-del:hover{background:#ffebee;color:#c62828;border-color:#ef9a9a}
+
+/* Inventory Summary */
+.inv-stats{display:grid;grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));gap:10px;margin-bottom:12px}
+.inv-stat-card{background:#fff;border-radius:10px;padding:14px 16px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.06);border:1px solid #f0f0f0}
+.inv-stat-card .stat-num{font-size:24px;font-weight:800;color:#333}
+.inv-stat-card .stat-label{font-size:11px;color:#999;margin-top:2px}
+.inv-stat-card.stat-total{border-color:#e3f2fd}
+.inv-stat-card.stat-total .stat-num{color:#1565c0}
+.inv-stat-card.stat-ok{border-color:#e8f5e9}
+.inv-stat-card.stat-ok .stat-num{color:#2e7d32}
+.inv-stat-card.stat-warn{border-color:#fff3e0}
+.inv-stat-card.stat-warn .stat-num{color:#e65100}
 
 .stock-btns .sb+:hover{background:#c8e6c9}
 
@@ -801,6 +844,9 @@ function renderProducts() {
   var lowStockItems = [];
 
   var categories = {};
+
+  var totalValue = 0;
+
   // Sort alphabetically by name
   var sorted = allProducts.slice().sort(function(a, b) {
     var na = (a.name || "").toLowerCase();
@@ -816,6 +862,8 @@ function renderProducts() {
 
     totalStock += (p.stock || 0);
 
+    totalValue += (p.price || 0) * (p.stock || 0);
+
     if (p.stock !== undefined && p.stock < 20) { lowStock++; lowStockItems.push(p.name + ' (' + p.stock + ')'); }
 
     if (!categories[p.category]) categories[p.category] = 0;
@@ -826,42 +874,51 @@ function renderProducts() {
 
     var stockLabel = p.stock <= 0 ? 'Out of stock' : p.stock + ' in stock';
 
+    var thumb = p.image
+      ? '<div class="prod-thumb"><img src="' + p.image + '" alt="' + p.name.replace(/'/g, "\\u0027") + '" onerror="this.innerHTML=\'<span class=no-img>\U0001f4e6</span>\'"></div>'
+      : '<div class="prod-thumb"><span class="no-img">\U0001f4e6</span></div>';
+
+    var desc = p.description
+      ? '<div class="prod-desc">' + p.description.substring(0,80) + (p.description.length > 80 ? '...' : '') + '</div>'
+      : '';
+
+    var featureBtn = p.featured
+      ? '<button class="pa-btn pa-feat active" onclick="toggleFeatured(\'' + p.id + '\',false)">\u2b50 Featured</button>'
+      : '<button class="pa-btn pa-feat" onclick="toggleFeatured(\'' + p.id + '\',true)">\u2b50 Feature</button>';
+
+    var saleBtn = p.specialOffer
+      ? '<button class="pa-btn pa-sale active" onclick="toggleSpecial(\'' + p.id + '\',false)">\U0001f525 On Sale</button>'
+      : '<button class="pa-btn pa-sale" onclick="toggleSpecial(\'' + p.id + '\',true)">\U0001f525 Offer</button>';
+
     html += '<div class="product-card">' +
 
-      '<div style="flex:1;display:flex;gap:10px">' +
-        (p.image ? '<div style="width:44px;height:44px;flex-shrink:0;border-radius:6px;overflow:hidden;background:#f0f0f0"><img src="' + p.image + '" alt="' + p.name + '" style="width:100%;height:100%;object-fit:cover" onerror="this.remove()"></div>' : '') +
-        '<div style="min-width:0">' +
+      thumb +
+
+      '<div class="prod-info">' +
         '<div class="prod-name">' + p.name + '</div>' +
-        '<div class="prod-cat">' + (p.category || '') + ' • ' + p.id + '</div>' +
-        '<div style="font-size:11px;color:#555;margin-top:2px">' + (p.description ? p.description.substring(0,60) + (p.description.length > 60 ? '...' : '') : '') + '</div>' +
+        '<div class="prod-cat"><span class="cat-badge">' + (p.category || 'General') + '</span> ' + p.id + '</div>' +
+        desc +
       '</div>' +
 
-      '<div style="text-align:center;min-width:100px;position:relative">' +
-
+      '<div class="prod-stock-section">' +
         '<div class="prod-price">KSh ' + Number(p.price).toLocaleString() + '</div>' +
-
-        '<div class="prod-stock ' + stockClass + '">' + stockLabel + '</div>' +
-
-        '<div style="display:flex;gap:2px;justify-content:center;margin-top:4px">' +
-          '<button onclick="quickStock(\'' + p.id + '\',-1)" title="Remove 1" style="padding:2px 6px;font-size:11px;background:#ffebee;color:#c62828;border:1px solid #ef9a9a;border-radius:3px;cursor:pointer">-1</button>' +
-          '<button onclick="quickStock(\'' + p.id + '\',-5)" title="Remove 5" style="padding:2px 6px;font-size:11px;background:#ffebee;color:#c62828;border:1px solid #ef9a9a;border-radius:3px;cursor:pointer">-5</button>' +
-          '<button onclick="quickStock(\'' + p.id + '\',1)" title="Add 1" style="padding:2px 6px;font-size:11px;background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;border-radius:3px;cursor:pointer">+1</button>' +
-          '<button onclick="quickStock(\'' + p.id + '\',5)" title="Add 5" style="padding:2px 6px;font-size:11px;background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;border-radius:3px;cursor:pointer">+5</button>' +
+        '<div class="prod-stock-badge ' + stockClass + '">' + stockLabel + '</div>' +
+        '<div class="stock-btns">' +
+          '<button class="sb sb--" onclick="quickStock(\'' + p.id + '\',-1)" title="Remove 1">-1</button>' +
+          '<button class="sb sb--" onclick="quickStock(\'' + p.id + '\',-5)" title="Remove 5">-5</button>' +
+          '<button class="sb sb+" onclick="quickStock(\'' + p.id + '\',1)" title="Add 1">+1</button>' +
+          '<button class="sb sb+" onclick="quickStock(\'' + p.id + '\',5)" title="Add 5">+5</button>' +
         '</div>' +
-
       '</div>' +
 
-      '<div style="display:flex;gap:4px">' +
+      '<div class="prod-actions">' +
+        '<button class="pa-btn pa-edit" onclick="showEditProduct(\'' + p.id + '\')">Edit</button>' +
+        featureBtn +
+        saleBtn +
+        '<button class="pa-btn pa-del" onclick="deleteProduct(\'' + p.id + '\',\'' + p.name.replace(/'/g,"\\'") + '\')" title="Delete product">Del</button>' +
+      '</div>' +
 
-        '<button class="btn btn-primary" onclick="showEditProduct(\'' + p.id + '\')" style="font-size:11px;padding:6px 12px">Edit</button>' +
-
-        (p.featured ? '<button onclick="toggleFeatured(\'' + p.id + '\',false)" style="font-size:11px;padding:6px 10px;background:#e8f5e9;color:#2e7d32;border:1px solid #2e7d32;border-radius:4px;cursor:pointer">\u2b50 Featured</button>' : '<button onclick="toggleFeatured(\'' + p.id + '\',true)" style="font-size:11px;padding:6px 10px;background:#f5f5f5;color:#888;border:1px solid #ddd;border-radius:4px;cursor:pointer">\u2b50 Feature</button>') +
-
-        (p.specialOffer ? '<button onclick="toggleSpecial(\'' + p.id + '\',false)" style="font-size:11px;padding:6px 10px;background:#fff3e0;color:#e65100;border:1px solid #e65100;border-radius:4px;cursor:pointer">\ud83d\udd25 On Sale</button>' : '<button onclick="toggleSpecial(\'' + p.id + '\',true)" style="font-size:11px;padding:6px 10px;background:#f5f5f5;color:#888;border:1px solid #ddd;border-radius:4px;cursor:pointer">\ud83d\udd25 Offer</button>') +
-
-        '<button class="btn" onclick="deleteProduct(\'' + p.id + '\',\'' + p.name.replace(/'/g,"\\'") + '\')" style="font-size:11px;padding:6px 12px;background:#ffebee;color:#c62828;border:none;border-radius:4px;cursor:pointer">Del</button>' +
-
-      '</div></div>';
+    '</div>';
 
   }
 
@@ -873,22 +930,45 @@ function renderProducts() {
 
   var catCount = Object.keys(categories).length;
 
-  document.getElementById('inventorySummary').style.display = 'block';
+  var elSum = document.getElementById('inventorySummary');
 
-  document.getElementById('inventorySummary').innerHTML =
+  elSum.style.display = 'block';
 
-    '<strong>📊 Inventory Summary</strong> — ' + sorted.length + ' products across ' + catCount + ' categories &nbsp;|&nbsp; ' +
+  var lowHtml = '';
 
-    '<span class="stock-ok">✅ ' + (allProducts.length - lowStock) + ' in stock</span> &nbsp;|&nbsp; ' +
+  if (lowStockItems.length > 0) {
 
-    '<span class="stock-low">⚠️ ' + lowStock + ' low stock</span> &nbsp;|&nbsp; ' +
+    lowHtml = '<div style="margin-top:10px;font-size:12px;line-height:1.6;background:#fff8e1;padding:10px 14px;border-radius:8px;border:1px solid #ffe082">' +
 
-    '📦 ' + totalStock + ' total units' +
+      '<strong style="color:#e65100">\u26a0\ufe0f Low Stock Alert:</strong> ' +
 
-    (lowStockItems.length > 0 ? '<div style="margin-top:10px;font-size:12px;line-height:1.6">' +
-      '<strong style="color:#c62828">⚠️ Low Stock Items:</strong> ' +
-      lowStockItems.join(' &nbsp;|&nbsp; ') +
-    '</div>' : '');
+      lowStockItems.join(' &nbsp;\u2022&nbsp; ') +
+
+    '</div>';
+
+  }
+
+  elSum.innerHTML =
+
+    '<div style="margin-bottom:8px;font-size:14px;font-weight:700;color:#333">\U0001f4ca Inventory Overview</div>' +
+
+    '<div class="inv-stats">' +
+
+      '<div class="inv-stat-card stat-total"><div class="stat-num">' + sorted.length + '</div><div class="stat-label">Total Products</div></div>' +
+
+      '<div class="inv-stat-card stat-total"><div class="stat-num">' + catCount + '</div><div class="stat-label">Categories</div></div>' +
+
+      '<div class="inv-stat-card stat-ok"><div class="stat-num">' + totalStock + '</div><div class="stat-label">Total Units</div></div>' +
+
+      '<div class="inv-stat-card stat-ok"><div class="stat-num">KSh ' + totalValue.toLocaleString() + '</div><div class="stat-label">Stock Value</div></div>' +
+
+      '<div class="inv-stat-card ' + (lowStock > 0 ? 'stat-warn' : 'stat-ok') + '"><div class="stat-num">' + lowStock + '</div><div class="stat-label">Low Stock Items</div></div>' +
+
+      '<div class="inv-stat-card stat-ok"><div class="stat-num">' + (allProducts.length - lowStock) + '</div><div class="stat-label">Healthy Stock</div></div>' +
+
+    '</div>' +
+
+    lowHtml;
 
 }
 

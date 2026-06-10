@@ -64,15 +64,15 @@
       <div>
         <h3 style="color:var(--primary);margin-bottom:16px;">📍 Shipping Details</h3>
         <form class="contact-form" id="shippingForm">
-          <label>Full Name *</label><input type="text" id="fullName" value="Robinson Angwenyi" required>
-          <label>Phone Number *</label><input type="tel" id="phoneNumber" value="+254 727 747 699" required>
-          <label>Email *</label><input type="email" id="email" value="robinsonobwocha10@gmail.com" required>
+          <label>Full Name *</label><input type="text" id="fullName" placeholder="John Doe" required>
+          <label>Phone Number *</label><input type="tel" id="phoneNumber" placeholder="0712 345 678" required>
+          <label>Email *</label><input type="email" id="email" placeholder="john@example.com" required>
           <label>County *</label>
           <select id="county" required>
-            <option>Nairobi</option><option>Mombasa</option><option>Kisumu</option><option selected>Meru</option><option>Nakuru</option><option>Eldoret</option><option>Kiambu</option><option>Machakos</option><option>Thika</option>
+            <option>Nairobi</option><option>Mombasa</option><option>Kisumu</option><option>Meru</option><option>Nakuru</option><option>Eldoret</option><option>Kiambu</option><option>Machakos</option><option>Thika</option>
           </select>
-          <label>Town / City *</label><input type="text" id="town" value="Meru Town" required>
-          <label>Street / Landmark *</label><input type="text" id="street" value="Nkubu Road" required>
+          <label>Town / City *</label><input type="text" id="town" placeholder="e.g. Meru Town" required>
+          <label>Street / Landmark *</label><input type="text" id="street" placeholder="e.g. Tom Mboya Street" required>
           <label>Delivery Instructions</label>
           <textarea id="instructions" placeholder="E.g. Call before delivery, leave with gate guard..."></textarea>
           <button type="button" class="btn btn-primary" onclick="goToStep(2)" style="width:100%;margin-top:10px;">Continue to Payment →</button>
@@ -104,7 +104,7 @@
           </div>
           <div class="mpesa-form visible">
             <label style="font-size:13px;">M-Pesa Phone Number *</label>
-            <input type="tel" id="mpesaPhone" value="0727747699" placeholder="0712 345 678" style="font-size:18px;">
+            <input type="tel" id="mpesaPhone" placeholder="0712 345 678" style="font-size:18px;">
             <p style="font-size:12px;color:var(--text-muted);margin-top:6px;">You'll receive an STK Push prompt on this number to enter your M-Pesa PIN</p>
           </div>
         </div>
@@ -130,7 +130,7 @@
               <div><label style="font-size:12px;">CVV *</label><input type="text" id="cardCvv" placeholder="123" maxlength="4"></div>
             </div>
             <label style="font-size:12px;">Cardholder Name *</label>
-            <input type="text" id="cardName" placeholder="Robinson Angwenyi">
+            <input type="text" id="cardName" placeholder="John Doe">
             <p style="font-size:12px;color:var(--text-muted);margin-top:6px;">🔒 Secured — your card details are encrypted</p>
           </div>
         </div>
@@ -162,10 +162,10 @@
           <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;color:#c00;"><span>Discount</span><span>-KSh 510</span></div>
           <div style="display:flex;justify-content:space-between;font-size:20px;font-weight:800;color:var(--primary);margin-top:12px;border-top:2px solid var(--primary);padding-top:12px;"><span>Total</span><span>KSh 7,240</span></div>
           <hr style="margin:12px 0;border-color:var(--border);">
-          <p style="font-size:13px;color:var(--text-muted);"><strong>Delivering to:</strong><br>
-          Robinson Angwenyi<br>
-          Nkubu Road, Meru Town, Meru<br>
-          📞 +254 727 747 699</p>
+          <p style="font-size:13px;color:var(--text-muted);" id="deliverySummary"><strong>Delivering to:</strong><br>
+          <span id="sumName">—</span><br>
+          <span id="sumStreet">—</span>, <span id="sumTown">—</span>, <span id="sumCounty">—</span><br>
+          📞 <span id="sumPhone">—</span></p>
         </div>
       </div>
     </div>
@@ -212,7 +212,7 @@
       </div>
       <h3 style="margin-top:12px;">Check Your Phone 📱</h3>
       <p style="font-size:13px;color:var(--text-muted);">
-        An M-Pesa STK Push has been sent to <strong id="stkPhone2">0727 747 699</strong>
+        An M-Pesa STK Push has been sent to <strong id="stkPhone2">—</strong>
       </p>
       <p style="font-size:12px;color:var(--text-muted);background:#f5f5f5;padding:10px;border-radius:8px;margin:8px 0;">
         1️⃣ Check your phone for the M-Pesa prompt<br>
@@ -311,6 +311,20 @@ let pinValue = '';
 let selectedPayment = 'mpesa';
 
 function goToStep(n) {
+  // Validate shipping form before proceeding from step 1
+  if(n === 2) {
+    var form = document.getElementById('shippingForm');
+    if(!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+    // Populate delivery summary from form
+    document.getElementById('sumName').textContent = document.getElementById('fullName').value || '—';
+    document.getElementById('sumStreet').textContent = document.getElementById('street').value || '—';
+    document.getElementById('sumTown').textContent = document.getElementById('town').value || '—';
+    document.getElementById('sumCounty').textContent = document.getElementById('county').value || '—';
+    document.getElementById('sumPhone').textContent = document.getElementById('phoneNumber').value || '—';
+  }
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.step-content').forEach(s => s.style.display = 'none');
   document.querySelector(`.step[data-step="${n}"]`).classList.add('active');
