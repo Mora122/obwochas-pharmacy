@@ -151,16 +151,16 @@
 
         <div style="display:flex;gap:10px;margin-top:16px;">
           <button class="btn" onclick="goToStep(1)" style="flex:1;">← Back</button>
-          <button class="btn btn-primary" onclick="processPayment()" style="flex:2;">Pay Now — KSh 7,240 →</button>
+          <button class="btn btn-primary" onclick="processPayment()" style="flex:2;">Pay Now — <span class="checkout-total-display">KSh 0 →</button>
         </div>
       </div>
       <div>
         <h3 style="color:var(--primary);margin-bottom:16px;">📋 Order Summary</h3>
         <div style="background:var(--bg-light);border-radius:var(--radius);padding:20px;">
-          <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;"><span>Subtotal</span><span>KSh 7,750</span></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;"><span>Subtotal</span><span class="checkout-subtotal-display">KSh 0</span></div>
           <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;color:var(--primary);"><span>Delivery</span><span>FREE</span></div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;color:#c00;"><span>Discount</span><span>-KSh 510</span></div>
-          <div style="display:flex;justify-content:space-between;font-size:20px;font-weight:800;color:var(--primary);margin-top:12px;border-top:2px solid var(--primary);padding-top:12px;"><span>Total</span><span>KSh 7,240</span></div>
+          
+          <div style="display:flex;justify-content:space-between;font-size:20px;font-weight:800;color:var(--primary);margin-top:12px;border-top:2px solid var(--primary);padding-top:12px;"><span>Total</span><span class="checkout-total-amount">KSh 0</span></div>
           <hr style="margin:12px 0;border-color:var(--border);">
           <p style="font-size:13px;color:var(--text-muted);" id="deliverySummary"><strong>Delivering to:</strong><br>
           <span id="sumName">—</span><br>
@@ -182,7 +182,7 @@
       <div class="mpesa-logo">📱</div>
       <h3>Sending M-Pesa Request</h3>
       <p style="font-size:13px;color:var(--text-muted);">Initiating STK Push to your phone...</p>
-      <div class="amount">KSh <span id="mpesaTotal">7,240</span></div>
+      <div class="amount">KSh <span id="mpesaTotal">0</span></div>
       <div class="phone">📞 To: <strong id="stkPhone">0727XXXXXX</strong></div>
       <div class="spinner" style="margin:20px auto;"></div>
       <p style="font-size:12px;color:var(--text-muted);">Sending payment request via Safaricom API</p>
@@ -200,7 +200,7 @@
             </div>
             <div class="notif-body">
               <div style="font-size:14px;">Enter PIN to pay</div>
-              <div style="font-size:20px;font-weight:800;color:#2e7d32;">KSh <span id="mpesaTotal2">7,240</span></div>
+              <div style="font-size:20px;font-weight:800;color:#2e7d32;">KSh <span id="mpesaTotal2">0</span></div>
               <div style="font-size:12px;color:#666;">to <strong>OBWOCHA'S PHARMACY</strong></div>
             </div>
             <div class="notif-input">
@@ -289,7 +289,7 @@
       <div class="order-details">
         <div class="row"><span>Order Number</span><span style="color:var(--primary);font-weight:700;">GLF-<span id="orderNumber">20260531</span>-<span id="orderSeq">2847</span></span></div>
         <div class="row"><span>Payment Method</span><span id="confirmPayment">M-Pesa</span></div>
-        <div class="row"><span>Total Paid</span><span style="color:var(--primary);font-weight:700;">KSh 7,240</span></div>
+        <div class="row"><span>Total Paid</span><span class="checkout-total-amount" style="color:var(--primary);font-weight:700;">KSh 0</span></div>
         <div class="row"><span>Delivery</span><span>Express — 3 hours</span></div>
         <div class="row"><span>Delivering To</span><span id="confirmAddress">Meru Town, Meru</span></div>
         <div class="row"><span>Estimated Arrival</span><span id="confirmTime">Today by 2:40 PM</span></div>
@@ -309,6 +309,39 @@
 let currentStep = 1;
 let pinValue = '';
 let selectedPayment = 'mpesa';
+let checkoutCartTotal = 0;
+
+function updateCheckoutTotal() {
+  var cart = (function(){ try { return JSON.parse(localStorage.getItem('obwocha_cart')) || []; } catch(e) { return []; } })();
+  checkoutCartTotal = cart.reduce(function(s,i){ return s + (i.price||0)*(i.qty||0); }, 0);
+  var formatted = 'KSh ' + checkoutCartTotal.toLocaleString();
+  var els = document.querySelectorAll('.checkout-total-display');
+  for (var i = 0; i < els.length; i++) {
+    els[i].textContent = formatted;
+  }
+  // Also update the order summary subtotal and total lines
+  var subtotals = document.querySelectorAll('.checkout-subtotal-display');
+  for (var j = 0; j < subtotals.length; j++) {
+    subtotals[j].textContent = formatted;
+  }
+  var totals = document.querySelectorAll('.checkout-total-amount');
+  for (var k = 0; k < totals.length; k++) {
+    totals[k].textContent = formatted;
+  }
+  return checkoutCartTotal;
+}
+
+
+function updateCheckoutTotal() {
+  var cart = (function(){ try { return JSON.parse(localStorage.getItem('obwocha_cart')) || []; } catch(e) { return []; } })();
+  var total = cart.reduce(function(s,i){ return s + (i.price||0)*(i.qty||0); }, 0);
+  var formatted = 'KSh ' + total.toLocaleString();
+  var els = document.querySelectorAll('.checkout-total-display');
+  for (var i = 0; i < els.length; i++) {
+    els[i].textContent = formatted;
+  }
+  return total;
+}
 
 function goToStep(n) {
   // Validate shipping form before proceeding from step 1
@@ -363,6 +396,7 @@ function selectPayment(method) {
 
 // Attach click listeners to payment options (works on mobile touch)
 document.addEventListener('DOMContentLoaded', function() {
+  updateCheckoutTotal();
   document.querySelectorAll('.payment-option').forEach(function(el) {
     el.addEventListener('click', function(e) {
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
@@ -382,6 +416,7 @@ const PAYMENT_API = window.location.hostname === 'localhost'
   : '/api';
 
 async function processPayment() {
+  updateCheckoutTotal();
   const cart = (function(){ try { return JSON.parse(localStorage.getItem('obwocha_cart')) || []; } catch(e) { return []; } })();
   const total = cart.reduce(function(s,i){ return s + (i.price||0)*(i.qty||0); }, 0);
   
@@ -434,7 +469,13 @@ async function processPayment() {
 async function processMpesa() {
   let phone = document.getElementById('mpesaPhone').value.replace(/\D/g, '');
   if(phone.length < 9) { alert('Please enter a valid M-Pesa phone number'); return; }
-  
+
+  // Update totals from cart
+  var mpesaCart = (function(){ try { return JSON.parse(localStorage.getItem('obwocha_cart')) || []; } catch(e) { return []; } })();
+  var mpesaTotal = mpesaCart.reduce(function(s,i){ return s + (i.price||0)*(i.qty||0); }, 0);
+  document.getElementById('mpesaTotal').textContent = mpesaTotal.toLocaleString();
+  document.getElementById('mpesaTotal2').textContent = mpesaTotal.toLocaleString();
+
   // Format phone for display
   let display = phone.length === 10 
     ? phone.slice(0,2) + ' ' + phone.slice(2,5) + ' ' + phone.slice(5,7) + ' ' + phone.slice(7)
@@ -589,7 +630,7 @@ function pinSubmit() {
         <div class="processing-screen">
           <div style="font-size:48px;color:#2e7d32;">✅</div>
           <h3 style="color:#2e7d32;">Transaction Successful!</h3>
-          <p style="font-size:14px;">M-Pesa confirmed — KSh 7,240</p>
+          <p style="font-size:14px;">M-Pesa confirmed — KSh ${checkoutCartTotal.toLocaleString()}</p>
           <p style="font-size:12px;color:var(--text-muted);margin:8px 0;">M-Pesa Ref: AC12XYZ789</p>
         </div>`;
       setTimeout(() => {
@@ -611,7 +652,7 @@ function pinSubmit() {
       <div class="processing-screen">
         <div style="font-size:48px;color:#2e7d32;">✅</div>
         <h3 style="color:#2e7d32;">Transaction Successful!</h3>
-        <p style="font-size:14px;">M-Pesa confirmed — KSh 7,240</p>
+        <p style="font-size:14px;">M-Pesa confirmed — KSh ${checkoutCartTotal.toLocaleString()}</p>
         <p style="font-size:12px;color:var(--text-muted);margin:8px 0;">M-Pesa Ref: AC12XYZ789</p>
       </div>`;
     setTimeout(() => {
@@ -627,7 +668,7 @@ function closeStkPush() {
     <div class="mpesa-logo">📱</div>
     <h3>M-Pesa STK Push</h3>
     <p style="font-size:13px;color:var(--text-muted);">Enter your M-Pesa PIN to complete payment</p>
-    <div class="amount">KSh 7,240</div>
+    <div class="amount">KSh ${checkoutCartTotal.toLocaleString()}</div>
     <div class="phone">📞 To: <strong id="stkPhone">07XX${document.getElementById('mpesaPhone').value.replace(/\D/g, '').slice(-4) || '0000'}</strong></div>
     <div class="pin-dots" id="pinDots">
       <div class="pin-dot" id="dot0"></div>
