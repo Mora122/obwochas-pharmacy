@@ -1005,6 +1005,7 @@ function renderProducts() {
 
       '<div class="prod-actions">' +
         '<button class="pa-btn pa-edit" onclick="showEditProduct(\'' + p.id + '\')">Edit</button>' +
+        '<button class=\"pa-btn\" onclick=\"showStockHistory(\'' + p.id + '\')\" title=\"Stock History\" style=\"font-size:16px;padding:4px 8px;background:#f3e5f5;color:#6a1b9a;border:1px solid #ce93d8;border-radius:4px;cursor:pointer\">📋</button>' +
         featureBtn +
         saleBtn +
         '<button class="pa-btn pa-del" onclick="deleteProduct(\'' + p.id + '\',\'' + p.name.replace(/'/g,"\\'") + '\')" title="Delete product">Del</button>' +
@@ -1284,6 +1285,58 @@ async function deleteProduct(id, name) {
 
 
 
+async function showStockHistory(id) {
+  try {
+    var r = await fetch(window.API + '/products?id=' + id);
+    var d = await r.json();
+    if (!d.success || !d.product) {
+      alert('Product not found');
+      return;
+    }
+    var p = d.product;
+    var history = p.stockHistory || [];
+    var name = p.name || 'Product';
+    var currentStock = p.stock || 0;
+
+    var html = '<div class="modal-content" style="max-width:700px">' +
+      '<span class="close" onclick="document.getElementById(\'stockHistoryModal\').classList.remove(\'open\')">&times;</span>' +
+      '<h2 style="margin-bottom:4px">📦 ' + name + '</h2>' +
+      '<p style="color:#666;margin-bottom:16px">Current stock: <strong>' + currentStock + ' units</strong></p>';
+
+    if (history.length === 0) {
+      html += '<p style="color:#999;padding:40px;text-align:center">No stock change history yet.</p>';
+    } else {
+      html += '<table style="width:100%;border-collapse:collapse;font-size:13px">' +
+        '<thead><tr style="background:#f5f5f5">' +
+          '<th style="padding:8px 10px;text-align:left;border-bottom:2px solid #ddd">Date</th>' +
+          '<th style="padding:8px 10px;text-align:center;border-bottom:2px solid #ddd">Change</th>' +
+          '<th style="padding:8px 10px;text-align:center;border-bottom:2px solid #ddd">From → To</th>' +
+          '<th style="padding:8px 10px;text-align:left;border-bottom:2px solid #ddd">Reason</th>' +
+        '</tr></thead><tbody>' +
+        history.slice().reverse().map(function(e) {
+          var changeClass = e.change > 0 ? 'color:#2e7d32' : 'color:#c62828';
+          var sign = e.change > 0 ? '+' : '';
+          return '<tr>' +
+            '<td style="padding:8px 10px;border-bottom:1px solid #f0f0f0">' + new Date(e.date).toLocaleString() + '</td>' +
+            '<td style="padding:8px 10px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:700;' + changeClass + '">' + sign + e.change + '</td>' +
+            '<td style="padding:8px 10px;text-align:center;border-bottom:1px solid #f0f0f0">' + e.from + ' → ' + e.to + '</td>' +
+            '<td style="padding:8px 10px;border-bottom:1px solid #f0f0f0;color:#666">' + e.reason + '</td>' +
+          '</tr>';
+        }).join('') +
+        '</tbody></table>';
+    }
+
+    html += '<div style="text-align:right;margin-top:16px">' +
+      '<button onclick="document.getElementById(\'stockHistoryModal\').classList.remove(\'open\')" style="padding:8px 20px;border:1px solid #ddd;border-radius:6px;background:#fff;cursor:pointer">Close</button>' +
+      '</div></div>';
+
+    document.getElementById('stockHistoryModal').innerHTML = html;
+    document.getElementById('stockHistoryModal').classList.add('open');
+  } catch(e) {
+    alert('Error loading history: ' + e.message);
+  }
+}
+
 // Auto-refresh
 
 loadOrders();
@@ -1293,7 +1346,9 @@ setInterval(loadOrders, 60000);
 </script>
 
 
-<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(e){console.log("SW registration failed:",e)})}</script></script></body>
+<div id="stockHistoryModal" class="modal"></div>
+
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(e){console.log("SW registration failed:",e)})}</script></body>
 
 </html>
 
