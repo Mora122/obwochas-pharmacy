@@ -257,7 +257,7 @@
     } catch(e) {}
   }
 
-  function addToCartCond(pid, name, price) {
+  function addToCartCond(pid, name, price, image) {
     try {
       var cart = JSON.parse(localStorage.getItem('obwocha_cart')) || [];
       var existing = cart.find(function(i) { return String(i.id) === String(pid); });

@@ -472,7 +472,7 @@ const ProductDB = {
       '<div class="qty-selector"><button onclick="this.nextElementSibling.stepDown()">−</button><input type="number" id="qtyInput" value="1" min="1" max="99"><button onclick="this.previousElementSibling.stepUp()">+</button></div>' +
 
 
-      '<div class="btn-row"><button class="btn btn-primary" onclick="addToCart(\'' + p.id + '\',\'' + p.name.replace(/'/g,"\\'") + '\',' + p.price + ')">🛒 Add to Cart</button>' +
+      '<div class="btn-row"><button class="btn btn-primary" onclick="addToCart(\'' + p.id + '\',\'' + p.name.replace(/'/g,"\\'") + '\',' + p.price + ",'" + (p.image||'').replace(/'/g,"\\'") + ')\">🛒 Add to Cart</button>' +
 
 
       '<a href="checkout.html" class="btn">Buy Now</a></div>' +
@@ -586,7 +586,7 @@ async function loadRelated(category, excludeId) {
       var imgInner = p.image ? '<img src="' + p.image + '" alt="' + p.name + '"  style="width:100%;height:100%;object-fit:cover;border-radius:8px" data-category="' + p.category + '" onerror="imgError(this)">' : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:36px;">' + icon + '</div>';
 
 
-      html += '<div class="product-card"><div class="product-img">' + imgInner + '</div><div class="product-body"><div class="brand">' + p.category + '</div><h3><a href="product.html?id=' + p.id + '">' + p.name + '</a></h3><div class="price">KSh ' + Number(p.price).toLocaleString() + '</div><div class="product-actions"><a href="product.html?id=' + p.id + '" class="btn btn-sm">View</a><button class="btn btn-primary btn-sm" onclick="addToCart(\'' + p.id + '\',\'' + p.name.replace(/'/g,"\\'") + '\',' + p.price + ')">Add to Cart</button></div></div></div>';
+      html += '<div class="product-card"><div class="product-img">' + imgInner + '</div><div class="product-body"><div class="brand">' + p.category + '</div><h3><a href="product.html?id=' + p.id + '">' + p.name + '</a></h3><div class="price">KSh ' + Number(p.price).toLocaleString() + '</div><div class="product-actions"><a href="product.html?id=' + p.id + '" class="btn btn-sm">View</a><button class="btn btn-primary btn-sm" onclick="addToCart(\'' + p.id + '\',\'' + p.name.replace(/'/g,"\\'") + '\',' + p.price + ",'" + (p.image||'').replace(/'/g,"\\'") + ')\">Add to Cart</button></div></div></div>';
 
 
     });
@@ -607,7 +607,7 @@ async function loadRelated(category, excludeId) {
 
 
 
-function addToCart(id, name, price) {
+function addToCart(id, name, price, image) {
 
 
   try {
