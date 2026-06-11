@@ -158,7 +158,7 @@
         <h3 style="color:var(--primary);margin-bottom:16px;">📋 Order Summary</h3>
         <div style="background:var(--bg-light);border-radius:var(--radius);padding:20px;">
           <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;"><span>Subtotal</span><span class="checkout-subtotal-display">KSh 0</span></div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;color:var(--primary);"><span>Delivery</span><span>FREE</span></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;color:var(--primary);"><span>Delivery</span><span class="checkout-delivery-display">FREE</span></div>
           
           <div style="display:flex;justify-content:space-between;font-size:20px;font-weight:800;color:var(--primary);margin-top:12px;border-top:2px solid var(--primary);padding-top:12px;"><span>Total</span><span class="checkout-total-amount">KSh 0</span></div>
           <hr style="margin:12px 0;border-color:var(--border);">
@@ -313,34 +313,40 @@ let checkoutCartTotal = 0;
 
 function updateCheckoutTotal() {
   var cart = (function(){ try { return JSON.parse(localStorage.getItem('obwocha_cart')) || []; } catch(e) { return []; } })();
-  checkoutCartTotal = cart.reduce(function(s,i){ return s + (i.price||0)*(i.qty||0); }, 0);
-  var formatted = 'KSh ' + checkoutCartTotal.toLocaleString();
+  var subtotal = cart.reduce(function(s,i){ return s + (i.price||0)*(i.qty||0); }, 0);
+  checkoutCartTotal = subtotal;
+  var delivery = subtotal > 2500 ? 0 : 350;
+  var total = subtotal + delivery;
+  var totalFormatted = 'KSh ' + total.toLocaleString();
+  var subFormatted = 'KSh ' + subtotal.toLocaleString();
+  // Update button text
   var els = document.querySelectorAll('.checkout-total-display');
   for (var i = 0; i < els.length; i++) {
-    els[i].textContent = formatted;
+    els[i].textContent = totalFormatted;
   }
-  // Also update the order summary subtotal and total lines
+  // Update order summary subtotal
   var subtotals = document.querySelectorAll('.checkout-subtotal-display');
   for (var j = 0; j < subtotals.length; j++) {
-    subtotals[j].textContent = formatted;
+    subtotals[j].textContent = subFormatted;
   }
+  // Update delivery text
+  var delEls = document.querySelectorAll('.checkout-delivery-display');
+  for (var d = 0; d < delEls.length; d++) {
+    delEls[d].textContent = delivery === 0 ? 'FREE' : 'KSh ' + delivery;
+    delEls[d].style.color = delivery === 0 ? 'var(--primary)' : 'inherit';
+  }
+  // Update total amounts (order summary + confirmation screen)
   var totals = document.querySelectorAll('.checkout-total-amount');
   for (var k = 0; k < totals.length; k++) {
-    totals[k].textContent = formatted;
+    totals[k].textContent = totalFormatted;
   }
+  // Update M-Pesa overlay amounts
+  var num = total.toLocaleString();
+  var mpesa1 = document.getElementById('mpesaTotal');
+  if (mpesa1) mpesa1.textContent = num;
+  var mpesa2 = document.getElementById('mpesaTotal2');
+  if (mpesa2) mpesa2.textContent = num;
   return checkoutCartTotal;
-}
-
-
-function updateCheckoutTotal() {
-  var cart = (function(){ try { return JSON.parse(localStorage.getItem('obwocha_cart')) || []; } catch(e) { return []; } })();
-  var total = cart.reduce(function(s,i){ return s + (i.price||0)*(i.qty||0); }, 0);
-  var formatted = 'KSh ' + total.toLocaleString();
-  var els = document.querySelectorAll('.checkout-total-display');
-  for (var i = 0; i < els.length; i++) {
-    els[i].textContent = formatted;
-  }
-  return total;
 }
 
 function goToStep(n) {
@@ -418,7 +424,9 @@ const PAYMENT_API = window.location.hostname === 'localhost'
 async function processPayment() {
   updateCheckoutTotal();
   const cart = (function(){ try { return JSON.parse(localStorage.getItem('obwocha_cart')) || []; } catch(e) { return []; } })();
-  const total = cart.reduce(function(s,i){ return s + (i.price||0)*(i.qty||0); }, 0);
+  const subtotal = cart.reduce(function(s,i){ return s + (i.price||0)*(i.qty||0); }, 0);
+  const delivery = subtotal > 2500 ? 0 : 350;
+  const total = subtotal + delivery;
   
   if(selectedPayment === 'card') {
     document.getElementById('cardProcessingOverlay').classList.add('active');
@@ -470,11 +478,9 @@ async function processMpesa() {
   let phone = document.getElementById('mpesaPhone').value.replace(/\D/g, '');
   if(phone.length < 9) { alert('Please enter a valid M-Pesa phone number'); return; }
 
-  // Update totals from cart
-  var mpesaCart = (function(){ try { return JSON.parse(localStorage.getItem('obwocha_cart')) || []; } catch(e) { return []; } })();
-  var mpesaTotal = mpesaCart.reduce(function(s,i){ return s + (i.price||0)*(i.qty||0); }, 0);
-  document.getElementById('mpesaTotal').textContent = mpesaTotal.toLocaleString();
-  document.getElementById('mpesaTotal2').textContent = mpesaTotal.toLocaleString();
+  // Update totals from cart (uses delivery-aware `total` from processPayment closure)
+  document.getElementById('mpesaTotal').textContent = total.toLocaleString();
+  document.getElementById('mpesaTotal2').textContent = total.toLocaleString();
 
   // Format phone for display
   let display = phone.length === 10 
@@ -728,7 +734,9 @@ function showConfirmation(method) {
 async function saveOrder(method) {
   try {
     const cart = JSON.parse(localStorage.getItem('obwocha_cart') || '[]');
-    const total = cart.reduce(function(s,i){ return s + (i.price||0)*(i.qty||0); }, 0);
+    const subtotal = cart.reduce(function(s,i){ return s + (i.price||0)*(i.qty||0); }, 0);
+    const delivery = subtotal > 2500 ? 0 : 350;
+    const total = subtotal + delivery;
     const resp = await fetch(PAYMENT_API + '/orders', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -740,7 +748,7 @@ async function saveOrder(method) {
           address: `${document.getElementById('street')?.value || ''}, ${document.getElementById('town')?.value || ''}, ${document.getElementById('county')?.value || ''}`
         },
         items: cart.map(function(i) { return { id: i.id, productId: i.productId || i.id, name: i.name, price: i.price, qty: i.qty, quantity: i.qty || i.quantity || 1, image: i.image || '' }; }),
-        totals: { subtotal: total, shipping: 0, tax: 0, total: total },
+        totals: { subtotal: subtotal, shipping: delivery, tax: 0, total: total },
         payment: { method: method, status: 'completed' },
         notes: document.getElementById('instructions')?.value || ''
       })
