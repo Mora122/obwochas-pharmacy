@@ -4,9 +4,9 @@
 <html lang="en">
 
 
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Submit Prescription — Obwocha's Pharmacy</title>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Prescription V2 — Obwocha's Pharmacy</title>
 <meta name="description" content="Submit your prescription online at Obwocha's Pharmacy. Fast processing and delivery of prescribed medicines.">
-<meta property="og:title" content="Submit Prescription — Obwocha's Pharmacy">
+<meta property="og:title" content="Prescription V2 — Obwocha's Pharmacy">
 <meta property="og:description" content="Submit your prescription online at Obwocha's Pharmacy. Fast processing and delivery of prescribed medicines.">
 <meta property="og:url" content="https://obwochas-pharmacy.vercel.app/prescription.html">
 <meta property="og:type" content="website">
@@ -54,7 +54,7 @@
 <header><button class="mobile-menu-toggle" onclick="document.querySelector('.main-nav').classList.toggle('open')">&#9776; Menu</button><a href="index.html" class="logo"><div class="logo-icon"><img src="icons/logo.svg" alt="Obwochas Pharmacy" width="44" height="44"></div><div class="logo-text"><h1>Obwocha's <span>Pharmacy</span></h1><small>Meru's Own Pharmacy</small></div></a><div class="search-bar"><input type="text" placeholder="Search..."><button>Search</button></div><div class="header-icons"><a href="cart.html" class="cart-icon">🛒 <span class="badge">0</span></a></div></header>
 
 <!-- Navigation -->
-<nav class="main-nav"><ul><li><a href="index.html">Home</a></li><li><a href="shop.html">Shop</a></li><li><a href="prescription.html" class="active">Submit Prescription</a></li><li><a href="services.html">Health Services</a></li></ul></nav>
+<nav class="main-nav"><ul><li><a href="index.html">Home</a></li><li><a href="shop.html">Shop</a></li><li><a href="prescription.html" class="active">Prescription V2</a></li><li><a href="services.html">Health Services</a></li></ul></nav>
 
 </div>
 
@@ -63,7 +63,7 @@
 
 
 
-<div class="page-header"><h2>📋 Submit Your Prescription</h2><p>Upload your prescription and we'll prepare your medication for collection or delivery</p><div class="breadcrumb"><a href="index.html">Home</a> / <span>Submit Prescription</span></div></div>
+<div class="page-header"><h2>📋 Submit Prescription (Updated)</h2><p>Upload your prescription and we'll prepare your medication for collection or delivery</p><div class="breadcrumb"><a href="index.html">Home</a> / <span>Prescription V2</span></div></div>
 
 
 <div class="container" style="max-width:700px;margin:0 auto;padding:40px 20px;">
@@ -120,7 +120,7 @@
       <textarea placeholder="Any special instructions or information for our pharmacist..."></textarea>
 
 
-      <button type="submit" class="btn btn-primary" style="width:100%;padding:14px;">📤 Submit Prescription</button>
+      <button type="submit" class="btn btn-primary" style="width:100%;padding:14px;">📤 Prescription V2</button>
 
 
     </form>
@@ -161,6 +161,20 @@ if ('serviceWorker' in navigator) {
   });
 }
 <script>
+// SELF-HEAL: On first load, nuke stale SW and caches
+(function() {
+  if (typeof caches !== 'undefined') {
+    caches.keys().then(function(keys) {
+      keys.forEach(function(k) { caches.delete(k); });
+    });
+  }
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function(regs) {
+      regs.forEach(function(reg) { reg.unregister(); });
+    });
+  }
+})();
+
 // File upload zone
 document.addEventListener('DOMContentLoaded', function() {
   var zone = document.querySelector('.upload-zone');
