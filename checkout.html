@@ -94,18 +94,29 @@
         <h3 style="color:var(--primary);margin-bottom:16px;">💳 Choose Payment Method</h3>
         <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Select your preferred payment method below</p>
 
-        <!-- M-Pesa -->
+                <!-- M-Pesa -->
         <div class="payment-option selected" data-method="mpesa">
           <div class="payment-header">
             <input type="radio" name="payment" value="mpesa" checked>
-            <span class="radio-circle"></span>
-            <span style="font-size:24px;">📱</span>
-            <div><strong>M-Pesa</strong><br><span style="font-size:12px;color:var(--text-muted);">Pay via M-Pesa STK Push — Kenya's fastest mobile money</span></div>
+            <div class="payment-radio"></div>
+            <div class="payment-icon-wrap">
+              <span>📱</span>
+            </div>
+            <div class="payment-info">
+              <span class="pm-title">M-Pesa</span>
+              <span class="pm-sub">Pay via STK Push — Kenya's fastest mobile money</span>
+            </div>
+            <span class="pm-badge-checkout">⚙️ Most Popular</span>
           </div>
-          <div class="mpesa-form visible">
-            <label style="font-size:13px;">M-Pesa Phone Number *</label>
-            <input type="tel" id="mpesaPhone" placeholder="0712 345 678" style="font-size:18px;">
-            <p style="font-size:12px;color:var(--text-muted);margin-top:6px;">You'll receive an STK Push prompt on this number to enter your M-Pesa PIN</p>
+          <div class="payment-form-body visible">
+            <div class="payment-input-group mpesa-phone-input-wrap">
+              <label>Phone Number</label>
+              <div style="position:relative;display:flex;align-items:center;">
+                <span style="font-size:13px;font-weight:700;color:#666;padding-right:6px;white-space:nowrap;">+254</span>
+                <input type="tel" id="mpesaPhone" placeholder="712 345 678" style="padding-left:6px;" oninput="this.value=this.value.replace(/\D/g,'').substring(0,9)">
+              </div>
+              <span class="payment-input-hint">📱 You'll receive an STK Push to enter your M-Pesa PIN</span>
+            </div>
           </div>
         </div>
 
@@ -113,25 +124,31 @@
         <div class="payment-option" data-method="card">
           <div class="payment-header">
             <input type="radio" name="payment" value="card">
-            <span class="radio-circle"></span>
-            <span style="font-size:24px;">💳</span>
-            <div><strong>Visa / MasterCard</strong><br><span style="font-size:12px;color:var(--text-muted);">Debit or credit card — secure checkout</span></div>
+            <div class="payment-radio"></div>
+            <div class="payment-icon-wrap">
+              <span>💳</span>
+            </div>
+            <div class="payment-info">
+              <span class="pm-title">Visa / Mastercard</span>
+              <span class="pm-sub">Debit or credit card — secure 3D checkout</span>
+            </div>
+            <span class="pm-badge-checkout">🔒 Encrypted</span>
           </div>
-          <div class="card-form">
-            <div class="card-form-row">
-              <div class="card-input-wrapper">
-                <label style="font-size:12px;">Card Number *</label>
-                <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCard(this)">
-                <span class="card-icon">💳</span>
+          <div class="card-form payment-form-body">
+            <div class="payment-input-group">
+              <label>Card Number</label>
+              <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCard(this)">
+            </div>
+            <div class="card-form-grid">
+              <div class="payment-input-group">
+                <label>Expiry</label>
+                <input type="text" id="cardExpiry" placeholder="MM / YY" maxlength="5" oninput="this.value=this.value.replace(/[^\d\/]/g,'')">
+              </div>
+              <div class="payment-input-group">
+                <label>CVV</label>
+                <input type="text" id="cardCvv" placeholder="•••" maxlength="4" oninput="this.value=this.value.replace(/\D/g,'').substring(0,4)">
               </div>
             </div>
-            <div class="card-expiry-cvv">
-              <div><label style="font-size:12px;">Expiry *</label><input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5"></div>
-              <div><label style="font-size:12px;">CVV *</label><input type="text" id="cardCvv" placeholder="123" maxlength="4"></div>
-            </div>
-            <label style="font-size:12px;">Cardholder Name *</label>
-            <input type="text" id="cardName" placeholder="John Doe">
-            <p style="font-size:12px;color:var(--text-muted);margin-top:6px;">🔒 Secured — your card details are encrypted</p>
           </div>
         </div>
 
@@ -139,14 +156,28 @@
         <div class="payment-option" data-method="cash">
           <div class="payment-header">
             <input type="radio" name="payment" value="cash">
-            <span class="radio-circle"></span>
-            <span style="font-size:24px;">💵</span>
-            <div><strong>Cash on Delivery</strong><br><span style="font-size:12px;color:var(--text-muted);">Pay in cash when your order arrives</span></div>
+            <div class="payment-radio"></div>
+            <div class="payment-icon-wrap">
+              <span>💵</span>
+            </div>
+            <div class="payment-info">
+              <span class="pm-title">Cash on Delivery</span>
+              <span class="pm-sub">Pay with cash when your order arrives</span>
+            </div>
+            <span class="pm-badge-checkout">📍 Nationwide</span>
           </div>
-          <div class="cash-notice" style="display:block !important;">
-            <strong>📌 Cash-on-Delivery Note</strong>
-            Please have exact change ready. Our delivery agent will collect payment upon delivery. A small convenience fee of KSh 100 may apply for COD orders.
+          <div class="payment-form-body visible">
+            <div class="payment-input-group" style="background:#fff8e1;border-color:#ffe0b2;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:28px;">🚚</span>
+                <div>
+                  <strong style="font-size:13px;">Available Nationwide</strong>
+                  <p style="font-size:12px;color:#888;margin:2px 0 0;">Please have exact change ready for a smooth handover</p>
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
         </div>
 
         <div style="display:flex;gap:10px;margin-top:16px;">
@@ -381,19 +412,15 @@ function selectPayment(method) {
   selectedPayment = method;
   document.querySelectorAll('.payment-option').forEach(function(el) { el.classList.remove('selected'); });
   document.querySelectorAll('.payment-option input').forEach(function(el) { el.checked = false; });
-  document.querySelectorAll('.mpesa-form').forEach(function(el) { el.classList.remove('visible'); });
-  document.querySelectorAll('.card-form').forEach(function(el) { el.classList.remove('visible'); });
 
   var options = document.querySelectorAll('.payment-option');
   var inputs = document.querySelectorAll('.payment-option input');
   if(method === 'mpesa') {
     options[0].classList.add('selected');
     inputs[0].checked = true;
-    document.querySelector('.mpesa-form').classList.add('visible');
   } else if(method === 'card') {
     options[1].classList.add('selected');
     inputs[1].checked = true;
-    document.querySelector('.card-form').classList.add('visible');
   } else if(method === 'cash') {
     options[2].classList.add('selected');
     inputs[2].checked = true;
