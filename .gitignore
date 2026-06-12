@@ -1,3 +1,9 @@
+# Dependencies
+node_modules/
+payment-backend/node_modules/
+.env
+.env.local
+
 # Temp scripts
 _check_*.py
 _apply_*.py
@@ -9,3 +15,10 @@ _live_*.py
 _temp*.txt
 *.log
 __pycache__/
+
+# Vercel output
+.vercel
+
+# IDE
+.vscode/
+.idea/
