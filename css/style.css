@@ -214,6 +214,9 @@ nav.main-nav ul li{border-bottom:1px solid #eee}
 .footer-grid{grid-template-columns:repeat(2,1fr);gap:20px}
 .footer-bottom{flex-direction:column;text-align:center;gap:8px}
 .features{grid-template-columns:repeat(2,1fr);gap:12px}
+.payment-methods-grid{grid-template-columns:1fr;max-width:420px;margin-left:auto;margin-right:auto}
+.payment-trust-bar{flex-direction:column;align-items:flex-start;gap:12px;padding:14px}
+.mpesa-visual{flex-direction:column;gap:8px}
 .service-grid{grid-template-columns:repeat(2,1fr);gap:12px}
 .blog-grid{grid-template-columns:repeat(2,1fr);gap:12px}
 .brand-grid{grid-template-columns:repeat(3,1fr);gap:12px}
