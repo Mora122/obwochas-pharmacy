@@ -1,0 +1,36 @@
+sendWhatsApp(result.viewUrl);
+      } else {
+        alert('Upload failed: ' + (result.error || 'Unknown error'));
+        btn.disabled = false;
+        btn.textContent = origText;
+      }
+    }).catch(function(err) {
+      alert('Upload error. Please try again.');
+      btn.disabled = false;
+      btn.textContent = origText;
+    });
+  };
+  reader.readAsDataURL(fileInput.files[0]);
+});
+
+function sendWhatsApp(viewUrl) {
+  var data = {};
+  var inputs = document.querySelector('.contact-form').querySelectorAll('input:not([type=file]), select, textarea');
+  inputs.forEach(function(inp) {
+    var label = '';
+    var prev = inp.previousElementSibling;
+    if (prev && prev.tagName === 'LABEL') label = prev.textContent.replace(' *','').replace('\u00a0','').trim();
+    data[label || inp.placeholder || 'input'] = inp.value || '(empty)';
+  });
+  var fileInput = document.getElementById('prescFile');
+  data['Prescription File'] = fileInput.files[0].name + ' (' + Math.round(fileInput.files[0].size/1024) + 'KB)';
+  data['View Prescription'] = viewUrl;
+  // WhatsApp message
+  var msg = '*New Prescription Submission*\n';
+  for (var key in data) {
+    msg += '\n*' + key + ':* ' + data[key];
+  }
+  msg += '\n\n_Submitted via Obwocha Pharmacy website_';
+  window.open('https://wa.me/+254727747699?text=' + encodeURIComponent(msg), '_blank');
+  // Success screen
+  document.querySelector('.contact-form').innerHTML = '<div style="text-align:center;padding:40px;"><div style="font-size:48px;">✅</div><h3>

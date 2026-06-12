@@ -13,6 +13,8 @@ const ASSETS = [
   '/services.html',
   '/store-locator.html',
   '/health-conditions.html',
+  '/prescription.html',
+  '/view-prescription.html',
   '/product.html',
   '/account.html',
   '/css/style.css',
