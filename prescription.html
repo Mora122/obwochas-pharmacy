@@ -203,7 +203,7 @@ document.querySelector('.contact-form').addEventListener('submit', function(e) {
   var form = this;
   reader.onload = function(e) {
     var base64 = e.target.result;
-    fetch('/api/upload-prescription', {
+    fetch('/api/prescription', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
