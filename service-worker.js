@@ -1,4 +1,4 @@
-const CACHE = 'obwocha-v9';
+const CACHE = 'obwocha-v10';
 const ASSETS = [
   '/',
   '/index.html',
@@ -14,6 +14,7 @@ const ASSETS = [
   '/store-locator.html',
   '/health-conditions.html',
   '/prescription.html',
+  '/view-prescription.html',
   '/product.html',
   '/account.html',
   '/css/style.css',

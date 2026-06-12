@@ -1,37 +1,11 @@
-# Dependencies
-node_modules/
-package-lock.json
-
-# Environment
-.env
-.env.local
-.env.*.local
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
-*.pyc
+# Temp scripts
+_check_*.py
+_apply_*.py
+_verify_*.py
+_remove_*.py
+_fix_*.py
+_find_*.py
+_live_*.py
+_temp*.txt
+*.log
 __pycache__/
-
-# Video/audio (too large for git)
-*.mp4
-*.wav
-*.mkv
-
-# Screenshots
-*.png
-*.jpg
-
-# Python venv
-venv/
-.venv/
-
-.vercel
-.env*
-.env
