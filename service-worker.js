@@ -1,4 +1,4 @@
-const CACHE = 'obwocha-v12';
+const CACHE = 'obwocha-v13';
 const ASSETS = [
   '/',
   '/index.html',
