@@ -168,17 +168,6 @@ document.querySelector('.contact-form').addEventListener('submit', function(e) {
   var form = this;
 
   // Read file, compress, then upload
-  // Open WhatsApp popup NOW (user interaction context - won't be blocked)
-  var waWindow = window.open('', '_blank');
-  if (!waWindow || waWindow.closed) {
-    // Popup blocked - we'll navigate instead
-    waWindow = null;
-  } else {
-    // Show brief loading message
-    try { waWindow.document.write('<html><body style="font-family:sans-serif;padding:20px;text-align:center;"><p>Opening WhatsApp...</p></body></html>'); } catch(e) {}
-  }
-
-  // Read file, compress, then upload
   var reader = new FileReader();
   reader.onload = function(e) {
     btn.textContent = 'Uploading...';
@@ -201,7 +190,7 @@ document.querySelector('.contact-form').addEventListener('submit', function(e) {
       .then(function(r) { return r.json(); })
       .then(function(result) {
         if (result.success) {
-          sendWhatsApp(result.viewUrl, waWindow);
+          sendWhatsApp(result.viewUrl);
         } else {
           alert('Upload failed: ' + (result.error || 'Unknown error'));
           btn.disabled = false;
@@ -218,7 +207,7 @@ document.querySelector('.contact-form').addEventListener('submit', function(e) {
   reader.readAsDataURL(fileInput.files[0]);
 });
 
-function sendWhatsApp(viewUrl, waWindow) {
+function sendWhatsApp(viewUrl) {
   var data = {};
   var inputs = document.querySelector('.contact-form').querySelectorAll('input:not([type=file]), select, textarea');
   inputs.forEach(function(inp) {
@@ -236,13 +225,7 @@ function sendWhatsApp(viewUrl, waWindow) {
     msg += '\n*' + key + ':* ' + data[key];
   }
   msg += '\n\n_Submitted via Obwocha Pharmacy website_';
-  // Use pre-opened popup if available, otherwise navigate directly
-  var waUrl = 'https://wa.me/+254727747699?text=' + encodeURIComponent(msg);
-  if (waWindow && !waWindow.closed) {
-    waWindow.location.href = waUrl;
-  } else {
-    window.location.href = waUrl;
-  }
+  window.open('https://wa.me/+254727747699?text=' + encodeURIComponent(msg), '_blank');
   // Success screen
   document.querySelector('.contact-form').innerHTML = '<div style="text-align:center;padding:40px;"><div style="font-size:48px;">✅</div><h3>Prescription Submitted!</h3><p style="color:var(--text-light);">A pharmacist will review and contact you within 1 hour.</p><a href="index.html" class="btn btn-primary" style="margin-top:16px;">Back to Home</a></div>';
   if (typeof updateCartBadge === 'function') updateCartBadge();

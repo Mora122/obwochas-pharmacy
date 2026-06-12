@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Submit Prescription — Obwocha's Pharmacy</title>
+<title>Submit Prescription V2 — Obwocha's Pharmacy</title>
 <meta name="description" content="Submit your prescription online at Obwocha's Pharmacy. Fast processing and delivery of prescribed medicines.">
-<meta property="og:title" content="Submit Prescription — Obwocha's Pharmacy">
+<meta property="og:title" content="Submit Prescription V2 — Obwocha's Pharmacy">
 <meta property="og:description" content="Submit your prescription online at Obwocha's Pharmacy. Fast processing and delivery of prescribed medicines.">
 <meta property="og:url" content="https://obwochas-pharmacy.vercel.app/prescription.html">
 <meta property="og:type" content="website">
@@ -52,7 +52,7 @@
 <header><button class="mobile-menu-toggle" onclick="document.querySelector('.main-nav').classList.toggle('open')">☰ Menu</button><a href="index.html" class="logo"><div class="logo-icon"><img src="icons/logo.svg" alt="Obwochas Pharmacy" width="44" height="44"></div><div class="logo-text"><h1>Obwocha's <span>Pharmacy</span></h1><small>Meru's Own Pharmacy</small></div></a><div class="search-bar"><input type="text" placeholder="Search..."><button>Search</button></div><div class="header-icons"><a href="cart.html" class="cart-icon">🛒 <span class="badge">0</span></a></div></header>
 <nav class="main-nav"><ul><li><a href="index.html">Home</a></li><li><a href="shop.html">Shop</a></li><li><a href="prescription.html" class="active">Submit Prescription</a></li><li><a href="services.html">Health Services</a></li></ul></nav>
 </div>
-<div class="page-header"><h2>📋 Submit Prescription (Updated)</h2><p>Upload your prescription and we'll prepare your medication for collection or delivery</p><div class="breadcrumb"><a href="index.html">Home</a> / <span>Submit Prescription V2</span></div></div>
+<div class="page-header"><h2>📋 Submit Prescription (Updated)</h2><p>Upload your prescription and we'll prepare your medication for collection or delivery</p><div class="breadcrumb"><a href="index.html">Home</a> / <span>Submit Prescription</span></div></div>
 <div class="container" style="max-width:700px;margin:0 auto;padding:40px 20px;">
   <div style="background:var(--bg-light);border-radius:var(--radius);padding:30px;">
     <form class="contact-form">
@@ -168,6 +168,17 @@ document.querySelector('.contact-form').addEventListener('submit', function(e) {
   var form = this;
 
   // Read file, compress, then upload
+  // Open WhatsApp popup NOW (user interaction context - won't be blocked)
+  var waWindow = window.open('', '_blank');
+  if (!waWindow || waWindow.closed) {
+    // Popup blocked - we'll navigate instead
+    waWindow = null;
+  } else {
+    // Show brief loading message
+    try { waWindow.document.write('<html><body style="font-family:sans-serif;padding:20px;text-align:center;"><p>Opening WhatsApp...</p></body></html>'); } catch(e) {}
+  }
+
+  // Read file, compress, then upload
   var reader = new FileReader();
   reader.onload = function(e) {
     btn.textContent = 'Uploading...';
@@ -190,7 +201,7 @@ document.querySelector('.contact-form').addEventListener('submit', function(e) {
       .then(function(r) { return r.json(); })
       .then(function(result) {
         if (result.success) {
-          sendWhatsApp(result.viewUrl);
+          sendWhatsApp(result.viewUrl, waWindow);
         } else {
           alert('Upload failed: ' + (result.error || 'Unknown error'));
           btn.disabled = false;
@@ -207,7 +218,7 @@ document.querySelector('.contact-form').addEventListener('submit', function(e) {
   reader.readAsDataURL(fileInput.files[0]);
 });
 
-function sendWhatsApp(viewUrl) {
+function sendWhatsApp(viewUrl, waWindow) {
   var data = {};
   var inputs = document.querySelector('.contact-form').querySelectorAll('input:not([type=file]), select, textarea');
   inputs.forEach(function(inp) {
@@ -225,7 +236,13 @@ function sendWhatsApp(viewUrl) {
     msg += '\n*' + key + ':* ' + data[key];
   }
   msg += '\n\n_Submitted via Obwocha Pharmacy website_';
-  window.open('https://wa.me/+254727747699?text=' + encodeURIComponent(msg), '_blank');
+  // Use pre-opened popup if available, otherwise navigate directly
+  var waUrl = 'https://wa.me/+254727747699?text=' + encodeURIComponent(msg);
+  if (waWindow && !waWindow.closed) {
+    waWindow.location.href = waUrl;
+  } else {
+    window.location.href = waUrl;
+  }
   // Success screen
   document.querySelector('.contact-form').innerHTML = '<div style="text-align:center;padding:40px;"><div style="font-size:48px;">✅</div><h3>Prescription Submitted!</h3><p style="color:var(--text-light);">A pharmacist will review and contact you within 1 hour.</p><a href="index.html" class="btn btn-primary" style="margin-top:16px;">Back to Home</a></div>';
   if (typeof updateCartBadge === 'function') updateCartBadge();
