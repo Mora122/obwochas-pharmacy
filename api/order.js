@@ -1,11 +1,12 @@
-// GET  /api/order?id=xxx — Get single order details
-// PATCH /api/order?id=xxx — Update order status (admin)
+// GET  /api/order?id=xxx — Get single order details (admin only)
+// PATCH /api/order?id=xxx — Update order status or discount (admin only)
 const db = require('../lib/db');
+const { requireAdmin } = require('../lib/auth');
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, PATCH, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
 
@@ -15,6 +16,10 @@ module.exports = async (req, res) => {
     if (!orderId) {
       return res.status(400).json({ error: 'Missing order id (use ?id=ORD-xxx)' });
     }
+
+    // All methods require admin auth
+    const user = requireAdmin(req, res);
+    if (!user) return;
 
     if (req.method === 'GET') {
       const order = await db.getOrder(orderId);

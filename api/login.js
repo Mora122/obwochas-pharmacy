@@ -1,5 +1,6 @@
-// Login API — Authenticate User
+// Login API — Authenticate User, return JWT token
 const bcrypt = require('bcryptjs');
+const { generateToken } = require('../lib/auth');
 
 let client = null;
 let db = null;
@@ -24,7 +25,7 @@ async function connect() {
 }
 
 // Load registered users from memory (shared via global for same-instance persistence)
-const MEMORY_KEY = '__obwochas_users';
+const MEMORY_KEY = '***';
 if (!global[MEMORY_KEY]) global[MEMORY_KEY] = [];
 const getMemoryUsers = () => global[MEMORY_KEY];
 
@@ -49,10 +50,8 @@ module.exports = async (req, res) => {
       user = await conn.db.collection('users').findOne({ email: email.toLowerCase().trim() });
     } else {
       const users = getMemoryUsers();
-      // Also check register.js memory — we maintain a global reference
       user = users.find(u => u.email === email.toLowerCase().trim());
       if (!user) {
-        // Try to find in register.js memory via a global hook
         const regUsers = global['__obwochas_registered_users'];
         if (regUsers) {
           user = regUsers.find(u => u.email === email.toLowerCase().trim());
@@ -69,10 +68,14 @@ module.exports = async (req, res) => {
       return res.status(401).json({ success: false, message: 'Invalid email or password' });
     }
 
-    // Success — return user info (never send password back)
+    // Generate JWT token
+    const token = generateToken(user);
+
+    // Success — return user info + token
     return res.status(200).json({
       success: true,
       message: 'Sign in successful!',
+      token,
       user: {
         id: user._id?.toString() || user.id,
         name: user.name,

@@ -1,17 +1,42 @@
-// POST /api/orders → create order
-// GET  /api/orders → list orders (optional ?status= filter)
+// GET  /api/orders — list orders (admin only, requires JWT)
+// POST /api/orders — create order (public)
 const db = require('../lib/db');
+const { requireAdmin } = require('../lib/auth');
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
 
   try {
+    // GET — list orders (ADMIN ONLY)
+    if (req.method === 'GET') {
+      const user = requireAdmin(req, res);
+      if (!user) return;
+
+      const status = req.query?.status;
+      const limit = parseInt(req.query?.limit) || 50;
+      const userFilter = req.query?.user;
+      const orders = await db.getOrders({ status, limit, userId: userFilter });
+      return res.json({
+        success: true,
+        count: orders.length,
+        orders: orders.map(o => ({
+          id: o.id || o._id?.toString(),
+          status: o.status,
+          customer: o.customer,
+          items: o.items?.length || 0,
+          total: o.totals?.total,
+          payment: o.payment,
+          createdAt: o.createdAt
+        }))
+      });
+    }
+
+    // POST — create order (PUBLIC — no auth needed)
     if (req.method === 'POST') {
-      // CREATE ORDER
       const { customer, items, totals, payment, notes } = req.body;
 
       if (!customer || !items || !items.length) {
@@ -52,27 +77,6 @@ module.exports = async (req, res) => {
           items: order.items,
           createdAt: order.createdAt
         }
-      });
-    }
-
-    if (req.method === 'GET') {
-      // LIST ORDERS
-      const status = req.query?.status;
-      const limit = parseInt(req.query?.limit) || 50;
-      const userFilter = req.query?.user;
-      const orders = await db.getOrders({ status, limit, userId: userFilter });
-      return res.json({
-        success: true,
-        count: orders.length,
-        orders: orders.map(o => ({
-          id: o.id || o._id?.toString(),
-          status: o.status,
-          customer: o.customer,
-          items: o.items?.length || 0,
-          total: o.totals?.total,
-          payment: o.payment,
-          createdAt: o.createdAt
-        }))
       });
     }
 

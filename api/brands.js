@@ -1,12 +1,9 @@
 // Brands API — CRUD for Product Brands
-// GET  /api/brands       — returns all brands
-// POST /api/brands       — add a brand (admin only, needs adminEmail + adminPassword in body)
-// DELETE /api/brands     — remove a brand (admin only, needs adminEmail + adminPassword + brandId in body)
+// GET  /api/brands        — returns all brands (public)
+// POST /api/brands        — add a brand (admin only, JWT required)
+// DELETE /api/brands      — remove a brand (admin only, JWT required)
 
-const bcrypt = require('bcryptjs');
-
-// Admin email — the account that gets admin powers
-const ADMIN_EMAIL = 'admin@obwochaspharmacy.co.ke';
+const { requireAdmin } = require('../lib/auth');
 
 let client = null;
 let db = null;
@@ -27,10 +24,10 @@ let memoryBrands = [
   { id: 'BR-014', name: 'Sante', icon: '??', slug: 'sante', image: 'https://placehold.co/200x200/2e7d32/ffffff?text=Sante', createdAt: new Date().toISOString() },
   { id: 'BR-015', name: 'Opti-Nutrition', icon: '??', slug: 'opti', image: 'https://placehold.co/200x200/e65100/ffffff?text=Opti', createdAt: new Date().toISOString() },
   { id: 'BR-016', name: 'Clarins', icon: '??', slug: 'clarins', image: 'https://placehold.co/200x200/880e4f/ffffff?text=Clarins', createdAt: new Date().toISOString() },
-  { id: 'BR-017', name: "L'Or�al", icon: '??', slug: 'loreal', image: 'https://placehold.co/200x200/000000/ffffff?text=L%27Oreal', createdAt: new Date().toISOString() },
+  { id: 'BR-017', name: "L'Oreal", icon: '??', slug: 'loreal', image: 'https://placehold.co/200x200/000000/ffffff?text=L%27Oreal', createdAt: new Date().toISOString() },
   { id: 'BR-018', name: 'Bioderma', icon: '??', slug: 'bioderma', image: 'https://placehold.co/200x200/00695c/ffffff?text=Bioderma', createdAt: new Date().toISOString() },
   { id: 'BR-019', name: 'A-Derma', icon: '??', slug: 'a-derma', image: 'https://placehold.co/200x200/33691e/ffffff?text=A-Derma', createdAt: new Date().toISOString() },
-  { id: 'BR-020', name: 'Av�ne', icon: '??', slug: 'avene', image: 'https://placehold.co/200x200/004d40/ffffff?text=Av%C3%A8ne', createdAt: new Date().toISOString() },
+  { id: 'BR-020', name: 'Avène', icon: '??', slug: 'avene', image: 'https://placehold.co/200x200/004d40/ffffff?text=Av%C3%A8ne', createdAt: new Date().toISOString() },
   { id: 'BR-021', name: 'Centrum', icon: '??', slug: 'centrum', image: 'https://placehold.co/200x200/1565c0/ffffff?text=Centrum', createdAt: new Date().toISOString() },
   { id: 'BR-022', name: 'Vitafusion', icon: '??', slug: 'vitafusion', image: 'https://placehold.co/200x200/c62828/ffffff?text=Vitafusion', createdAt: new Date().toISOString() },
   { id: 'BR-023', name: 'Calpol', icon: '??', slug: 'calpol', image: 'https://placehold.co/200x200/00695c/ffffff?text=Calpol', createdAt: new Date().toISOString() },
@@ -70,50 +67,23 @@ async function connect() {
   return { mode: 'memory', db: null };
 }
 
-async function verifyAdmin(adminEmail, adminPassword) {
-  // Check against MongoDB users collection
-  const conn = await connect();
-  if (conn.mode === 'mongodb') {
-    try {
-      const user = await conn.db.collection('users').findOne({ email: adminEmail.toLowerCase().trim() });
-      if (!user) return false;
-      // Check if this email is admin
-      if (user.email !== ADMIN_EMAIL) return false;
-      return await bcrypt.compare(adminPassword, user.password);
-    } catch {
-      return false;
-    }
-  }
-
-  // In-memory check
-  const allUsers = [...(global['__obwochas_users'] || []), ...(global['__obwochas_registered_users'] || [])];
-  const user = allUsers.find(u => u.email === adminEmail.toLowerCase().trim());
-  if (!user || user.email !== ADMIN_EMAIL) return false;
-  try {
-    return await bcrypt.compare(adminPassword, user.password);
-  } catch {
-    return false;
-  }
-}
-
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   try {
     const conn = await connect();
 
-    // GET — Return all brands
+    // GET — Return all brands (PUBLIC)
     if (req.method === 'GET') {
       let brands;
       if (conn.mode === 'mongodb') {
         brands = await conn.db.collection('brands').find({}).sort({ name: 1 }).toArray();
         brands = brands.map(b => {
           var brand = { id: b._id.toString(), name: b.name, icon: b.icon, slug: b.slug, image: b.image || '' };
-          // Auto-fill placeholder image if missing
           if (!brand.image) {
             brand.image = 'https://placehold.co/200x200/1a5c2e/ffffff?text=' + encodeURIComponent(brand.name);
           }
@@ -125,17 +95,12 @@ module.exports = async (req, res) => {
       return res.status(200).json({ success: true, brands });
     }
 
-    // POST — Add a brand (admin only)
+    // POST — Add a brand (ADMIN ONLY)
     if (req.method === 'POST') {
-      const { adminEmail, adminPassword, name, icon, image } = req.body;
+      const user = requireAdmin(req, res);
+      if (!user) return;
 
-      if (!adminEmail || !adminPassword) {
-        return res.status(401).json({ success: false, message: 'Admin credentials required' });
-      }
-      const isAdmin = await verifyAdmin(adminEmail, adminPassword);
-      if (!isAdmin) {
-        return res.status(403).json({ success: false, message: 'Unauthorized. Only the admin can add brands.' });
-      }
+      const { name, icon, image } = req.body;
       if (!name || !name.trim()) {
         return res.status(400).json({ success: false, message: 'Brand name is required' });
       }
@@ -147,7 +112,6 @@ module.exports = async (req, res) => {
       const brandImage = image || 'https://placehold.co/200x200/1a5c2e/ffffff?text=' + encodeURIComponent(brandName);
 
       if (conn.mode === 'mongodb') {
-        // Check if brand already exists
         const existing = await conn.db.collection('brands').findOne({ slug });
         if (existing) {
           return res.status(409).json({ success: false, message: `Brand "${brandName}" already exists` });
@@ -161,7 +125,6 @@ module.exports = async (req, res) => {
         });
       }
 
-      // Memory mode
       if (memoryBrands.find(b => b.slug === slug)) {
         return res.status(409).json({ success: false, message: `Brand "${brandName}" already exists` });
       }
@@ -176,17 +139,12 @@ module.exports = async (req, res) => {
       });
     }
 
-    // DELETE — Remove a brand (admin only)
+    // DELETE — Remove a brand (ADMIN ONLY)
     if (req.method === 'DELETE') {
-      const { adminEmail, adminPassword, brandId, brandSlug } = req.body;
+      const user = requireAdmin(req, res);
+      if (!user) return;
 
-      if (!adminEmail || !adminPassword) {
-        return res.status(401).json({ success: false, message: 'Admin credentials required' });
-      }
-      const isAdmin = await verifyAdmin(adminEmail, adminPassword);
-      if (!isAdmin) {
-        return res.status(403).json({ success: false, message: 'Unauthorized. Only the admin can remove brands.' });
-      }
+      const { brandId, brandSlug } = req.body;
       if (!brandId && !brandSlug) {
         return res.status(400).json({ success: false, message: 'brandId or brandSlug is required' });
       }
@@ -206,7 +164,6 @@ module.exports = async (req, res) => {
         return res.json({ success: true, message: 'Brand removed successfully' });
       }
 
-      // Memory mode
       const idx = brandId
         ? memoryBrands.findIndex(b => b.id === brandId)
         : memoryBrands.findIndex(b => b.slug === brandSlug);

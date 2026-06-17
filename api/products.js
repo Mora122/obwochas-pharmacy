@@ -1,12 +1,13 @@
 // Products API — GET /api/products, POST /api/products, PATCH /api/products, DELETE /api/products
+// GET is public; POST, PATCH, DELETE require admin JWT
 const { connect } = require('../lib/db');
 const productsDb = require('../lib/products_db');
+const { requireAdmin } = require('../lib/auth');
 
 module.exports = async (req, res) => {
-  // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -18,7 +19,7 @@ module.exports = async (req, res) => {
     // Seed products on first call
     await productsDb.seedProducts(conn);
 
-    // GET — Single product or list
+    // GET — Single product or list (PUBLIC)
     if (req.method === 'GET') {
       if (req.query.id) {
         const product = await productsDb.getProduct(conn, req.query.id);
@@ -40,8 +41,11 @@ module.exports = async (req, res) => {
       return res.json({ success: true, count: products.length, products });
     }
 
-    // POST — Create product (admin)
+    // POST — Create product (ADMIN ONLY)
     if (req.method === 'POST') {
+      const user = requireAdmin(req, res);
+      if (!user) return;
+
       const { name, category, price, stock, description, image } = req.body || {};
       if (!name || !category || !price) {
         return res.status(400).json({ success: false, error: 'Name, category, and price are required' });
@@ -50,8 +54,11 @@ module.exports = async (req, res) => {
       return res.json({ success: true, product });
     }
 
-    // PATCH — Stock adjustment (dedicated endpoint)
+    // PATCH — Stock adjustment (ADMIN ONLY)
     if (req.method === 'PATCH' && req.query.action === 'stock') {
+      const user = requireAdmin(req, res);
+      if (!user) return;
+
       const productId = req.query.id;
       if (!productId) {
         return res.status(400).json({ success: false, error: 'Product ID required' });
@@ -68,8 +75,11 @@ module.exports = async (req, res) => {
       return res.json(result);
     }
 
-    // PATCH — Update product (admin)
+    // PATCH — Update product (ADMIN ONLY)
     if (req.method === 'PATCH') {
+      const user = requireAdmin(req, res);
+      if (!user) return;
+
       const productId = req.query.id;
       if (!productId) {
         return res.status(400).json({ success: false, error: 'Product ID required' });
@@ -87,8 +97,11 @@ module.exports = async (req, res) => {
       return res.json({ success: true, product });
     }
 
-    // DELETE — Delete product (admin)
+    // DELETE — Delete product (ADMIN ONLY)
     if (req.method === 'DELETE') {
+      const user = requireAdmin(req, res);
+      if (!user) return;
+
       const productId = req.query.id || req.query._id;
       if (!productId) {
         return res.status(400).json({ success: false, error: 'Product ID required' });
