@@ -508,7 +508,7 @@
 
 
 <!-- Customer Reviews / Testimonials -->
-<section class="testimonials">
+<section class="testimonials" id="reviews-section">
 
 
   <div class="section-title">
@@ -523,81 +523,53 @@
   </div>
 
 
-  <div class="testimonial-grid">
+  <div class="testimonial-grid" id="testimonial-grid">
 
 
-    <div class="testimonial-card">
+    <div style="text-align:center;padding:40px;color:#999;width:100%">Loading reviews...</div>
 
 
-      <div class="stars"><span class="filled">★</span><span class="filled">★</span><span class="filled">★</span><span class="filled">★</span><span class="filled">★</span></div>
+  </div>
 
 
-      <p>"I've been ordering my monthly medications from Obwocha's for over a year now. The express delivery never disappoints — ordered at 6pm and it was at my door by 8pm. Highly recommend!"</p>
+  <!-- Review Form -->
+  <div style="max-width:600px;margin:40px auto 0;padding:30px;background:#f9fdf9;border-radius:12px;border:1px solid #e0f0e0;text-align:left">
+    <h3 style="margin:0 0 6px;color:var(--primary);font-size:18px">✍️ Share Your Experience</h3>
+    <p style="margin:0 0 20px;color:#666;font-size:14px">Your review helps others make informed choices.</p>
 
+    <div id="review-form-success" style="display:none;padding:16px;background:#e8f5e9;border-radius:8px;color:#2e7d32;margin-bottom:16px;text-align:center"></div>
+    <div id="review-form-error" style="display:none;padding:16px;background:#ffebee;border-radius:8px;color:#c62828;margin-bottom:16px;text-align:center"></div>
 
-      <div class="testimonial-author">
-
-
-        <div class="avatar">M</div>
-
-
-        <div class="info"><strong>Margaret W.</strong><small>Nairobi — Verified Buyer</small></div>
-
-
-      </div>
-
-
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <label style="font-size:13px;font-weight:600;color:#333">
+        Your Name <span style="color:#c62828">*</span>
+        <input type="text" id="review-name" placeholder="e.g. John D." style="width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px;margin-top:4px" required>
+      </label>
+      <label style="font-size:13px;font-weight:600;color:#333">
+        Your Location
+        <input type="text" id="review-location" placeholder="e.g. Nairobi" style="width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px;margin-top:4px">
+      </label>
     </div>
 
-
-    <div class="testimonial-card">
-
-
-      <div class="stars"><span class="filled">★</span><span class="filled">★</span><span class="filled">★</span><span class="filled">★</span><span class="filled">★</span></div>
-
-
-      <p>"The CeraVe products are genuine and prices beat the supermarkets. I save about 15% on my skincare routine ordering here. My dermatologist recommended them and I'm glad I switched."</p>
-
-
-      <div class="testimonial-author">
-
-
-        <div class="avatar">J</div>
-
-
-        <div class="info"><strong>James K.</strong><small>Mombasa — Verified Buyer</small></div>
-
-
-      </div>
-
-
+    <label style="font-size:13px;font-weight:600;color:#333">
+      Rating
+    </label>
+    <div id="review-stars" style="font-size:28px;margin:4px 0 12px;letter-spacing:4px;cursor:pointer;user-select:none">
+      <span data-star="1" style="color:#e0e0e0">★</span>
+      <span data-star="2" style="color:#e0e0e0">★</span>
+      <span data-star="3" style="color:#e0e0e0">★</span>
+      <span data-star="4" style="color:#e0e0e0">★</span>
+      <span data-star="5" style="color:#e0e0e0">★</span>
     </div>
+    <input type="hidden" id="review-rating" value="5">
 
+    <label style="font-size:13px;font-weight:600;color:#333">
+      Your Review <span style="color:#c62828">*</span>
+      <textarea id="review-comment" rows="3" placeholder="Tell us about your experience... What did you like? How was the delivery?" style="width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px;margin-top:4px;resize:vertical" required></textarea>
+    </label>
 
-    <div class="testimonial-card">
-
-
-      <div class="stars"><span class="filled">★</span><span class="filled">★</span><span class="filled">★</span><span class="filled">★</span><span>★</span></div>
-
-
-      <p>"Fast delivery to Meru! Got my baby's diapers and vitamins the same day. The WhatsApp support is very responsive. Only wish they had more stock of the premium formula brands."</p>
-
-
-      <div class="testimonial-author">
-
-
-        <div class="avatar">A</div>
-
-
-        <div class="info"><strong>Ann M.</strong><small>Meru — Verified Buyer</small></div>
-
-
-      </div>
-
-
-    </div>
-
-
+    <button onclick="submitReview()" id="review-submit-btn" style="margin-top:16px;padding:12px 28px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer">Submit Review</button>
+    <span id="review-submit-loading" style="display:none;margin-left:12px;color:#666;font-size:13px">Submitting...</span>
   </div>
 
 
@@ -1011,10 +983,135 @@ async function loadSpecialOffers() {
   }
 }
 
+/* ========= REVIEWS ========= */
+
+async function loadReviews() {
+  var grid = document.getElementById('testimonial-grid');
+  if (!grid) return;
+  try {
+    var r = await fetch('/api/reviews?limit=20');
+    var d = await r.json();
+    if (!d.success || !d.reviews || d.reviews.length === 0) {
+      grid.innerHTML = '<div style="text-align:center;padding:40px;color:#999;width:100%">No reviews yet. Be the first to share your experience!</div>';
+      return;
+    }
+    var html = '';
+    for (var i = 0; i < d.reviews.length; i++) {
+      var rev = d.reviews[i];
+      var stars = '';
+      for (var s = 1; s <= 5; s++) {
+        stars += '<span class="' + (s <= rev.rating ? 'filled' : '') + '">★</span>';
+      }
+      var initial = (rev.name || 'A').charAt(0).toUpperCase();
+      var location = rev.location ? rev.location + ' — ' : '';
+      var verifiedBadge = rev.verified ? ' · ✅ Verified Buyer' : '';
+      html += '<div class="testimonial-card">' +
+        '<div class="stars">' + stars + '</div>' +
+        '<p>"' + rev.comment + '"</p>' +
+        '<div class="testimonial-author">' +
+        '<div class="avatar">' + initial + '</div>' +
+        '<div class="info"><strong>' + rev.name + '</strong><small>' + location + 'Verified Buyer' + (rev.verified ? ' ✅' : '') + '</small></div>' +
+        '</div></div>';
+    }
+    grid.innerHTML = html;
+  } catch(e) {
+    grid.innerHTML = '<div style="text-align:center;padding:40px;color:#999;width:100%">Could not load reviews. Try again later.</div>';
+  }
+}
+
+var reviewSelectedRating = 5;
+var reviewStarElements = null;
+
+function setupReviewStars() {
+  var container = document.getElementById('review-stars');
+  if (!container) return;
+  reviewStarElements = container.querySelectorAll('span[data-star]');
+  reviewStarElements.forEach(function(el) {
+    el.addEventListener('click', function() {
+      reviewSelectedRating = parseInt(this.getAttribute('data-star'));
+      document.getElementById('review-rating').value = reviewSelectedRating;
+      updateReviewStars();
+    });
+    el.addEventListener('mouseenter', function() {
+      var hover = parseInt(this.getAttribute('data-star'));
+      reviewStarElements.forEach(function(s) {
+        var starVal = parseInt(s.getAttribute('data-star'));
+        s.style.color = starVal <= hover ? '#f5a623' : '#e0e0e0';
+      });
+    });
+    el.addEventListener('mouseleave', function() {
+      updateReviewStars();
+    });
+  });
+  updateReviewStars();
+}
+
+function updateReviewStars() {
+  if (!reviewStarElements) return;
+  reviewStarElements.forEach(function(s) {
+    var starVal = parseInt(s.getAttribute('data-star'));
+    s.style.color = starVal <= reviewSelectedRating ? '#f5a623' : '#e0e0e0';
+  });
+}
+
+async function submitReview() {
+  var name = document.getElementById('review-name').value.trim();
+  var location = document.getElementById('review-location').value.trim();
+  var comment = document.getElementById('review-comment').value.trim();
+  var btn = document.getElementById('review-submit-btn');
+  var loading = document.getElementById('review-submit-loading');
+  var successDiv = document.getElementById('review-form-success');
+  var errorDiv = document.getElementById('review-form-error');
+
+  successDiv.style.display = 'none';
+  errorDiv.style.display = 'none';
+
+  if (!name || name.length < 2) {
+    errorDiv.textContent = 'Please enter your name.';
+    errorDiv.style.display = 'block';
+    return;
+  }
+  if (!comment || comment.length < 10) {
+    errorDiv.textContent = 'Please write a review (at least 10 characters).';
+    errorDiv.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  loading.style.display = 'inline';
+
+  try {
+    var r = await fetch('/api/reviews', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name, location: location, rating: reviewSelectedRating, comment: comment })
+    });
+    var d = await r.json();
+    if (d.success) {
+      successDiv.textContent = 'Thank you ' + name + '! Your review has been submitted and is pending approval.';
+      successDiv.style.display = 'block';
+      document.getElementById('review-name').value = '';
+      document.getElementById('review-location').value = '';
+      document.getElementById('review-comment').value = '';
+    } else {
+      errorDiv.textContent = d.error || 'Failed to submit review. Please try again.';
+      errorDiv.style.display = 'block';
+    }
+  } catch(e) {
+    errorDiv.textContent = 'Network error. Please try again later.';
+    errorDiv.style.display = 'block';
+  }
+
+  btn.disabled = false;
+  loading.style.display = 'none';
+}
+
 // Run when page loads
 document.addEventListener('DOMContentLoaded', function() {
   loadFeaturedProducts();
   loadSpecialOffers();
+  loadReviews();
+  setupReviewStars();
 });
 </script>
 </body>
