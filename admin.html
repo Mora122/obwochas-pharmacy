@@ -1054,19 +1054,67 @@ function renderCategories() {
   el.innerHTML = html;
 }
 
-async function addCategory() {
-  var name = prompt('Enter new category name:');
-  if (!name || !name.trim()) return;
-  name = name.trim();
+function addCategory() {
+  // Show inline modal instead of browser prompt()
+  var overlay = document.createElement('div');
+  overlay.id = 'cat-prompt-overlay';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:99999;display:flex;align-items:center;justify-content:center';
+  overlay.onclick = function(e) { if (e.target === overlay) overlay.remove(); };
+  overlay.innerHTML = '<div style="background:#fff;border-radius:12px;padding:24px;width:360px;max-width:90vw;box-shadow:0 10px 40px rgba(0,0,0,0.15)" onclick="event.stopPropagation()">' +
+    '<h3 style="margin:0 0 6px;color:var(--primary);font-size:17px">+ New Category</h3>' +
+    '<p style="margin:0 0 14px;color:#888;font-size:13px">Enter a name for the new product category.</p>' +
+    '<input type="text" id="cat-prompt-input" placeholder="e.g. Eye Care" style="width:100%;padding:10px 14px;border:2px solid #ddd;border-radius:8px;font-size:14px;margin-bottom:14px;box-sizing:border-box;outline:none">' +
+    '<div style="display:flex;gap:10px">' +
+      '<button onclick="document.getElementById(\'cat-prompt-overlay\').remove()" style="flex:1;padding:10px;background:#f5f5f5;color:#666;border:1px solid #ddd;border-radius:8px;cursor:pointer;font-size:14px">Cancel</button>' +
+      '<button onclick="doAddCategory()" style="flex:2;padding:10px;background:var(--primary);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600">Add Category</button>' +
+    '</div></div>';
+  document.body.appendChild(overlay);
+  setTimeout(function() {
+    var inp = document.getElementById('cat-prompt-input');
+    if (inp) { inp.focus(); inp.addEventListener('keydown', function(ev) { if (ev.key === 'Enter') doAddCategory(); }); }
+  }, 100);
+}
+
+function doAddCategory() {
+  var input = document.getElementById('cat-prompt-input');
+  if (!input) return;
+  var name = input.value.trim();
+  if (!name) { input.style.borderColor = '#c62828'; input.focus(); return; }
+  input.style.borderColor = '#ddd';
+  var overlay = document.getElementById('cat-prompt-overlay');
+  if (overlay) overlay.remove();
   if (allCategories.indexOf(name) >= 0) {
-    alert('Category \"' + name + '\" already exists.');
+    alert('Category "' + name + '" already exists.');
     return;
   }
-  // Add to first product's edit form
-  // Category doesn't need a separate API - just use it
   allCategories.push(name);
   allCategories.sort();
-  loadCategories();
+  // Update both dropdowns directly (don't call loadCategories - it re-fetches from products and overwrites)
+  var filter = document.getElementById('prodCategoryFilter');
+  if (filter) {
+    var currVal = filter.value;
+    filter.innerHTML = '<option value="">All Categories</option><option value="__lowstock__">\u26a0 Low Stock (< 20)</option>';
+    for (var j = 0; j < allCategories.length; j++) {
+      var opt = document.createElement('option');
+      opt.value = allCategories[j];
+      opt.textContent = allCategories[j];
+      filter.appendChild(opt);
+    }
+    filter.value = currVal;
+  }
+  var formCat = document.getElementById('prodCategory');
+  if (formCat) {
+    var currFormVal = formCat.value;
+    formCat.innerHTML = '';
+    for (var k = 0; k < allCategories.length; k++) {
+      var opt2 = document.createElement('option');
+      opt2.value = allCategories[k];
+      opt2.textContent = allCategories[k];
+      formCat.appendChild(opt2);
+    }
+    formCat.value = currFormVal;
+  }
+  renderCategories();
 }
 
 async function deleteCategory(name) {
