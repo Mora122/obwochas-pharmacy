@@ -100,7 +100,7 @@
             <input type="radio" name="payment" value="mpesa" checked>
             <div class="payment-radio"></div>
             <div class="payment-icon-wrap">
-              <img src="images/mpesa-logo.svg" alt="M-Pesa" class="mpesa-icon-img">
+              <img src="images/mpesa-logo-white.svg" alt="M-Pesa" class="mpesa-icon-img">
             </div>
             <div class="payment-info">
               <span class="pm-title">M-Pesa</span>
@@ -210,7 +210,7 @@
   <div class="stk-push-modal">
     <!-- State 1: Sending STK Push -->
     <div id="mpesaStateSending">
-      <img src="images/mpesa-logo.svg" alt="M-Pesa" class="stk-mpesa-logo-img">
+      <img src="images/mpesa-logo-white.svg" alt="M-Pesa" class="stk-mpesa-logo-img">
       <h3>Sending M-Pesa Request</h3>
       <p style="font-size:13px;color:var(--text-muted);">Initiating STK Push to your phone...</p>
       <div class="amount">KSh <span id="mpesaTotal">0</span></div>
@@ -698,7 +698,7 @@ function pinSubmit() {
 function closeStkPush() {
   document.getElementById('stkPushOverlay').classList.remove('active');
   document.querySelector('.stk-push-modal').innerHTML = `
-    <img src="images/mpesa-logo.svg" alt="M-Pesa" class="stk-mpesa-logo-img">
+    <img src="images/mpesa-logo-white.svg" alt="M-Pesa" class="stk-mpesa-logo-img">
     <h3>M-Pesa STK Push</h3>
     <p style="font-size:13px;color:var(--text-muted);">Enter your M-Pesa PIN to complete payment</p>
     <div class="amount">KSh ${checkoutCartTotal.toLocaleString()}</div>
