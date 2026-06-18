@@ -180,13 +180,7 @@
         </div>
         </div>
 
-        <div style="display:flex;gap:10px;margin-top:16px;max-width:380px;align-items:flex-start;">
-          <button class="btn" onclick="goToStep(1)" style="flex:1;">← Back</button>
-          <button class="btn btn-primary" onclick="processPayment()" style="flex:1;">Pay Now — <span class="checkout-total-display" style="display:inline">KSh 0</span> →</button>
-        </div>
-      </div>
-      <div>
-        <h3 style="color:var(--primary);margin-bottom:16px;">📋 Order Summary</h3>
+        <h3 style="color:var(--primary);margin-bottom:16px;margin-top:20px;">📋 Order Summary</h3>
         <div style="background:var(--bg-light);border-radius:var(--radius);padding:20px;">
           <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;"><span>Subtotal</span><span class="checkout-subtotal-display">KSh 0</span></div>
           <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;color:var(--primary);"><span>Delivery</span><span class="checkout-delivery-display">FREE</span></div>
@@ -198,6 +192,10 @@
           <span id="sumStreet">—</span>, <span id="sumTown">—</span>, <span id="sumCounty">—</span><br>
           📞 <span id="sumPhone">—</span></p>
         </div>
+      </div>
+      <div style="display:flex;flex-direction:column;justify-content:flex-end;gap:10px;">
+        <button class="btn" onclick="goToStep(1)" style="width:100%;">← Back</button>
+        <button class="btn btn-primary" onclick="processPayment()" style="width:100%;">Pay Now — <span class="checkout-total-display" style="display:inline">KSh 0</span> →</button>
       </div>
     </div>
   </div>
