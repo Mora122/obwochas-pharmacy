@@ -236,6 +236,7 @@ body{background:#f0f2f5}
 <div id="dashboardRoot" style="display:none">
   <div style="background:var(--primary-dark);padding:6px 20px;text-align:right">
     <span id="userBadge" style="color:#fff;font-size:12px;opacity:0.8"></span>
+    <span id="notifBell" style="color:#fff;font-size:13px;margin-left:15px;cursor:pointer;position:relative" onclick="switchTab('notifications')">🔔 <span id="notifBadge" style="display:none;background:#ff4444;color:#fff;font-size:10px;padding:1px 5px;border-radius:10px;position:absolute;top:-6px;right:-10px">0</span></span>
     <button onclick="handleLogout()" style="background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);padding:4px 12px;border-radius:4px;cursor:pointer;font-size:11px;margin-left:10px">Sign Out</button>
   </div>
   <div class="admin-header">
@@ -265,6 +266,8 @@ body{background:#f0f2f5}
   <button class="tab-btn" data-tab="products" onclick="switchTab('products')">💊 Products</button>
 
   <button class="tab-btn" data-tab="reviews" onclick="switchTab('reviews')">⭐ Reviews</button>
+
+  <button class="tab-btn" data-tab="notifications" onclick="switchTab('notifications');loadNotifications()">🔔 Notifications <span id="notifCount"></span></button>
 
 </div>
 
@@ -492,6 +495,27 @@ body{background:#f0f2f5}
 
 </div>
 
+<!-- Notifications Tab -->
+<div id="tab-notifications" class="tab-content" style="display:none">
+
+  <div class="admin-container">
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+      <h2 style="margin:0;font-size:20px">🔔 Notifications</h2>
+      <div style="display:flex;gap:8px">
+        <button class="btn" onclick="loadNotifications()" style="font-size:12px">🔄 Refresh</button>
+        <button class="btn" onclick="markAllNotifsRead()" style="font-size:12px;background:#e8f5e9;color:#2e7d32">✓ Mark All Read</button>
+      </div>
+    </div>
+
+    <div id="notifList">
+      <div style="text-align:center;padding:40px;color:#999">Loading notifications...</div>
+    </div>
+
+  </div>
+
+</div>
+
 </div><!-- /dashboardRoot -->
 
 <script>
@@ -597,7 +621,10 @@ function checkAuth() {
 
 function initDashboard() {
   loadOrders();
+  loadNotifications();
+  updateNotifBadge();
   setInterval(loadOrders, 60000);
+  setInterval(updateNotifBadge, 30000);
 }
 
 // Also add Enter key handler for login form
@@ -625,6 +652,8 @@ function switchTab(tab) {
   if (tab === 'orders') loadOrders();
 
   if (tab === 'products') loadProducts();
+
+  if (tab === 'notifications') loadNotifications();
 
   if (tab === 'reviews') loadAdminReviews();
 
@@ -1677,6 +1706,104 @@ async function deleteReview(id, name) {
   } catch(e) {
     alert('Error: ' + e.message);
   }
+}
+
+/* ========= NOTIFICATIONS ========= */
+
+async function updateNotifBadge() {
+  try {
+    var r = await fetch(API + '/notifications?unread=true&limit=1');
+    var d = await r.json();
+    if (d.success) {
+      var badge = document.getElementById('notifBadge');
+      var count = document.getElementById('notifCount');
+      if (d.unreadCount > 0) {
+        badge.textContent = d.unreadCount;
+        badge.style.display = 'inline';
+        count.textContent = '(' + d.unreadCount + ')';
+        count.style.color = '#ff4444';
+        count.style.fontSize = '11px';
+      } else {
+        badge.style.display = 'none';
+        count.textContent = '';
+      }
+    }
+  } catch(e) { /* silent */ }
+}
+
+async function loadNotifications() {
+  try {
+    var r = await fetch(API + '/notifications');
+    var d = await r.json();
+    var list = document.getElementById('notifList');
+    if (!d.success) {
+      list.innerHTML = '<div style="text-align:center;padding:40px;color:#c62828">Error: ' + (d.error || 'Failed to load') + '</div>';
+      return;
+    }
+    if (!d.notifications || !d.notifications.length) {
+      list.innerHTML = '<div style="text-align:center;padding:60px;color:#999"><div style="font-size:48px;margin-bottom:16px">🔔</div><p>No notifications yet. New orders and status changes will appear here.</p></div>';
+      updateNotifBadge();
+      return;
+    }
+    var html = '';
+    d.notifications.forEach(function(n) {
+      var timeAgo = '';
+      if (n.createdAt) {
+        var diff = Date.now() - new Date(n.createdAt).getTime();
+        var mins = Math.floor(diff / 60000);
+        if (mins < 1) timeAgo = 'Just now';
+        else if (mins < 60) timeAgo = mins + 'm ago';
+        else if (mins < 1440) timeAgo = Math.floor(mins / 60) + 'h ago';
+        else timeAgo = Math.floor(mins / 1440) + 'd ago';
+      }
+      var typeIcon = n.type === 'order_created' ? '🆕' : n.type === 'order_updated' ? '🔄' : '💬';
+      html += '<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-bottom:1px solid #f0f0f0;' + (n.read ? '' : 'background:#f0faf3') + '">' +
+        '<span style="font-size:20px">' + typeIcon + '</span>' +
+        '<div style="flex:1;min-width:0">' +
+          '<div style="font-weight:' + (n.read ? '400' : '600') + ';font-size:14px;color:#333">' + n.title + '</div>' +
+          '<div style="font-size:12px;color:#888;margin-top:2px">' + n.message + '</div>' +
+          '<div style="display:flex;gap:12px;margin-top:4px;font-size:11px;color:#aaa">' +
+            '<span>' + timeAgo + '</span>' +
+            (n.customer ? '<span>👤 ' + n.customer + '</span>' : '') +
+            (n.orderId ? '<span onclick="trackOrderNotif(\'' + n.orderId + '\')" style="color:#2e7d32;cursor:pointer;text-decoration:underline">📦 ' + n.orderId.substring(0,12) + '</span>' : '') +
+          '</div>' +
+        '</div>' +
+        (!n.read ? '<span style="width:8px;height:8px;background:#2e7d32;border-radius:50%;flex-shrink:0;margin-top:6px" onclick="markNotifRead(\'' + (n.id || '') + '\')" title="Mark as read"></span>' : '') +
+      '</div>';
+    });
+    list.innerHTML = html;
+    updateNotifBadge();
+  } catch(e) {
+    document.getElementById('notifList').innerHTML = '<div style="text-align:center;padding:40px;color:#c62828">Connection error. Retry.</div>';
+  }
+}
+
+async function markNotifRead(id) {
+  try {
+    await fetch(API + '/notifications', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: id })
+    });
+    loadNotifications();
+  } catch(e) { /* silent */ }
+}
+
+async function markAllNotifsRead() {
+  try {
+    await fetch(API + '/notifications', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ markAll: true })
+    });
+    loadNotifications();
+  } catch(e) { /* silent */ }
+}
+
+function trackOrderNotif(orderId) {
+  switchTab('orders');
+  document.getElementById('orderSearch').value = orderId;
+  searchOrders();
 }
 
 </script>

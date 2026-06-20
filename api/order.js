@@ -1,6 +1,7 @@
 // GET  /api/order?id=xxx — Get single order details (admin only)
 // PATCH /api/order?id=xxx — Update order status or discount (admin only)
 const db = require('../lib/db');
+const notif = require('../lib/notifications_db');
 const { requireAdmin } = require('../lib/auth');
 
 module.exports = async (req, res) => {
@@ -49,7 +50,22 @@ module.exports = async (req, res) => {
       
       const updated = await db.updateOrderStatus(orderId, status);
       if (!updated) return res.status(404).json({ error: 'Order not found' });
-      return res.json({ success: true, order: updated });
+
+      // Auto-notify on status change
+      try {
+        const statusLabels = { pending:'Pending', confirmed:'Confirmed', processing:'Processing', shipped:'Shipped', delivered:'Delivered', cancelled:'Cancelled' };
+        await notif.createNotification({
+          type: 'order_updated',
+          title: 'Order Status Updated',
+          message: 'Order ' + orderId + ' status changed to ' + (statusLabels[status] || status),
+          orderId: orderId,
+          customer: updated.customer?.name || ''
+        });
+      } catch (notifErr) {
+        console.warn('Failed to create notification:', notifErr.message);
+      }
+
+      return res.json({ success: true, order: updated, notification: 'Status updated' });
     }
 
     res.status(405).json({ error: 'Method not allowed' });

@@ -142,7 +142,7 @@ async function loadOrder() {
   }
 
   try {
-    var resp = await fetch(API + '/order?id=' + encodeURIComponent(orderId));
+    var resp = await fetch(API + '/track?id=' + encodeURIComponent(orderId));
     var data = await resp.json();
 
     if (!data.success || !data.order) {

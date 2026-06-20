@@ -74,7 +74,7 @@
 <footer><div class="footer-bottom"><p>Copyright © 2026 Obwocha's Pharmacy</p></div></footer>
 
 <script>
-var API = 'https://obwochas-pharmacy.vercel.app';
+var API = '/api';
 
 function trackOrder() {
   var id = document.getElementById('orderId').value.trim();
@@ -83,7 +83,7 @@ function trackOrder() {
   btn.disabled = true; btn.textContent = 'Searching...';
   hideTrackError();
 
-  fetch(API + '/api/orders/' + encodeURIComponent(id))
+  fetch(API + '/track?id=' + encodeURIComponent(id))
     .then(function(r) { return r.json(); })
     .then(function(d) {
       btn.disabled = false; btn.textContent = 'Track \u2192';

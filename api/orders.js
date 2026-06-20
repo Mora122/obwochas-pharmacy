@@ -1,6 +1,7 @@
 // GET  /api/orders — list orders (admin only, requires JWT)
 // POST /api/orders — create order (public)
 const db = require('../lib/db');
+const notif = require('../lib/notifications_db');
 const { requireAdmin } = require('../lib/auth');
 
 module.exports = async (req, res) => {
@@ -67,16 +68,32 @@ module.exports = async (req, res) => {
         notes: notes || ''
       });
 
+      const orderId = order.id || order._id?.toString();
+
+      // Auto-create notification
+      try {
+        await notif.createNotification({
+          type: 'order_created',
+          title: 'New Order Received',
+          message: (customer.name || 'A customer') + ' placed an order of KSh ' + Number(totals?.total || 0).toLocaleString(),
+          orderId: orderId,
+          customer: customer.name || 'Guest'
+        });
+      } catch (notifErr) {
+        console.warn('Failed to create notification:', notifErr.message);
+      }
+
       return res.status(201).json({
         success: true,
         order: {
-          id: order.id || order._id?.toString(),
+          id: orderId,
           status: order.status,
           totals: order.totals,
           customer: order.customer,
           items: order.items,
           createdAt: order.createdAt
-        }
+        },
+        notification: 'Order confirmation sent'
       });
     }
 
