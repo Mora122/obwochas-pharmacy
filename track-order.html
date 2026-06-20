@@ -83,7 +83,7 @@ function trackOrder() {
   btn.disabled = true; btn.textContent = 'Searching...';
   hideTrackError();
 
-  fetch(API + '/track?id=' + encodeURIComponent(id))
+  fetch(API + '/orders?track=' + encodeURIComponent(id))
     .then(function(r) { return r.json(); })
     .then(function(d) {
       btn.disabled = false; btn.textContent = 'Track \u2192';

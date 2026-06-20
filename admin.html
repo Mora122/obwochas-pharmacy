@@ -1712,7 +1712,7 @@ async function deleteReview(id, name) {
 
 async function updateNotifBadge() {
   try {
-    var r = await fetch(API + '/notifications?unread=true&limit=1');
+    var r = await fetch(API + '/orders?notifications=1&unread=true&limit=1');
     var d = await r.json();
     if (d.success) {
       var badge = document.getElementById('notifBadge');
@@ -1733,7 +1733,7 @@ async function updateNotifBadge() {
 
 async function loadNotifications() {
   try {
-    var r = await fetch(API + '/notifications');
+    var r = await fetch(API + '/orders?notifications=1');
     var d = await r.json();
     var list = document.getElementById('notifList');
     if (!d.success) {
@@ -1780,7 +1780,7 @@ async function loadNotifications() {
 
 async function markNotifRead(id) {
   try {
-    await fetch(API + '/notifications', {
+    await fetch(API + '/orders?notifications=1', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: id })
@@ -1791,7 +1791,7 @@ async function markNotifRead(id) {
 
 async function markAllNotifsRead() {
   try {
-    await fetch(API + '/notifications', {
+    await fetch(API + '/orders?notifications=1', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ markAll: true })
