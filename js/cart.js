@@ -14,54 +14,36 @@ async function loadApiProducts() {
     const d = await r.json();
     if (d.success && d.products) {
       ApiProductDB = {};
+      window.ProductDB = {};
       d.products.forEach(function(p) {
-        // Build lookup by id
+        // Build lookup by product id (e.g. PROD-001)
         ApiProductDB[p.id] = p;
+        window.ProductDB[p.id] = { name: p.name, price: p.price, image: p.image, brand: p.category, sku: p.id };
+        // Also map by numeric ID for backward compat (e.g. '1' from old hardcoded DB)
+        var num = p.id.replace('PROD-', '');
+        ApiProductDB[num] = p;
+        window.ProductDB[num] = { name: p.name, price: p.price, image: p.image, brand: p.category, sku: p.id };
         // Also map by productId if different
         if (p.productId && p.productId !== p.id) {
           ApiProductDB[p.productId] = p;
+          window.ProductDB[p.productId] = { name: p.name, price: p.price, image: p.image, brand: p.category, sku: p.id };
         }
       });
       // Export to window for other scripts
       window.ApiProductDB = ApiProductDB;
       window.ApiProducts = d.products;
+      return true;
     }
   } catch(e) {
-    console.warn('Failed to load products from API, using local DB', e);
+    console.warn('Failed to load products from API, using fallback', e);
   }
 }
 
-// Load API products on page load
+// Load API products on page load (runs early, non-blocking)
 document.addEventListener('DOMContentLoaded', function() {
   loadApiProducts();
 });
 
-const ProductDB = {
-  1: { name: "Wellman Multivitamin 30 Tablets", price: 1850, image: "wellman.png", brand: "Wellman", sku: "WLM-30" },
-  2: { name: "CeraVe Moisturising Cream 454g", price: 2690, image: "cerave_cream.jpg", brand: "CeraVe", sku: "CRV-454" },
-  3: { name: "Pampers Premium Care Diapers Size 4 (48s)", price: 1450, image: "pampers.jpg", brand: "Pampers", sku: "PMP-48" },
-  4: { name: "Dettol Antiseptic Disinfectant 500ml", price: 520, image: "dettol_antiseptic.jpg", brand: "Dettol", sku: "DTL-500" },
-  5: { name: "Sante Herbal Green Tea 20 Bags", price: 380, image: "sante_tea.jpg", brand: "Sante", sku: "SNT-20" },
-  6: { name: "Colgate Total Advanced Whitening 100ml", price: 450, image: "colgate.jpg", brand: "Colgate", sku: "CLG-100" },
-  7: { name: "Opti-Nutrition Whey Protein 2kg - Chocolate", price: 4500, image: "opti_whey.jpg", brand: "Optimum Nutrition", sku: "OPT-2K" },
-  8: { name: "Nivea Sun Protect & Moisture SPF 50 200ml", price: 3020, image: "nivea_sun.jpg", brand: "Nivea", sku: "NIV-200" },
-  9: { name: "Seven Seas Heart Health Omega-3 30 Capsules", price: 1650, image: "seven_seas.jpg", brand: "Seven Seas", sku: "SVS-30" },
-  10: { name: "Optrex Eye Drops 10ml", price: 890, image: "optrex.jpg", brand: "Optrex", sku: "OPX-10" },
-  11: { name: "Piriton Allergy Relief Tablets 30s", price: 680, image: "piriton.jpg", brand: "Piriton", sku: "PRT-30" },
-  12: { name: "Brufen Ibuprofen 400mg 100 Tablets", price: 520, image: "brufen.jpg", brand: "Brufen", sku: "BRF-100" },
-  13: { name: "CeraVe Hydrating Cleanser 473ml", price: 2190, image: "cerave_foam.jpg", brand: "CeraVe", sku: "CRV-473" },
-  14: { name: "CeraVe AM Facial Moisturizing Lotion SPF30", price: 2450, image: "cerave_am.jpg", brand: "CeraVe", sku: "CRV-AM" },
-  15: { name: "CeraVe PM Facial Moisturizing Lotion", price: 2450, image: "cerave_pm.png", brand: "CeraVe", sku: "CRV-PM" },
-  16: { name: "CeraVe Retinol Serum 30ml", price: 3890, image: "cerave_retinol.jpg", brand: "CeraVe", sku: "CRV-RT" },
-  17: { name: "CeraVe Daily Moisturizing Lotion 473ml", price: 2290, image: "cerave_lotion.jpg", brand: "CeraVe", sku: "CRV-DL" },
-  18: { name: "Panadol Extra 500mg 30 Tablets", price: 350, image: "panadol_extra.jpg", brand: "Panadol", sku: "PND-30" },
-  19: { name: "Cetirizine 10mg 30 Tablets", price: 280, image: "cetirizine.jpg", brand: "Cetirizine", sku: "CTZ-30" },
-  20: { name: "Vitamin C 1000mg 60 Tablets", price: 890, image: "vitamin_c.jpg", brand: "Vit-C", sku: "VTC-60" },
-  21: { name: "Omega-3 Fish Oil 1000mg 60 Softgels", price: 1200, image: "omega3.jpg", brand: "Omega-3", sku: "OM3-60" },
-  22: { name: "Amoxicillin 500mg 21 Capsules", price: 650, image: "amoxicillin.jpg", brand: "Amoxil", sku: "AMX-21" },
-  23: { name: "Multivitamin Daily 60 Tablets", price: 750, image: "multivitamin.jpg", brand: "Multi-V", sku: "MTV-60" },
-  24: { name: "Hand Sanitizer 500ml", price: 420, image: "hand_sanitizer.jpg", brand: "Sanitize", sku: "SAN-500" }
-};
 
 function getCart() {
   try { return JSON.parse(localStorage.getItem(OBOCHA_CART_KEY)) || []; } 
@@ -86,23 +68,17 @@ function addToCart(productId, qty) {
   if (existing) {
     existing.qty += qty;
   } else {
-    // Lookup product: 1) API-loaded DB first (live data), 2) hardcoded ProductDB (deprecated), 3) SKU search
+    // Lookup product: 1) API-loaded DB first (live data), 2) window.ProductDB (fallback), 3) SKU search
     let prod = null;
     if (ApiProductDB[productId]) {
       prod = ApiProductDB[productId];
-    } else if (ProductDB[productId]) {
-      prod = ProductDB[productId];
+    } else if (window.ProductDB && window.ProductDB[productId]) {
+      prod = window.ProductDB[productId];
     } else if (window.ApiProductDB && window.ApiProductDB[productId]) {
       prod = window.ApiProductDB[productId];
     } else {
-      // Try finding by SKU
-      for (var key in ProductDB) {
-        if (ProductDB[key].sku === productId) {
-          prod = ProductDB[key];
-          break;
-        }
-      }
-      if (!prod && window.ApiProducts) {
+      // Try finding by SKU in API products
+      if (window.ApiProducts) {
         var skuMatch = window.ApiProducts.find(function(p) { return p.sku === productId; });
         if (skuMatch) prod = skuMatch;
       }

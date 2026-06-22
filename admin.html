@@ -117,9 +117,17 @@ body{background:#f0f2f5}
 
 .product-card .stock-ok{background:#e8f5e9;color:#2e7d32}
 
-.product-card .stock-low{background:#fff3e0;color:#e65100}
+.product-card .stock-low{background:#fff8e1;color:#ff8f00}
 
-.product-card .stock-out{background:#ffebee;color:#c62828}
+.product-card .stock-critical{background:#ffebee;color:#c62828}
+
+.product-card .stock-out{background:#fce4ec;color:#b71c1c}
+
+.stock-inline-btns{display:inline-flex;gap:2px;margin-left:6px}
+
+.stock-inline-btns button{background:none;border:1px solid #ccc;border-radius:3px;cursor:pointer;font-size:10px;font-weight:700;padding:0 4px;line-height:16px;color:#555;transition:all 0.15s}
+
+.stock-inline-btns button:hover{background:#f0f0f0;border-color:#999}
 
 .stock-btns{display:flex;gap:2px;margin-top:4px}
 
@@ -1416,9 +1424,19 @@ function renderProducts() {
 
     categories[p.category]++;
 
-    var stockClass = p.stock <= 0 ? 'stock-out' : p.stock < 20 ? 'stock-low' : 'stock-ok';
+    var stockClass = p.stock < 5 ? 'stock-critical' : p.stock < 20 ? 'stock-low' : 'stock-ok';
+    if (p.stock <= 0) stockClass = 'stock-out';
 
-    var stockLabel = p.stock <= 0 ? 'Out of stock' : p.stock + ' in stock';
+    var stockLabel = '';
+    if (p.stock <= 0) {
+      stockLabel = '❌ Out of Stock';
+    } else if (p.stock < 5) {
+      stockLabel = '❌ Critical (' + p.stock + ')';
+    } else if (p.stock < 20) {
+      stockLabel = '⚠ Low Stock (' + p.stock + ')';
+    } else {
+      stockLabel = 'In Stock (' + p.stock + ')';
+    }
 
     var thumb = p.image
       ? '<div class="prod-thumb"><img src="' + p.image + '" alt="' + p.name.replace(/'/g, "\\u0027") + '" onerror="this.innerHTML=\'<span class=no-img>\U0001f4e6</span>\'"></div>'
@@ -1448,7 +1466,12 @@ function renderProducts() {
 
       '<div class="prod-stock-section">' +
         '<div class="prod-price">KSh ' + Number(p.price).toLocaleString() + '</div>' +
-        '<div class="prod-stock-badge ' + stockClass + '">' + stockLabel + '</div>' +
+        '<div class="prod-stock-badge ' + stockClass + '">' + stockLabel + '
+          <span class="stock-inline-btns">' +
+            '<button onclick="event.stopPropagation();adjustStock(\'' + p.id + '\',-1)" title="Decrease by 1">[-]</button>' +
+            '<button onclick="event.stopPropagation();adjustStock(\'' + p.id + '\',1)" title="Increase by 1">[+]</button>' +
+          '</span>' +
+        '</div>' +
         '<div class="stock-btns">' +
           '<button class="sb sb--" onclick="quickStock(\'' + p.id + '\',-1)" title="Remove 1">-1</button>' +
           '<button class="sb sb--" onclick="quickStock(\'' + p.id + '\',-5)" title="Remove 5">-5</button>' +
@@ -1658,6 +1681,26 @@ async function toggleSpecial(id, value) {
     if (d.success) { loadProducts(); }
   } catch(e) { alert("Error: " + e.message); }
 }
+
+/** adjustStock(id, change) — inline stock adjustment without prompt */
+window.adjustStock = async function adjustStock(productId, change) {
+  try {
+    var reason = change > 0 ? 'Manual addition (admin)' : 'Manual reduction (admin)';
+    var r = await fetch(API + '/products?id=' + productId + '&action=stock', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('obwochas_admin_token') },
+      body: JSON.stringify({ change: change, reason: reason })
+    });
+    var d = await r.json();
+    if (d.success) {
+      loadProducts();
+    } else {
+      alert('Error: ' + (d.error || 'Unknown'));
+    }
+  } catch(e) {
+    alert('Error adjusting stock: ' + e.message);
+  }
+};
 
 async function quickStock(id, change) {
 
