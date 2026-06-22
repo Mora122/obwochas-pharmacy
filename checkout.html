@@ -829,8 +829,9 @@ document.querySelectorAll('.payment-option:first-child input').forEach(el => el.
 </script>
 
 <script>
-if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(e){console.log("SW registration failed:",e)})}
+window.addEventListener('scroll',function(){var b=document.getElementById('backToTop');if(b){b.style.display=window.scrollY>300?'flex':'none'}});if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(e){console.log("SW registration failed:",e)})}
 </script>
 
-<script src="js/search.js" defer></script></body>
+<script src="js/search.js" defer></script><button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="position:fixed;bottom:30px;right:30px;width:50px;height:50px;border-radius:50%;background:#1a5c2e;color:#fff;border:none;font-size:24px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.25);display:none;z-index:999;transition:opacity 0.3s;align-items:center;justify-content:center;">↑</button>
+</body>
 </html>

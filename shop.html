@@ -686,7 +686,7 @@
           var stockLabel = '<span style="color:' + (p.stock > 10 ? '#2e7d32' : (p.stock > 0 ? '#e65100' : '#c62828')) + ';font-weight:600">' + (p.stock > 10 ? '\u2705 In stock' : (p.stock > 0 ? '\u26a0\ufe0f Only ' + p.stock + ' left' : '\u274c Out of stock')) + '</span>'
 
 
-          var imgHtml = p.image ? '<img src="' + p.image + '" alt="' + p.name + '"  style="width:100%;height:100%;object-fit:cover;border-radius:8px" onerror="this.onerror=null;this.src=\'images/placeholder.svg\'">' : '<img src="images/placeholder.svg" alt="' + p.name + '"  style="width:100%;height:100%;object-fit:contain;padding:20px;background:#f5f8f5;border-radius:8px">';
+          var imgHtml = p.image ? '<img src="' + p.image + '" alt="' + p.name + '"  style="width:100%;height:100%;object-fit:cover;border-radius:8px" onerror="this.onerror=null;this.src=\'images/placeholder.svg\'" onload="this.classList.add('loaded')">' : '<img src="images/placeholder.svg" alt="' + p.name + '"  style="width:100%;height:100%;object-fit:contain;padding:20px;background:#f5f8f5;border-radius:8px">';
 
 
           html += '<div class="product-card">' +
@@ -1065,9 +1065,10 @@ function addToCart(id, name, price, image) {
 
 
 <script>
-if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(e){console.log("SW registration failed:",e)})}
+window.addEventListener('scroll',function(){var b=document.getElementById('backToTop');if(b){b.style.display=window.scrollY>300?'flex':'none'}});if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(e){console.log("SW registration failed:",e)})}
 </script>
-<script src="js/search.js" defer></script></body>
+<script src="js/search.js" defer></script><button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="position:fixed;bottom:30px;right:30px;width:50px;height:50px;border-radius:50%;background:#1a5c2e;color:#fff;border:none;font-size:24px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.25);display:none;z-index:999;transition:opacity 0.3s;align-items:center;justify-content:center;">↑</button>
+</body>
 
 
 </html>

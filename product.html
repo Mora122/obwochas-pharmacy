@@ -414,7 +414,7 @@ const ProductDB = {
     var p = d.product;
 
 
-    var imgHtml = p.image ? '<img src="' + p.image + '" alt="' + p.name + '"  data-category="' + p.category + '" onerror="imgError(this)">' : '<div style="width:100%;max-width:500px;height:300px;display:flex;align-items:center;justify-content:center;font-size:80px;background:#f5f8f5;border-radius:12px">' + (CAT_ICONS[p.category] || '💊') + '</div>';
+    var imgHtml = p.image ? '<img src="' + p.image + '" alt="' + p.name + '"  data-category="' + p.category + '" onerror="imgError(this)" onload="this.classList.add('loaded')">' : '<div style="width:100%;max-width:500px;height:300px;display:flex;align-items:center;justify-content:center;font-size:80px;background:#f5f8f5;border-radius:12px">' + (CAT_ICONS[p.category] || '💊') + '</div>';
 
 
     
@@ -585,7 +585,7 @@ async function loadRelated(category, excludeId) {
       var icon = CAT_ICONS[p.category] || '💊';
 
 
-      var imgInner = p.image ? '<img src="' + p.image + '" alt="' + p.name + '"  style="width:100%;height:100%;object-fit:cover;border-radius:8px" data-category="' + p.category + '" onerror="imgError(this)">' : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:36px;">' + icon + '</div>';
+      var imgInner = p.image ? '<img src="' + p.image + '" alt="' + p.name + '"  style="width:100%;height:100%;object-fit:cover;border-radius:8px" data-category="' + p.category + '" onerror="imgError(this)" onload="this.classList.add('loaded')">' : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:36px;">' + icon + '</div>';
 
 
       html += '<div class="product-card"><div class="product-img">' + imgInner + '</div><div class="product-body"><div class="brand">' + p.category + '</div><h3><a href="product.html?id=' + p.id + '">' + p.name + '</a></h3><div class="price">KSh ' + Number(p.price).toLocaleString() + '</div><div class="product-actions"><a href="product.html?id=' + p.id + '" class="btn btn-sm">View</a><button class="btn btn-primary btn-sm" onclick="addToCart(\'' + p.id + '\',\'' + p.name.replace(/'/g,"\\'") + '\',' + p.price + ",'" + (p.image||'').replace(/'/g,"\\'") + ')\">Add to Cart</button></div></div></div>';
@@ -675,10 +675,11 @@ loadProduct();
 
 
 <script>
-if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(e){console.log("SW registration failed:",e)})}
+window.addEventListener('scroll',function(){var b=document.getElementById('backToTop');if(b){b.style.display=window.scrollY>300?'flex':'none'}});if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(e){console.log("SW registration failed:",e)})}
 </script>
 
-<script src="js/search.js" defer></script></body>
+<script src="js/search.js" defer></script><button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="position:fixed;bottom:30px;right:30px;width:50px;height:50px;border-radius:50%;background:#1a5c2e;color:#fff;border:none;font-size:24px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.25);display:none;z-index:999;transition:opacity 0.3s;align-items:center;justify-content:center;">↑</button>
+</body>
 
 
 </html>
