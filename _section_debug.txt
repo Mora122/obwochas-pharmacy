@@ -1,0 +1,67 @@
+try { return JSON.parse(localStorage.getItem('obwochas_user') || 'null'); }
+  catch { return null; }
+}
+
+// Wrap fetch to always include JWT token
+var _origFetch = window.fetch;
+window.fetch = function(url, opts) {
+  opts = opts || {};
+  opts.headers = opts.headers || {};
+  var token = getToken();
+  if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+  return _origFetch.call(window, url, opts).then(function(r) {
+    // On 401 Unauthorized, redirect to login
+    if (r.status === 401 && !url.toString().includes('/login')) {
+      handleLogout();
+      throw new Error('Session expired. Please sign in again.');
+    }
+    return r;
+  });
+};
+
+async function handleLogin() {
+  var email = document.getElementById('loginEmail').value.trim();
+  var password = document.getElementById('loginPassword').value;
+  var errorEl = document.getElementById('loginError');
+  var btn = document.getElementById('loginBtn');
+  
+  if (!email || !password) {
+    errorEl.textContent = 'Email and password are required';
+    errorEl.style.display = 'block';
+    return;
+  }
+  
+  btn.disabled = true;
+  btn.textContent = 'Signing in...';
+  errorEl.style.display = 'none';
+  
+  try {
+(async function() {
+    var r = await _origFetch.call(window, API + '/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, password: password })
+    });
+    var d = await r.json();
+    if (d.success && d.token) {
+      // Store token + user info
+      localStorage.setItem('obwochas_token', d.token);
+      localStorage.setItem('obwochas_user', JSON.stringify(d.user || {}));
+      // Show dashboard
+      document.getElementById('loginOverlay').style.display = 'none';
+      document.getElementById('dashboardRoot').style.display = 'block';
+      document.getElementById('userBadge').textContent = '👤 ' + (d.user.name || d.user.email || 'Admin');
+      initDashboard();
+    } else {
+      errorEl.textContent = d.message || 'Invalid email or password';
+      errorEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Sign In';
+    }
+  } catch(e) {
+    errorEl.textContent = 'Connection error. Please try again.';
+    errorEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Sign In';
+  }
+})();
