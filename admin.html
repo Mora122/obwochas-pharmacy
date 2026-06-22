@@ -706,19 +706,21 @@ function switchTab(tab) {
 
   document.querySelector('.tab-btn[data-tab="' + tab + '"]').classList.add('active');
 
-  document.getElementById('tab-' + tab).style.display = 'block';
+  var el = document.getElementById('tab-' + tab);
+  if (el) el.style.display = 'block';
 
+  if (tab === 'dashboard') loadDashboard();
   if (tab === 'orders') loadOrders();
-
   if (tab === 'products') loadProducts();
-
+  if (tab === 'users') loadUsers();
   if (tab === 'notifications') loadNotifications();
-
   if (tab === 'reviews') loadAdminReviews();
 
 }
 
 
+
+/* ========= ORDERS ========= */
 
 /* ========= ORDERS ========= */
 
@@ -830,7 +832,7 @@ async function loadUsers() {
     var r = await fetch('/api/users');
     var d = await r.json();
     if (!d.success) {
-      el.innerHTML = '<div style="text-align:center;padding:40px;color:#f44336">Failed to load users. Make sure you're signed in as admin.</div>';
+      el.innerHTML = '<div style="text-align:center;padding:40px;color:#f44336">Failed to load users. Make sure you are signed in as admin.</div>';
       return;
     }
     if (!d.users || d.users.length === 0) {
