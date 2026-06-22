@@ -51,6 +51,26 @@ module.exports = async (req, res) => {
         });
       }
 
+      // PUBLIC: Get orders by user email (for customer order history)
+      if (req.query?.email) {
+        const email = req.query.email.trim().toLowerCase();
+        if (!email) return res.status(400).json({ error: 'Missing email parameter' });
+
+        const orders = await db.getOrders({ customerEmail: email, limit: 50 });
+        return res.json({
+          success: true,
+          count: orders.length,
+          orders: orders.map(o => ({
+            id: o.id || o._id?.toString(),
+            status: o.status,
+            total: o.totals?.total,
+            items: o.items?.length || 0,
+            createdAt: o.createdAt,
+            updatedAt: o.updatedAt
+          }))
+        });
+      }
+
       // PUBLIC: List notifications
       if (req.query?.notifications) {
         const user = requireAdmin(req, res);
