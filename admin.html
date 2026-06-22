@@ -1466,8 +1466,8 @@ function renderProducts() {
 
       '<div class="prod-stock-section">' +
         '<div class="prod-price">KSh ' + Number(p.price).toLocaleString() + '</div>' +
-        '<div class="prod-stock-badge ' + stockClass + '">' + stockLabel + '
-          <span class="stock-inline-btns">' +
+        '<div class="prod-stock-badge ' + stockClass + '">' + stockLabel + 
+          '<span class="stock-inline-btns">' +
             '<button onclick="event.stopPropagation();adjustStock(\'' + p.id + '\',-1)" title="Decrease by 1">[-]</button>' +
             '<button onclick="event.stopPropagation();adjustStock(\'' + p.id + '\',1)" title="Increase by 1">[+]</button>' +
           '</span>' +
