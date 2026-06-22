@@ -1,21 +1,88 @@
 {
   "version": 2,
   "rewrites": [
-    { "source": "/products.html", "destination": "/shop.html" },
-    { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/shop", "destination": "/shop.html" },
-    { "source": "/cart", "destination": "/cart.html" },
-    { "source": "/account", "destination": "/account.html" },
-    { "source": "/about", "destination": "/about.html" },
-    { "source": "/contact", "destination": "/contact.html" },
-    { "source": "/faq", "destination": "/faq.html" },
-    { "source": "/blog", "destination": "/blog.html" },
-    { "source": "/brands", "destination": "/brands.html" },
-    { "source": "/prescription", "destination": "/prescription.html" },
-    { "source": "/services", "destination": "/services.html" },
-    { "source": "/checkout", "destination": "/checkout.html" },
-    { "source": "/register", "destination": "/register.html" },
-    { "source": "/privacy", "destination": "/privacy.html" },
-    { "source": "/terms", "destination": "/terms.html" }
+    {
+      "source": "/products.html",
+      "destination": "/shop.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/admin.html"
+    },
+    {
+      "source": "/shop",
+      "destination": "/shop.html"
+    },
+    {
+      "source": "/cart",
+      "destination": "/cart.html"
+    },
+    {
+      "source": "/account",
+      "destination": "/account.html"
+    },
+    {
+      "source": "/about",
+      "destination": "/about.html"
+    },
+    {
+      "source": "/contact",
+      "destination": "/contact.html"
+    },
+    {
+      "source": "/faq",
+      "destination": "/faq.html"
+    },
+    {
+      "source": "/blog",
+      "destination": "/blog.html"
+    },
+    {
+      "source": "/brands",
+      "destination": "/brands.html"
+    },
+    {
+      "source": "/prescription",
+      "destination": "/prescription.html"
+    },
+    {
+      "source": "/services",
+      "destination": "/services.html"
+    },
+    {
+      "source": "/checkout",
+      "destination": "/checkout.html"
+    },
+    {
+      "source": "/register",
+      "destination": "/register.html"
+    },
+    {
+      "source": "/privacy",
+      "destination": "/privacy.html"
+    },
+    {
+      "source": "/terms",
+      "destination": "/terms.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/admin.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        },
+        {
+          "key": "Pragma",
+          "value": "no-cache"
+        },
+        {
+          "key": "Expires",
+          "value": "0"
+        }
+      ]
+    }
   ]
 }

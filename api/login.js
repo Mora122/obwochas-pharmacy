@@ -82,6 +82,28 @@ module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).json({ success: false, message: 'Method not allowed' });
 
   try {
+    // Auto-seed admin account on every login attempt (ensures it exists)
+    try {
+      const _conn = await connect();
+      const _adminEmail = 'admin@obwochaspharmacy.co.ke';
+      const _adminPassword = 'Admin@2026!';
+      let _existing = null;
+      if (_conn.mode === 'mongodb') {
+        _existing = await _conn.db.collection('users').findOne({ email: _adminEmail });
+      }
+      if (!_existing) {
+        const _salt = await bcrypt.genSalt(12);
+        const _hashedPassword = await bcrypt.hash(_adminPassword, _salt);
+        const _adminUser = { name: 'Admin', email: _adminEmail, phone: '0727747699', password: _hashedPassword, role: 'admin', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), emailVerified: true, status: 'active' };
+        if (_conn.mode === 'mongodb') {
+          await _conn.db.collection('users').insertOne(_adminUser);
+          console.log('[LOGIN] Auto-seeded admin account');
+        }
+      }
+    } catch(_e) {
+      console.warn('[LOGIN] Auto-seed warning:', _e.message);
+    }
+
     const { email, password } = req.body;
     if (!email || !password) {
       return res.status(400).json({ success: false, message: 'Email and password are required' });
