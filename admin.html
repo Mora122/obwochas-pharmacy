@@ -282,19 +282,19 @@ body{background:#f0f2f5}
   <div class="admin-container">
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px" id="statCards">
       <div class="stat-card" style="background:linear-gradient(135deg,#2e7d32,#1b5e20);color:#fff;border-radius:12px;padding:20px;text-align:center">
-        <div style="font-size:32px;font-weight:700" id="dashRevenue">0</div>
+        <div style="font-size:32px;font-weight:700" id="dashRevenue"><span class="skeleton" style="display:inline-block;width:100px;height:32px"></span></div>
         <div style="font-size:13px;opacity:0.9;margin-top:4px">Total Revenue (KSh)</div>
       </div>
       <div class="stat-card" style="background:linear-gradient(135deg,#1565c0,#0d47a1);color:#fff;border-radius:12px;padding:20px;text-align:center">
-        <div style="font-size:32px;font-weight:700" id="dashOrders">0</div>
+        <div style="font-size:32px;font-weight:700" id="dashOrders"><span class="skeleton" style="display:inline-block;width:60px;height:32px"></span></div>
         <div style="font-size:13px;opacity:0.9;margin-top:4px">Total Orders</div>
       </div>
       <div class="stat-card" style="background:linear-gradient(135deg,#e65100,#bf360c);color:#fff;border-radius:12px;padding:20px;text-align:center">
-        <div style="font-size:32px;font-weight:700" id="dashProducts">0</div>
+        <div style="font-size:32px;font-weight:700" id="dashProducts"><span class="skeleton" style="display:inline-block;width:50px;height:32px"></span></div>
         <div style="font-size:13px;opacity:0.9;margin-top:4px">Products</div>
       </div>
       <div class="stat-card" style="background:linear-gradient(135deg,#6a1b9a,#4a148c);color:#fff;border-radius:12px;padding:20px;text-align:center">
-        <div style="font-size:32px;font-weight:700" id="dashUsers">0</div>
+        <div style="font-size:32px;font-weight:700" id="dashUsers"><span class="skeleton" style="display:inline-block;width:40px;height:32px"></span></div>
         <div style="font-size:13px;opacity:0.9;margin-top:4px">Customers</div>
       </div>
     </div>
@@ -349,7 +349,7 @@ body{background:#f0f2f5}
 
     </div>
 
-    <div id="orderList"><div class="loading">Loading orders...</div></div>
+    <div id="orderList"><div class="table-skeleton" style="padding:12px"><div class="skeleton skeleton-text" style="width:100%;margin:8px 0"></div><div class="skeleton skeleton-text" style="width:90%;margin:8px 0"></div><div class="skeleton skeleton-text" style="width:95%;margin:8px 0"></div><div class="skeleton skeleton-text" style="width:85%;margin:8px 0"></div><div class="skeleton skeleton-text" style="width:92%;margin:8px 0"></div></div></div>
 
     <div id="orderDetail" class="order-detail-panel"></div>
 
@@ -399,7 +399,7 @@ body{background:#f0f2f5}
 
     </div>
 
-    <div id="productList"><div class="loading">Loading products...</div></div>
+    <div id="productList"><div class="table-skeleton" style="padding:12px"><div class="skeleton skeleton-text" style="width:100%;margin:8px 0;height:16px"></div><div class="skeleton skeleton-text" style="width:88%;margin:8px 0;height:16px"></div><div class="skeleton skeleton-text" style="width:92%;margin:8px 0;height:16px"></div><div class="skeleton skeleton-text" style="width:78%;margin:8px 0;height:16px"></div><div class="skeleton skeleton-text" style="width:95%;margin:8px 0;height:16px"></div></div></div>
 
     <div id="inventorySummary" style="background:#fff;border-radius:10px;padding:16px 20px;margin-top:12px;box-shadow:0 1px 3px rgba(0,0,0,0.08);display:none"></div>
 
