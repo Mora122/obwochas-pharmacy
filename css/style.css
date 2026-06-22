@@ -399,9 +399,6 @@ img{max-width:100%;height:auto}
 .product-img img {
   transition: opacity 0.4s ease-in-out;
 }
-.product-img img[loading="lazy"] {
-  opacity: 0;
-}
 .product-img img.loaded,
 .product-img img.error {
   opacity: 1;
