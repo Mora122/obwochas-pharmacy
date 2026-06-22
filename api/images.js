@@ -13,8 +13,10 @@ module.exports = async (req, res) => {
 
   try {
     const conn = await connect();
-    const db = conn.db();
-    const collection = db.collection('images');
+    if (conn.mode !== 'mongodb') {
+      return res.status(500).json({ success: false, error: 'Database not connected' });
+    }
+    const collection = conn.db.collection('images');
 
     // GET — Serve image (public, no auth needed)
     if (req.method === 'GET') {
