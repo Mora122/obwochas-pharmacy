@@ -209,7 +209,13 @@ body{background:#f0f2f5}
 
 @media(max-width:768px){.admin-header{flex-direction:column;gap:10px;text-align:center}.order-card{flex-direction:column;gap:8px;text-align:center}.detail-grid{grid-template-columns:1fr}.product-card{flex-direction:column;gap:6px;text-align:center}.inline-grid{grid-template-columns:1fr}}
 
-.cat-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid #eee;border-radius:8px;margin-bottom:6px}.cat-row:hover{background:#fafafa}.cat-row-name{font-weight:500;font-size:14px}.cat-count{font-size:12px;color:#888;font-weight:400;margin-left:6px}.cat-del-btn{padding:4px 12px;background:#ffebee;color:#c62828;border:1px solid #ef9a9a;border-radius:4px;cursor:pointer;font-size:12px}.cat-del-btn:hover{background:#ffcdd2}.cat-inuse{font-size:11px;color:#999}</style>
+.cat-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid #eee;border-radius:8px;margin-bottom:6px}.cat-row:hover{background:#fafafa}.cat-row-name{font-weight:500;font-size:14px}.cat-count{font-size:12px;color:#888;font-weight:400;margin-left:6px}.cat-del-btn{padding:4px 12px;background:#ffebee;color:#c62828;border:1px solid #ef9a9a;border-radius:4px;cursor:pointer;font-size:12px}.cat-del-btn:hover{background:#ffcdd2}.cat-inuse{font-size:11px;color:#999}
+.low-stock-banner{margin:12px 16px;padding:12px 16px;border-radius:10px;background:#fff3e0;border:1px solid #ffb300;display:none}
+.low-stock-banner h4{margin:0 0 8px 0;color:#e65100;font-size:15px}
+.low-stock-banner ul{margin:0;padding:0 0 0 20px}
+.low-stock-banner li{margin:4px 0;font-size:13px;color:#555}
+.low-stock-banner .close-banner{float:right;background:none;border:none;font-size:20px;cursor:pointer;color:#e65100;line-height:1}
+</style>
 
 
 <link rel="manifest" href="/manifest.json">
@@ -292,6 +298,11 @@ body{background:#f0f2f5}
 <!-- Dashboard Tab -->
 <div id="tab-dashboard" class="tab-content">
   <div class="admin-container">
+<div id="lowStockBanner" class="low-stock-banner">
+  <button class="close-banner" onclick="this.parentElement.style.display='none'">&times;</button>
+  <h4>⚠️ Low Stock Alert</h4>
+  <ul id="lowStockList"></ul>
+</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px" id="statCards">
       <div class="stat-card" style="background:linear-gradient(135deg,#2e7d32,#1b5e20);color:#fff;border-radius:12px;padding:20px;text-align:center">
         <div style="font-size:32px;font-weight:700" id="dashRevenue"><span class="skeleton" style="display:inline-block;width:100px;height:32px"></span></div>
@@ -740,6 +751,7 @@ function switchTab(tab) {
   if (tab === 'dashboard') loadDashboard();
   if (tab === 'orders') loadOrders();
   if (tab === 'products') loadProducts();
+    setTimeout(checkLowStock, 500);
   if (tab === 'users') loadUsers();
   if (tab === 'notifications') loadNotifications();
   if (tab === 'reviews') loadAdminReviews();
@@ -753,7 +765,24 @@ function switchTab(tab) {
 /* ========= ORDERS ========= */
 
 // Dashboard: load analytics
-async function loadDashboard() {
+async 
+  function checkLowStock() {
+    var threshold = 10;
+    fetch('/api/products').then(function(r){return r.json();}).then(function(prods){
+      var low=prods.filter(function(p){return p.stock!==undefined&&p.stock>0&&p.stock<=threshold;});
+      var out=prods.filter(function(p){return p.stock!==undefined&&p.stock===0;});
+      var list=document.getElementById('lowStockList');
+      if(!list)return;
+      var h='';
+      if(low.length>0){h+='<li><strong>'+low.length+' product(s) running low:</strong></li>';low.forEach(function(p){h+='<li>'+p.name+' <span style="color:#e65100;font-weight:600">('+p.stock+' left)</span></li>';});}
+      if(out.length>0){h+='<li><strong>'+out.length+' product(s) out of stock:</strong></li>';out.forEach(function(p){h+='<li>'+p.name+' <span style="color:#c62828;font-weight:600">(Out of stock)</span></li>';});}
+      list.innerHTML=h;
+      var bn=document.getElementById('lowStockBanner');
+      if(bn)bn.style.display=(low.length+out.length>0)?'block':'none';
+    }).catch(function(e){console.log('Low stock check failed:',e);});
+  }
+
+  function loadDashboard() {
   var revenue = document.getElementById('dashRevenue');
   var ordersCount = document.getElementById('dashOrders');
   var prodCount = document.getElementById('dashProducts');

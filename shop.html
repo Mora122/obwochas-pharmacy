@@ -719,7 +719,7 @@
             '<a href="product.html?id=' + p.id + '" class="btn btn-sm">View</a>' +
 
 
-            '<button class="btn btn-primary btn-sm" onclick="addToCart(\'' + p.id + '\',\'' + p.name.replace(/'/g,"\\'") + '\',' + p.price + ",'" + (p.image||'').replace(/'/g,"\\'") + "')\">Add to Cart</button></div></div></div>";
+            '(p.stock > 0 ? '<button class="btn btn-primary btn-sm" onclick="addToCart(\'' + p.id + '\',\'' + p.name.replace(/'/g,"\\'") + '\',' + p.price + ",'" + (p.image||'').replace(/'/g,"\\'") + "')\">Add to Cart</button>' : '<button class="btn btn-sm" disabled style="background:#eee;color:#999;cursor:not-allowed">Out of Stock</button>') + '</div></div></div>";
 
 
         }
