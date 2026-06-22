@@ -972,14 +972,24 @@ function addToCart(id, name, price, image) {
       for (var li = 0; li < lazyImgs.length; li++) {
         (function(img) {
           var realSrc = img.getAttribute('data-src');
-          if (!realSrc) return;
+          if (!realSrc) { img.removeAttribute('data-src'); return; }
+          // Give up after 4 seconds if image won't load
+          var timeout = setTimeout(function() { img.removeAttribute('data-src'); }, 4000);
           var test = new Image();
-          test.onload = function() { img.src = realSrc; img.style.objectFit = 'cover'; };
-          test.onerror = function() { }; // stay on placeholder
+          test.onload = function() {
+            clearTimeout(timeout);
+            img.src = realSrc;
+            img.style.objectFit = 'cover';
+            img.removeAttribute('data-src');
+          };
+          test.onerror = function() {
+            clearTimeout(timeout);
+            img.removeAttribute('data-src');
+          };
           test.src = realSrc;
         })(lazyImgs[li]);
       }
-    }, 50);
+    }, 500);
         loadProducts();
 
 

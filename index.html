@@ -1173,6 +1173,28 @@ async function submitReview() {
 document.addEventListener('DOMContentLoaded', function() {
   loadFeaturedProducts();
   loadSpecialOffers();
+        // Lazy-load featured/offer images after render
+        setTimeout(function() {
+          var lazyImgs = document.querySelectorAll('.product-img img[data-src]');
+          for (var li = 0; li < lazyImgs.length; li++) {
+            (function(img) {
+              var realSrc = img.getAttribute('data-src');
+              if (!realSrc) { img.removeAttribute('data-src'); return; }
+              var timeout = setTimeout(function() { img.removeAttribute('data-src'); }, 4000);
+              var test = new Image();
+              test.onload = function() {
+                clearTimeout(timeout);
+                img.src = realSrc;
+                img.removeAttribute('data-src');
+              };
+              test.onerror = function() {
+                clearTimeout(timeout);
+                img.removeAttribute('data-src');
+              };
+              test.src = realSrc;
+            })(lazyImgs[li]);
+          }
+        }, 500);
   loadReviews();
   setupReviewStars();
 });
