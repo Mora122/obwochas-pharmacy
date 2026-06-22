@@ -686,7 +686,7 @@
           var stockLabel = '<span style="color:' + (p.stock > 10 ? '#2e7d32' : (p.stock > 0 ? '#e65100' : '#c62828')) + ';font-weight:600">' + (p.stock > 10 ? '\u2705 In stock' : (p.stock > 0 ? '\u26a0\ufe0f Only ' + p.stock + ' left' : '\u274c Out of stock')) + '</span>'
 
 
-          var imgHtml = '<img loading="lazy" src="images/placeholder.svg" data-src="' + (p.image || '') + '" alt="' + p.name + '"  style="width:100%;height:100%;object-fit:contain;padding:15px;background:#f0f5f0;border-radius:8px">';
+          var imgHtml = p.image ? '<img loading="lazy" src="' + p.image + '" alt="' + p.name + '"  style="width:100%;height:100%;object-fit:cover;border-radius:8px" onerror="this.onerror=null;this.src=\'images/placeholder.svg\'">' : '<img loading="lazy" src="images/placeholder.svg" alt="' + p.name + '" style="width:100%;height:100%;object-fit:contain;padding:20px;background:#f5f8f5;border-radius:8px">';
 
 
           html += '<div class="product-card">' +
@@ -966,30 +966,7 @@ function addToCart(id, name, price, image) {
 
 
         
-    // Lazy-load real product images after cards are in DOM
-    setTimeout(function() {
-      var lazyImgs = document.querySelectorAll('.product-img img[data-src]');
-      for (var li = 0; li < lazyImgs.length; li++) {
-        (function(img) {
-          var realSrc = img.getAttribute('data-src');
-          if (!realSrc) { img.removeAttribute('data-src'); return; }
-          // Give up after 4 seconds if image won't load
-          var timeout = setTimeout(function() { img.removeAttribute('data-src'); }, 4000);
-          var test = new Image();
-          test.onload = function() {
-            clearTimeout(timeout);
-            img.src = realSrc;
-            img.style.objectFit = 'cover';
-            img.removeAttribute('data-src');
-          };
-          test.onerror = function() {
-            clearTimeout(timeout);
-            img.removeAttribute('data-src');
-          };
-          test.src = realSrc;
-        })(lazyImgs[li]);
-      }
-    }, 500);
+    
         loadProducts();
 
 

@@ -958,7 +958,7 @@ async function loadFeaturedProducts() {
       var p = d.products[i];
       var img = p.image || 'images/placeholder.svg';
       html += '<div class="product-card">' +
-        '<div class="product-img"><img loading="lazy" src="images/placeholder.svg" data-src="' + (img || '') + '" onerror="this.src=\'images/placeholder.svg\'" alt="' + p.name + '" style="width:100%;height:100%;object-fit:contain;background:#f0f5f0;padding:15px;"></div>' +
+        '<div class="product-img"><img loading="lazy" src="' + img + '" onerror="this.onerror=null;this.src=\'images/placeholder.svg\'" alt="' + p.name + '" style="width:100%;height:100%;object-fit:contain;background:#f0f5f0;padding:15px;"></div>' +
         '<div class="product-body">' +
         '<div class="brand">' + (p.category || '') + '</div>' +
         '<h3><a href="product.html?id=' + (p.id || i) + '">' + p.name + '</a></h3>' +
@@ -996,7 +996,7 @@ async function loadSpecialOffers() {
       var p = d.products[i];
       var img = p.image || 'images/placeholder.svg';
       html += '<div class="product-card">' +
-        '<div class="product-img"><img loading="lazy" src="images/placeholder.svg" data-src="' + (img || '') + '" onerror="this.src=\'images/placeholder.svg\'" alt="' + p.name + '" style="width:100%;height:100%;object-fit:contain;background:#f0f5f0;padding:15px;"></div>' +
+        '<div class="product-img"><img loading="lazy" src="' + img + '" onerror="this.onerror=null;this.src=\'images/placeholder.svg\'" alt="' + p.name + '" style="width:100%;height:100%;object-fit:contain;background:#f0f5f0;padding:15px;"></div>' +
         '<div class="product-body">' +
         '<div class="brand">' + (p.category || '') + '</div>' +
         '<h3><a href="product.html?id=' + (p.id || i) + '">' + p.name + '</a></h3>' +
@@ -1173,28 +1173,7 @@ async function submitReview() {
 document.addEventListener('DOMContentLoaded', function() {
   loadFeaturedProducts();
   loadSpecialOffers();
-        // Lazy-load featured/offer images after render
-        setTimeout(function() {
-          var lazyImgs = document.querySelectorAll('.product-img img[data-src]');
-          for (var li = 0; li < lazyImgs.length; li++) {
-            (function(img) {
-              var realSrc = img.getAttribute('data-src');
-              if (!realSrc) { img.removeAttribute('data-src'); return; }
-              var timeout = setTimeout(function() { img.removeAttribute('data-src'); }, 4000);
-              var test = new Image();
-              test.onload = function() {
-                clearTimeout(timeout);
-                img.src = realSrc;
-                img.removeAttribute('data-src');
-              };
-              test.onerror = function() {
-                clearTimeout(timeout);
-                img.removeAttribute('data-src');
-              };
-              test.src = realSrc;
-            })(lazyImgs[li]);
-          }
-        }, 500);
+        
   loadReviews();
   setupReviewStars();
 });
