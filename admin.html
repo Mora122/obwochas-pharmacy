@@ -792,7 +792,7 @@ async
     }).catch(function(e){console.log('Low stock check failed:',e);});
   }
 
-  function loadDashboard() {
+  async function loadDashboard() {
   var revenue = document.getElementById('dashRevenue');
   var ordersCount = document.getElementById('dashOrders');
   var prodCount = document.getElementById('dashProducts');
