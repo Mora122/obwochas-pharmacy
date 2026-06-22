@@ -497,7 +497,23 @@ body{background:#f0f2f5}
 
       <label>Image URL</label>
 
-      <input type="text" id="prodImage" placeholder="Optional">
+      <div style="display:flex;gap:8px;align-items:center">
+
+        <input type="text" id="prodImage" placeholder="Optional" style="flex:1">
+
+        <button type="button" onclick="document.getElementById('prodImageUpload').click()" style="padding:10px 16px;background:var(--primary);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;white-space:nowrap">Upload Photo</button>
+
+        <input type="file" id="prodImageUpload" accept="image/*" style="display:none" onchange="uploadProductImage(this)">
+
+      </div>
+
+      <div id="prodImagePreview" style="display:none;margin-top:8px;padding:8px;background:#f5f8f5;border-radius:6px;text-align:center">
+
+        <img id="prodImagePreviewImg" style="max-height:120px;border-radius:4px">
+
+        <div style="font-size:11px;color:#666;margin-top:4px" id="prodImagePreviewStatus"></div>
+
+      </div>
 
     </div>
 
@@ -2005,7 +2021,52 @@ function trackOrderNotif(orderId) {
 
 <div id="stockHistoryModal" class="modal"></div>
 
-<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(e){console.log("SW registration failed:",e)})}</script></body>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(e){console.log("SW registration failed:",e)})}
+
+// Upload product image
+function uploadProductImage(input) {
+  var file = input.files[0];
+  if (!file) return;
+  
+  var preview = document.getElementById('prodImagePreview');
+  var previewImg = document.getElementById('prodImagePreviewImg');
+  var status = document.getElementById('prodImagePreviewStatus');
+  
+  preview.style.display = 'block';
+  status.textContent = 'Uploading...';
+  
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var base64 = e.target.result;
+    
+    // Show preview immediately
+    previewImg.src = base64;
+    
+    // Upload to server
+    fetch(API + '/images', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image: base64 })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.success) {
+        document.getElementById('prodImage').value = d.url;
+        status.textContent = 'Ready';
+        status.style.color = '#2e7d32';
+      } else {
+        status.textContent = 'Upload failed: ' + (d.error || 'Unknown error');
+        status.style.color = '#c62828';
+      }
+    })
+    .catch(function(err) {
+      status.textContent = 'Upload error: ' + err.message;
+      status.style.color = '#c62828';
+    });
+  };
+  reader.readAsDataURL(file);
+}
+</script></body>
 
 </html>
 
