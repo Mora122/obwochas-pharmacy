@@ -41,7 +41,7 @@ module.exports = async (req, res) => {
     try {
       const conn = await connect();
       const adminEmail = 'admin@obwochaspharmacy.co.ke';
-      const adminPassword = 'Admin@2026!';
+      const adminPassword = 'obwochas2026';
 
       let existing = null;
       if (conn.mode === 'mongodb') {
@@ -86,7 +86,7 @@ module.exports = async (req, res) => {
     try {
       const _conn = await connect();
       const _adminEmail = 'admin@obwochaspharmacy.co.ke';
-      const _adminPassword = 'Admin@2026!';
+      const _adminPassword = 'obwochas2026';
       let _existing = null;
       if (_conn.mode === 'mongodb') {
         _existing = await _conn.db.collection('users').findOne({ email: _adminEmail });
