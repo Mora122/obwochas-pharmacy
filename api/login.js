@@ -35,6 +35,44 @@ module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
+
+  // Seed admin endpoint (GET /api/login?seed=1)
+  if (req.method === 'GET' && req.query?.seed === '1') {
+    try {
+      const conn = await connect();
+      const adminEmail = 'admin@obwochaspharmacy.co.ke';
+      const adminPassword = 'Admin@2026!';
+
+      let existing = null;
+      if (conn.mode === 'mongodb') {
+        existing = await conn.db.collection('users').findOne({ email: adminEmail });
+      } else {
+        const regUsers = global['__obwochas_registered_users'];
+        if (regUsers) existing = regUsers.find(function(u){return u.email===adminEmail});
+      }
+
+      if (existing) {
+        return res.json({ success: true, message: 'Admin account already exists', email: adminEmail, loginUrl: '/admin.html' });
+      }
+
+      const salt = await bcrypt.genSalt(12);
+      const hashedPassword = await bcrypt.hash(adminPassword, salt);
+      const adminUser = { name: 'Admin', email: adminEmail, phone: '0727747699', password: hashedPassword, role: 'admin', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), emailVerified: true, status: 'active' };
+
+      if (conn.mode === 'mongodb') {
+        await conn.db.collection('users').insertOne(adminUser);
+      } else {
+        if (!global['__obwochas_registered_users']) global['__obwochas_registered_users'] = [];
+        adminUser.id = 'ADM-001';
+        global['__obwochas_registered_users'].push(adminUser);
+      }
+
+      return res.json({ success: true, message: 'Admin account created!', email: adminEmail, password: adminPassword, loginUrl: '/admin.html' });
+    } catch (e) {
+      return res.status(500).json({ success: false, error: e.message });
+    }
+  }
+
   if (req.method !== 'POST') return res.status(405).json({ success: false, message: 'Method not allowed' });
 
   try {

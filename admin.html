@@ -734,7 +734,7 @@ async function loadDashboard() {
 
   revenue.textContent = '...';
   try {
-    var r = await fetch('/api/analytics');
+    var r = await fetch('/api/orders?analytics=1');
     var d = await r.json();
     if (!d.success || !d.stats) return;
     var s = d.stats;
@@ -827,7 +827,7 @@ async function loadUsers() {
   el.innerHTML = '<div class="loading">Loading users...</div>';
   try {
     var search = (document.getElementById('userSearchBox') && document.getElementById('userSearchBox').value) || '';
-    var r = await fetch('/api/users' + (search ? '?search=' + encodeURIComponent(search) : ''));
+    var r = await fetch('/api/users');
     var d = await r.json();
     if (!d.success) {
       el.innerHTML = '<div style="text-align:center;padding:40px;color:#f44336">Failed to load users. Make sure you're signed in as admin.</div>';

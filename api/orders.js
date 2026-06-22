@@ -78,6 +78,74 @@ module.exports = async (req, res) => {
         });
       }
 
+      // ADMIN: Dashboard analytics
+      if (req.query?.analytics === '1') {
+        const user = requireAdmin(req, res);
+        if (!user) return;
+
+        const conn = await db.connect();
+        var stats = { totalOrders: 0, totalRevenue: 0, totalProducts: 0, totalUsers: 0, pendingOrders: 0, shippedOrders: 0, deliveredOrders: 0, cancelledOrders: 0, lowStockProducts: 0, pendingReviews: 0, recentOrders: [], revenueByDay: [], topProducts: [], ordersByStatus: {} };
+
+        if (conn.mode === 'mongodb') {
+          const coll = conn.db.collection('orders');
+          const orders = await coll.find({}).toArray();
+          stats.totalOrders = orders.length;
+          var r30 = new Date(); r30.setDate(r30.getDate() - 30);
+          var statusCounts = {};
+          for (var o of orders) {
+            var t = parseFloat(o.totals?.total || o.total || o.subtotal || 0);
+            var s = o.status || 'pending';
+            if (s !== 'cancelled') stats.totalRevenue += t;
+            statusCounts[s] = (statusCounts[s] || 0) + 1;
+          }
+          stats.ordersByStatus = statusCounts;
+          stats.pendingOrders = statusCounts['pending'] || 0;
+          stats.shippedOrders = statusCounts['shipped'] || 0;
+          stats.deliveredOrders = statusCounts['delivered'] || 0;
+          stats.cancelledOrders = statusCounts['cancelled'] || 0;
+
+          stats.recentOrders = orders.sort(function(a,b){return new Date(b.createdAt||0)-new Date(a.createdAt||0)}).slice(0,5).map(function(o){return{id:o._id?.toString(),name:o.customer?.name||'Unknown',total:parseFloat(o.totals?.total||o.total||0),status:o.status||'pending',createdAt:o.createdAt}});
+
+          // Top products
+          var pCounts = {};
+          for (var o of orders) {
+            var items = o.items || [];
+            for (var item of items) {
+              var n = item.name || 'Unknown';
+              var q = parseInt(item.quantity || item.qty || 1);
+              pCounts[n] = (pCounts[n] || 0) + q;
+            }
+          }
+          stats.topProducts = Object.entries(pCounts).sort(function(a,b){return b[1]-a[1]}).slice(0,10).map(function(x){return{name:x[0],count:x[1]}});
+
+          // Products count
+          try {
+            var prods = await conn.db.collection('products').find({}).toArray();
+            stats.totalProducts = prods.length;
+            stats.lowStockProducts = prods.filter(function(p){return(p.stock||0)<20}).length;
+          } catch(e){}
+
+          // Users count
+          try { stats.totalUsers = await conn.db.collection('users').countDocuments({}); } catch(e){}
+
+          // Revenue by day (30 days)
+          var dayMap = {};
+          var today = new Date();
+          for (var i=30;i>=0;i--) { var d=new Date(today);d.setDate(d.getDate()-i);dayMap[d.toISOString().slice(0,10)]=0; }
+          for (var o of orders) {
+            if (o.status === 'cancelled') continue;
+            var date = (o.createdAt||'').slice(0,10);
+            if (date && dayMap[date]!==undefined) dayMap[date] += parseFloat(o.totals?.total||o.total||o.subtotal||0);
+          }
+          stats.revenueByDay = Object.entries(dayMap).map(function(x){return{date:x[0],revenue:Math.round(x[1]*100)/100}});
+
+          // Pending reviews
+          try { stats.pendingReviews = await conn.db.collection('reviews').countDocuments({approved:{$ne:true}}); } catch(e){}
+        }
+
+        return res.json({ success: true, stats });
+      }
+
       // ADMIN: List orders
       const user = requireAdmin(req, res);
       if (!user) return;
