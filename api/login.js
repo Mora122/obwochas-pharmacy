@@ -52,7 +52,13 @@ module.exports = async (req, res) => {
       }
 
       if (existing) {
-        return res.json({ success: true, message: 'Admin account already exists', email: adminEmail, loginUrl: '/admin.html' });
+        // If ?force=1, delete and recreate
+        if (req.query?.force === '1' && conn.mode === 'mongodb') {
+          await conn.db.collection('users').deleteOne({ email: adminEmail });
+          existing = null;
+        } else {
+          return res.json({ success: true, message: 'Admin account already exists', email: adminEmail, loginUrl: '/admin.html' });
+        }
       }
 
       const salt = await bcrypt.genSalt(12);
