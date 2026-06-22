@@ -37,10 +37,16 @@
       <input type="tel" id="regPhone" placeholder="07XX XXX XXX" required>
 
       <label>Password *</label>
-      <input type="password" id="regPassword" placeholder="Min. 8 characters" minlength="8" required>
+      <div style="position:relative;display:flex;align-items:stretch;width:100%;">
+  <input type="password" id="regPassword" placeholder="Min. 8 characters" minlength="8" required>
+  <button type="button" onclick="togglePw('regPassword')" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;padding:4px 8px;line-height:1;color:#666;" title="Show password">👁</button>
+</div>
 
       <label>Confirm Password *</label>
-      <input type="password" id="regConfirm" placeholder="Repeat password" required>
+      <div style="position:relative;display:flex;align-items:stretch;width:100%;">
+  <input type="password" id="regConfirm" placeholder="Repeat password" required>
+  <button type="button" onclick="togglePw('regConfirm')" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;padding:4px 8px;line-height:1;color:#666;" title="Show password">👁</button>
+</div>
 
       <div style="margin-bottom:14px;font-size:13px;">
         <label><input type="checkbox" id="agreeTerms" checked> I agree to the <a href="#" style="color:var(--primary);">Terms & Conditions</a> and <a href="#" style="color:var(--primary);">Privacy Policy</a></label>
@@ -116,5 +122,20 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
 if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(e){console.log("SW registration failed:",e)})}
 </script>
 
-<script src="js/search.js" defer></script></body>
+<script src="js/search.js" defer></script>
+<script>
+function togglePw(id) {
+  var el = document.getElementById(id);
+  var btn = el.parentElement.querySelector('button');
+  if (el.type === 'password') {
+    el.type = 'text';
+    if (btn) btn.textContent = '👁\u200D🗨';
+  } else {
+    el.type = 'password';
+    if (btn) btn.textContent = '👁';
+  }
+}
+</script>
+
+</body>
 </html>

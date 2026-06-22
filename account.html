@@ -54,7 +54,10 @@
     <h3 style="color:var(--primary);margin-bottom:16px;">🔑 Sign In</h3>
     <form class="contact-form" id="loginForm">
       <label>Email Address *</label><input type="email" id="loginEmail" placeholder="you@example.com" required>
-      <label>Password *</label><input type="password" id="loginPassword" placeholder="Enter your password" required>
+      <label>Password *</label><div style="position:relative;display:flex;align-items:stretch;width:100%;">
+  <input type="password" id="loginPassword" placeholder="Enter your password" required>
+  <button type="button" onclick="togglePw('loginPassword')" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;padding:4px 8px;line-height:1;color:#666;" title="Show password">👁</button>
+</div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
         <label style="font-size:13px;"><input type="checkbox" id="rememberMe"> Remember me</label>
         <a href="#" style="font-size:13px;">Forgot password?</a>
@@ -230,5 +233,20 @@ if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-work
   } catch(e){}
 })();
 </script>
-<script src="js/search.js" defer></script></body>
+<script src="js/search.js" defer></script>
+<script>
+function togglePw(id) {
+  var el = document.getElementById(id);
+  var btn = el.parentElement.querySelector('button');
+  if (el.type === 'password') {
+    el.type = 'text';
+    if (btn) btn.textContent = '👁\u200D🗨';
+  } else {
+    el.type = 'password';
+    if (btn) btn.textContent = '👁';
+  }
+}
+</script>
+
+</body>
 </html>
