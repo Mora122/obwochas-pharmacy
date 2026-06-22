@@ -1,3 +1,6 @@
 {
-  "version": 2
+  "version": 2,
+  "rewrites": [
+    { "source": "/products.html", "destination": "/shop.html" }
+  ]
 }

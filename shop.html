@@ -686,7 +686,7 @@
           var stockLabel = '<span style="color:' + (p.stock > 10 ? '#2e7d32' : (p.stock > 0 ? '#e65100' : '#c62828')) + ';font-weight:600">' + (p.stock > 10 ? '\u2705 In stock' : (p.stock > 0 ? '\u26a0\ufe0f Only ' + p.stock + ' left' : '\u274c Out of stock')) + '</span>'
 
 
-          var imgHtml = p.image ? '<img src="' + p.image + '" alt="' + p.name + '"  style="width:100%;height:100%;object-fit:cover;border-radius:8px" onerror="this.onerror=null;this.src=\'images/placeholder.svg\'" onload="this.classList.add('loaded')">' : '<img src="images/placeholder.svg" alt="' + p.name + '"  style="width:100%;height:100%;object-fit:contain;padding:20px;background:#f5f8f5;border-radius:8px">';
+          var imgHtml = p.image ? '<img loading="lazy" src="' + p.image + '" alt="' + p.name + '"  style="width:100%;height:100%;object-fit:cover;border-radius:8px" onerror="this.onerror=null;this.src=\'images/placeholder.svg\'" onload="this.classList.add('loaded')">' : '<img loading="lazy" src="images/placeholder.svg" alt="' + p.name + '"  style="width:100%;height:100%;object-fit:contain;padding:20px;background:#f5f8f5;border-radius:8px">';
 
 
           html += '<div class="product-card">' +
