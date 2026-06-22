@@ -504,7 +504,11 @@ async function processMpesa() {
   let phone = document.getElementById('mpesaPhone').value.replace(/\D/g, '');
   if(phone.length < 9) { alert('Please enter a valid M-Pesa phone number'); return; }
 
-  // Update totals from cart (uses delivery-aware `total` from processPayment closure)
+  // Calculate total from cart (cannot rely on processPayment's closure)
+  const mpesaCart = (function(){ try { return JSON.parse(localStorage.getItem('obwocha_cart')) || []; } catch(e) { return []; } })();
+  const mpesaSubtotal = mpesaCart.reduce(function(s,i){ return s + (i.price||0)*(i.qty||0); }, 0);
+  const total = mpesaSubtotal + (mpesaSubtotal > 2500 ? 0 : 350);
+
   document.getElementById('mpesaTotal').textContent = total.toLocaleString();
   document.getElementById('mpesaTotal2').textContent = total.toLocaleString();
 
@@ -584,12 +588,15 @@ function verifyPayment() {
   
   const phone = document.getElementById('mpesaPhone').value.replace(/\D/g, '');
   const ref = window.mpesaCheckoutRef || 'DEMO_' + Date.now();
+  const verifyCart = (function(){ try { return JSON.parse(localStorage.getItem('obwocha_cart')) || []; } catch(e) { return []; } })();
+  const verifySubtotal = verifyCart.reduce(function(s,i){ return s + (i.price||0)*(i.qty||0); }, 0);
+  const verifyTotal = verifySubtotal + (verifySubtotal > 2500 ? 0 : 350);
   
   // Call backend to verify payment with confirmation code
   fetch(PAYMENT_API + '/mpesa-verify', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ phone, amount: total, checkout_request_id: ref, confirmation_code: code })
+    body: JSON.stringify({ phone, amount: verifyTotal, checkout_request_id: ref, confirmation_code: code })
   })
   .then(r => r.json())
   .then(data => {

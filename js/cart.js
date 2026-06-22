@@ -5,6 +5,37 @@
  */
 const OBOCHA_CART_KEY = 'obwocha_cart';
 
+// Load products from API dynamically (replaces hardcoded ProductDB for live data)
+let ApiProductDB = {};
+
+async function loadApiProducts() {
+  try {
+    const r = await fetch('/api/products?all=true');
+    const d = await r.json();
+    if (d.success && d.products) {
+      ApiProductDB = {};
+      d.products.forEach(function(p) {
+        // Build lookup by id
+        ApiProductDB[p.id] = p;
+        // Also map by productId if different
+        if (p.productId && p.productId !== p.id) {
+          ApiProductDB[p.productId] = p;
+        }
+      });
+      // Export to window for other scripts
+      window.ApiProductDB = ApiProductDB;
+      window.ApiProducts = d.products;
+    }
+  } catch(e) {
+    console.warn('Failed to load products from API, using local DB', e);
+  }
+}
+
+// Load API products on page load
+document.addEventListener('DOMContentLoaded', function() {
+  loadApiProducts();
+});
+
 const ProductDB = {
   1: { name: "Wellman Multivitamin 30 Tablets", price: 1850, image: "wellman.png", brand: "Wellman", sku: "WLM-30" },
   2: { name: "CeraVe Moisturising Cream 454g", price: 2690, image: "cerave_cream.jpg", brand: "CeraVe", sku: "CRV-454" },
@@ -55,15 +86,30 @@ function addToCart(productId, qty) {
   if (existing) {
     existing.qty += qty;
   } else {
-    let prod = ProductDB[productId];
-    if (!prod) {
-      // Fallback: check API-loaded products
-      if (window.ApiProductDB && window.ApiProductDB[productId]) {
-        prod = window.ApiProductDB[productId];
-      } else {
-        console.error('Unknown product:', productId);
-        return;
+    // Lookup product: 1) API-loaded DB first (live data), 2) hardcoded ProductDB (deprecated), 3) SKU search
+    let prod = null;
+    if (ApiProductDB[productId]) {
+      prod = ApiProductDB[productId];
+    } else if (ProductDB[productId]) {
+      prod = ProductDB[productId];
+    } else if (window.ApiProductDB && window.ApiProductDB[productId]) {
+      prod = window.ApiProductDB[productId];
+    } else {
+      // Try finding by SKU
+      for (var key in ProductDB) {
+        if (ProductDB[key].sku === productId) {
+          prod = ProductDB[key];
+          break;
+        }
       }
+      if (!prod && window.ApiProducts) {
+        var skuMatch = window.ApiProducts.find(function(p) { return p.sku === productId; });
+        if (skuMatch) prod = skuMatch;
+      }
+    }
+    if (!prod) {
+      console.error('Unknown product:', productId);
+      return;
     }
     cart.push({ id: productId, qty: qty, name: prod.name, price: prod.price, image: prod.image, brand: prod.brand, sku: prod.sku });
   }

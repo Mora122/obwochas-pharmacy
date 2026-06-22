@@ -6,6 +6,7 @@
 // PATCH /api/orders          — mark notification read / mark all read (admin)
 const db = require('../lib/db');
 const notif = require('../lib/notifications_db');
+const email = require('../lib/email');
 const { requireAdmin } = require('../lib/auth');
 
 module.exports = async (req, res) => {
@@ -235,6 +236,13 @@ module.exports = async (req, res) => {
         });
       } catch (notifErr) {
         console.warn('Failed to create notification:', notifErr.message);
+      }
+
+      // Send email confirmation (non-blocking)
+      try {
+        await email.sendOrderConfirmation(order, customer.email || '');
+      } catch (emailErr) {
+        console.warn('[EMAIL] Confirmation failed:', emailErr.message);
       }
 
       return res.status(201).json({

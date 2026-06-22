@@ -2,6 +2,7 @@
 // PATCH /api/order?id=xxx — Update order status or discount (admin only)
 const db = require('../lib/db');
 const notif = require('../lib/notifications_db');
+const email = require('../lib/email');
 const { requireAdmin } = require('../lib/auth');
 
 module.exports = async (req, res) => {
@@ -63,6 +64,13 @@ module.exports = async (req, res) => {
         });
       } catch (notifErr) {
         console.warn('Failed to create notification:', notifErr.message);
+      }
+
+      // Send email status update (non-blocking)
+      try {
+        await email.sendStatusUpdate(updated, status, updated.customer?.email || '');
+      } catch (emailErr) {
+        console.warn('[EMAIL] Status update notification failed:', emailErr.message);
       }
 
       return res.json({ success: true, order: updated, notification: 'Status updated' });
