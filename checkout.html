@@ -537,7 +537,7 @@ async function processMpesa() {
   // Try real API call, fall back to demo
   let checkoutRef = 'OBWOCHA_' + Date.now().toString().slice(-6);
   try {
-    const resp = await fetch(PAYMENT_API + '/mpesa-stk-push', {
+    const resp = await fetch(PAYMENT_API + '/mpesa?action=stkpush', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
@@ -602,7 +602,7 @@ function verifyPayment() {
   const verifyTotal = verifySubtotal + (verifySubtotal > 2500 ? 0 : 350);
   
   // Call backend to verify payment with confirmation code
-  fetch(PAYMENT_API + '/mpesa-verify', {
+  fetch(PAYMENT_API + '/mpesa?action=verify', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ phone, amount: verifyTotal, checkout_request_id: ref, confirmation_code: code })
