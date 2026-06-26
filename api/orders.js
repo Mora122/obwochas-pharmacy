@@ -105,7 +105,7 @@ module.exports = async (req, res) => {
         if (!user) return;
 
         const conn = await db.connect();
-        var stats = { totalOrders: 0, totalRevenue: 0, totalProducts: 0, totalUsers: 0, pendingOrders: 0, shippedOrders: 0, deliveredOrders: 0, cancelledOrders: 0, lowStockProducts: 0, pendingReviews: 0, recentOrders: [], revenueByDay: [], topProducts: [], ordersByStatus: {} };
+        var stats = { totalOrders: 0, totalRevenue: 0, totalProducts: 0, totalUsers: 0, pendingOrders: 0, shippedOrders: 0, deliveredOrders: 0, cancelledOrders: 0, lowStockProducts: 0, pendingReviews: 0, recentOrders: [], revenueByDay: [], ordersByDay: [], topProducts: [], ordersByStatus: {} };
 
         if (conn.mode === 'mongodb') {
           const coll = conn.db.collection('orders');
@@ -152,13 +152,19 @@ module.exports = async (req, res) => {
           // Revenue by day (30 days)
           var dayMap = {};
           var today = new Date();
-          for (var i=30;i>=0;i--) { var d=new Date(today);d.setDate(d.getDate()-i);dayMap[d.toISOString().slice(0,10)]=0; }
+          var orderCountMap = {};
+          for (var i=30;i>=0;i--) { var d=new Date(today);d.setDate(d.getDate()-i);dayMap[d.toISOString().slice(0,10)]=0; orderCountMap[d.toISOString().slice(0,10)]=0; }
           for (var o of orders) {
             if (o.status === 'cancelled') continue;
             var date = (o.createdAt||'').slice(0,10);
             if (date && dayMap[date]!==undefined) dayMap[date] += parseFloat(o.totals?.total||o.total||o.subtotal||0);
           }
+          for (var o of orders) {
+            var date = (o.createdAt||'').slice(0,10);
+            if (date && orderCountMap[date]!==undefined) orderCountMap[date] += 1;
+          }
           stats.revenueByDay = Object.entries(dayMap).map(function(x){return{date:x[0],revenue:Math.round(x[1]*100)/100}});
+          stats.ordersByDay = Object.entries(orderCountMap).map(function(x){return{date:x[0],orders:x[1]}});
 
           // Pending reviews
           try { stats.pendingReviews = await conn.db.collection('reviews').countDocuments({approved:{$ne:true}}); } catch(e){}

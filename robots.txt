@@ -1,0 +1,8 @@
+# Obwocha's Pharmacy — robots.txt
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /api/
+Disallow: /private/
+
+Sitemap: https://obwochas-pharmacy.vercel.app/sitemap.xml
