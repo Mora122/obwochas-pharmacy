@@ -5,6 +5,29 @@
 <head>
 <!-- build:20260622223209 -->
 
+<!-- Cache nuke: force SW cleanup on every load -->
+<script>
+  'use strict';
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function(regs) {
+      for (var i = 0; i < regs.length; i++) {
+        regs[i].unregister();
+        console.log('SW unregistered:', regs[i].scope);
+      }
+    });
+    if (window.caches) {
+      caches.keys().then(function(names) {
+        for (var i = 0; i < names.length; i++) {
+          if (names[i].indexOf('obwocha') === 0) {
+            caches.delete(names[i]);
+            console.log('Cache deleted:', names[i]);
+          }
+        }
+      });
+    }
+  }
+</script>
+
 <meta charset="UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -300,6 +323,7 @@ body{background:#f0f2f5}
   <button class="tab-btn" data-tab="reviews" onclick="switchTab('reviews')">⭐ Reviews</button>
 
   <button class="tab-btn" data-tab="notifications" onclick="switchTab('notifications');loadNotifications()">🔔 Notifications <span id="notifCount"></span></button>
+          <button class="tab-btn" onclick="switchTab('dashboard');setTimeout(function(){var e=document.getElementById('repHeader');if(e)e.scrollIntoView({behavior:'smooth'})},300)">📊 Reports</button>
 
 </div>
 
@@ -358,7 +382,65 @@ body{background:#f0f2f5}
       <h3 style="margin:0 0 12px;font-size:15px;color:#333">📦 Recent Orders</h3>
       <div id="recentOrdersList" style="font-size:13px;color:#555"></div>
     </div>
+  
+  <!-- ===== REPORTS SECTION (in Dashboard) ===== -->
+  <div style="margin-top:32px;border-top:2px solid #2e7d32;padding-top:20px">
+    <h2 id="repHeader" style="margin:0 0 8px;font-size:18px;color:#2e7d32">📊 Reports</h2>
+    <p style="margin:0 0 16px;font-size:13px;color:#666">Order reports and analytics</p>
+    
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+      <button class="rep-filter active" onclick="repSetRange('today',this)" style="padding:5px 12px;border:1px solid #ddd;border-radius:5px;background:#2e7d32;color:white;cursor:pointer;font-size:12px">Today</button>
+      <button class="rep-filter" onclick="repSetRange('yesterday',this)" style="padding:5px 12px;border:1px solid #ddd;border-radius:5px;background:white;cursor:pointer;font-size:12px">Yesterday</button>
+      <button class="rep-filter" onclick="repSetRange('thisweek',this)" style="padding:5px 12px;border:1px solid #ddd;border-radius:5px;background:white;cursor:pointer;font-size:12px">This Week</button>
+      <button class="rep-filter" onclick="repSetRange('thismonth',this)" style="padding:5px 12px;border:1px solid #ddd;border-radius:5px;background:white;cursor:pointer;font-size:12px">This Month</button>
+      <button class="rep-filter" onclick="repSetRange('all',this)" style="padding:5px 12px;border:1px solid #ddd;border-radius:5px;background:white;cursor:pointer;font-size:12px">All Time</button>
+      <input type="date" id="repDateStart" style="padding:5px 9px;border:1px solid #ddd;border-radius:5px;font-size:12px">
+      <input type="date" id="repDateEnd" style="padding:5px 9px;border:1px solid #ddd;border-radius:5px;font-size:12px">
+      <button onclick="repCustomDate()" style="padding:5px 12px;border:1px solid #2e7d32;border-radius:5px;background:#2e7d32;cursor:pointer;font-size:12px;color:white">→ Go</button>
+      <button onclick="repCSV()" style="padding:5px 12px;border:1px solid #2e7d32;border-radius:5px;background:white;cursor:pointer;font-size:12px;color:#2e7d32">📥 CSV</button>
+      <button onclick="repRefresh()" style="padding:5px 12px;border:1px solid #2e7d32;border-radius:5px;background:white;cursor:pointer;font-size:12px;color:#2e7d32">🔄 Refresh</button>
+    </div>
+    
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">
+      <div style="background:white;padding:12px;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.08);text-align:center">
+        <div style="font-size:11px;color:#888">Orders</div>
+        <div id="repOrders" style="font-size:20px;font-weight:700;color:#2e7d32;margin-top:2px">-</div>
+      </div>
+      <div style="background:white;padding:12px;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.08);text-align:center">
+        <div style="font-size:11px;color:#888">Revenue</div>
+        <div id="repRevenue" style="font-size:20px;font-weight:700;color:#2e7d32;margin-top:2px">-</div>
+      </div>
+      <div style="background:white;padding:12px;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.08);text-align:center">
+        <div style="font-size:11px;color:#888">Avg Order</div>
+        <div id="repAvg" style="font-size:20px;font-weight:700;color:#2e7d32;margin-top:2px">-</div>
+      </div>
+      <div style="background:white;padding:12px;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.08);text-align:center">
+        <div style="font-size:11px;color:#888">Items Sold</div>
+        <div id="repItems" style="font-size:20px;font-weight:700;color:#2e7d32;margin-top:2px">-</div>
+      </div>
+    </div>
+    
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div style="background:white;border-radius:8px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+        <h3 style="margin:0 0 8px;font-size:13px;color:#2e7d32">📋 Order Status</h3>
+        <table id="repStatusTable" style="width:100%;border-collapse:collapse;font-size:12px">
+          <tr><td style="text-align:center;padding:12px;color:#999">Loading...</td></tr>
+        </table>
+      </div>
+      <div style="background:white;border-radius:8px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+        <h3 style="margin:0 0 8px;font-size:13px;color:#2e7d32">💳 Payment</h3>
+        <table id="repPaymentTable" style="width:100%;border-collapse:collapse;font-size:12px">
+          <tr><td style="text-align:center;padding:12px;color:#999">Loading...</td></tr>
+        </table>
+      </div>
+    </div>
+    
+    <div style="background:white;border-radius:8px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,.08);margin-bottom:12px">
+      <h3 style="margin:0 0 8px;font-size:13px;color:#2e7d32">📄 Orders in Period</h3>
+      <div id="repOrdersList" style="font-size:12px;max-height:300px;overflow-y:auto"></div>
+    </div>
   </div>
+</div>
 </div>
 
 <!-- Orders Tab -->
@@ -440,10 +522,23 @@ body{background:#f0f2f5}
       <button class="btn btn-primary" onclick="loadProducts()" style="font-size:12px">Refresh</button>
 
       <button class="btn btn-success" onclick="showAddProduct()" style="font-size:12px;background:#2e7d32;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-weight:600">+ Add Product</button>
+      <button class="btn" onclick="toggleInventoryView()" style="font-size:12px;background:#1565c0;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-weight:600">📦 Stock View</button>
 
     </div>
 
     <div id="productList"><div class="table-skeleton" style="padding:12px"><div class="skeleton skeleton-text" style="width:100%;margin:8px 0;height:16px"></div><div class="skeleton skeleton-text" style="width:88%;margin:8px 0;height:16px"></div><div class="skeleton skeleton-text" style="width:92%;margin:8px 0;height:16px"></div><div class="skeleton skeleton-text" style="width:78%;margin:8px 0;height:16px"></div><div class="skeleton skeleton-text" style="width:95%;margin:8px 0;height:16px"></div></div></div>
+
+    <div id="inventoryView" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="margin:0;font-size:18px;color:#1565c0">📦 Inventory Overview</h3>
+        <button class="btn" onclick="toggleInventoryView()" style="background:#f5f5f5;color:#333;border:1px solid #ddd;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600">📋 Back to Products</button>
+      </div>
+      <div id="invViewCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px"></div>
+      <h3 style="margin:12px 0 8px;font-size:15px;color:#e65100">⚠️ Low Stock</h3>
+      <div id="invViewLow"></div>
+      <h3 style="margin:12px 0 8px;font-size:15px;color:#333">📋 All Products Stock</h3>
+      <div id="invViewAll"></div>
+    </div>
 
     <div id="inventorySummary" style="background:#fff;border-radius:10px;padding:16px 20px;margin-top:12px;box-shadow:0 1px 3px rgba(0,0,0,0.08);display:none"></div>
 
@@ -860,6 +955,8 @@ async
     revenue.textContent = 'Error';
     console.error('Dashboard error:', e);
   }
+
+  repLoad();
 }
 
 // Simple canvas bar chart for revenue
@@ -2242,6 +2339,305 @@ function trackOrderNotif(orderId) {
   switchTab('orders');
   document.getElementById('orderSearch').value = orderId;
   searchOrders();
+}
+
+// ---- Inventory View ----
+function toggleInventoryView() {
+  var pv = document.getElementById('productList');
+  var iv = document.getElementById('inventoryView');
+  var btn = document.querySelector('button[onclick*="toggleInventoryView"]');
+  if (iv.style.display !== 'none') {
+    iv.style.display = 'none';
+    pv.style.display = 'block';
+  } else {
+    pv.style.display = 'none';
+    iv.style.display = 'block';
+    loadInventoryView();
+  }
+}
+
+function loadInventoryView() {
+  var cards = document.getElementById('invViewCards');
+  if (!cards) return;
+  cards.innerHTML = '<div style="text-align:center;padding:20px;color:#999">Loading...</div>';
+  fetch(window.location.origin + '/api/products?all=true')
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (!d.success || !d.products) {
+        cards.innerHTML = '<div style="text-align:center;padding:30px;color:#c62828">Failed to load</div>';
+        return;
+      }
+      var p = d.products;
+      var totalStock = 0, totalValue = 0, low = [], out = [];
+      for (var i = 0; i < p.length; i++) {
+        totalStock += (p[i].stock || 0);
+        totalValue += ((p[i].price || 0) * (p[i].stock || 0));
+        if (p[i].stock !== undefined && p[i].stock > 0 && p[i].stock < 20) low.push(p[i]);
+        if (p[i].stock === 0 || p[i].stock === undefined || p[i].stock === null) out.push(p[i]);
+      }
+      cards.innerHTML = 
+        '<div class="inv-stat-card stat-total"><div class="stat-num">' + p.length + '</div><div class="stat-label">Products</div></div>' +
+        '<div class="inv-stat-card stat-ok"><div class="stat-num">' + totalStock + '</div><div class="stat-label">Total Stock</div></div>' +
+        '<div class="inv-stat-card stat-ok"><div class="stat-num">KSh ' + totalValue.toLocaleString() + '</div><div class="stat-label">Stock Value</div></div>' +
+        '<div class="inv-stat-card ' + (low.length > 0 ? 'stat-warn' : 'stat-ok') + '"><div class="stat-num">' + low.length + '</div><div class="stat-label">Low Stock</div></div>' +
+        '<div class="inv-stat-card ' + (out.length > 0 ? 'stat-warn' : 'stat-ok') + '"><div class="stat-num">' + out.length + '</div><div class="stat-label">Out of Stock</div></div>';
+      
+      // Low stock table
+      var lowEl = document.getElementById('invViewLow');
+      if (low.length === 0) {
+        lowEl.innerHTML = '<div style="padding:30px;text-align:center;color:#999">✅ All products have sufficient stock</div>';
+      } else {
+        var h = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px;background:#fff;border-radius:8px"><thead><tr style="background:#fff3e0"><th style="padding:10px;text-align:left">Product</th><th style="padding:10px;text-align:center">Stock</th><th style="padding:10px;text-align:center">Price</th><th style="padding:10px;text-align:center">Value</th></tr></thead><tbody>';
+        for (var b = 0; b < low.length; b++) {
+          var cls = low[b].stock < 5 ? 'stock-critical' : 'stock-low';
+          h += '<tr style="border-top:1px solid #f0f0f0"><td style="padding:10px;font-weight:600">' + low[b].name + '</td><td style="padding:10px;text-align:center"><span class="prod-stock-badge ' + cls + '">' + low[b].stock + '</span></td><td style="padding:10px;text-align:center">KSh ' + Number(low[b].price).toLocaleString() + '</td><td style="padding:10px;text-align:center">KSh ' + ((low[b].price || 0) * (low[b].stock || 0)).toLocaleString() + '</td></tr>';
+        }
+        h += '</tbody></table></div>';
+        lowEl.innerHTML = h;
+      }
+      
+      // All stock table
+      var allEl = document.getElementById('invViewAll');
+      var h2 = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px;background:#fff;border-radius:8px"><thead><tr style="background:#f5f5f5"><th style="padding:10px;text-align:left">Product</th><th style="padding:10px;text-align:center">Price</th><th style="padding:10px;text-align:center">Stock</th><th style="padding:10px;text-align:center">Status</th></tr></thead><tbody>';
+      for (var c = 0; c < p.length; c++) {
+        var s = p[c].stock || 0;
+        var cls2, label;
+        if (s <= 0) { cls2 = 'stock-out'; label = '\u274c Out of Stock'; }
+        else if (s < 5) { cls2 = 'stock-critical'; label = '\ud83d\udd34 Critical'; }
+        else if (s < 20) { cls2 = 'stock-low'; label = '\u26a0\ufe0f Low'; }
+        else { cls2 = 'stock-ok'; label = '\u2705 OK'; }
+        h2 += '<tr style="border-top:1px solid #f0f0f0"><td style="padding:10px;font-weight:600">' + p[c].name + '</td><td style="padding:10px;text-align:center;font-weight:600;color:#1565c0">KSh ' + Number(p[c].price).toLocaleString() + '</td><td style="padding:10px;text-align:center;font-weight:600">' + s + '</td><td style="padding:10px;text-align:center"><span class="prod-stock-badge ' + cls2 + '">' + label + '</span></td></tr>';
+      }
+      h2 += '</tbody></table></div>';
+      allEl.innerHTML = h2;
+    })
+    .catch(function(e) {
+      cards.innerHTML = '<div style="text-align:center;padding:30px;color:#c62828">Error: ' + e.message + '</div>';
+    });
+}
+
+// ---- Dashboard Reports ----
+var rep_allOrders = [];
+var rep_currentRange = 'today';
+window.rep_currentRange = rep_currentRange;
+
+function repSetRange(name, btn) {
+  document.querySelectorAll('.rep-filter').forEach(function(b) {
+    b.style.background = 'white';
+    b.style.color = '#333';
+  });
+  if (btn) { btn.style.background = '#2e7d32'; btn.style.color = 'white'; }
+  rep_currentRange = name;
+  // Clear custom date inputs when a preset is pressed
+  var ds = document.getElementById('repDateStart');
+  var de = document.getElementById('repDateEnd');
+  if (ds) { ds.value = ''; }
+  if (de) { de.value = ''; }
+  repLoad();
+}
+
+function repLoad() {
+  var apiBase = window.location.origin + '/api';
+  fetch(apiBase + '/orders')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      rep_allOrders = data.orders || [];
+      repRender();
+    })
+    .catch(function(err) {
+      document.getElementById('repStatusTable').innerHTML = '<tr><td style="padding:12px;text-align:center;color:red">Error: ' + err.message + '</td></tr>';
+    });
+}
+
+function repRender() {
+  var orders = rep_allOrders;
+  var now = new Date();
+  var start, end;
+  var _range = rep_currentRange || 'today';
+  
+  switch(_range) {
+    case 'today':
+      start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      end = new Date(start.getTime() + 86400000);
+      break;
+    case 'yesterday':
+      start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+      end = new Date(start.getTime() + 86400000);
+      break;
+    case 'thisweek':
+      var d = now.getDay() || 7;
+      start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - d + 1);
+      end = new Date(start.getTime() + 7 * 86400000);
+      break;
+    case 'thismonth':
+      start = new Date(now.getFullYear(), now.getMonth(), 1);
+      end = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+      break;
+    case 'custom':
+      start = document.getElementById('repDateStart');
+      end = document.getElementById('repDateEnd');
+      if (start && end && start.value && end.value) {
+        start = new Date(start.value + 'T00:00:00');
+        end = new Date(end.value + 'T23:59:59');
+      } else {
+        start = new Date(0);
+        end = '9999-12-31';
+      }
+      break;
+    default:
+      start = new Date(0);
+      end = '9999-12-31';
+  }
+  
+  var startStr = start.toISOString().slice(0,10);
+  var endStr = typeof end === 'string' ? end : end.toISOString().slice(0,10);
+  
+  var filtered = orders.filter(function(o) {
+    var d = (o.createdAt || '').slice(0,10);
+    return d >= startStr && d < endStr;
+  });
+  
+  var total = filtered.length;
+  var revenue = 0, items = 0;
+  var statusCounts = {}, payCounts = {};
+  
+  filtered.forEach(function(o) {
+    var t = parseFloat(o.total || o.totals?.total || 0);
+    if (o.status !== 'cancelled') revenue += t;
+    items += (o.items || 0);
+    var s = o.status || 'pending';
+    statusCounts[s] = (statusCounts[s] || 0) + 1;
+    var pm = (o.payment?.method) || (o.paymentMethod) || 'Pending';
+    payCounts[pm] = (payCounts[pm] || 0) + 1;
+  });
+  
+  document.getElementById('repOrders').textContent = total;
+  document.getElementById('repRevenue').textContent = 'KSh ' + revenue.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+  document.getElementById('repAvg').textContent = 'KSh ' + (total ? (revenue/total).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) : '0.00');
+  document.getElementById('repItems').textContent = items;
+  
+  // Status table
+  var sh = '<tr style="border-bottom:1px solid #eee"><th style="padding:6px;text-align:left;font-size:11px;color:#888">Status</th><th style="padding:6px;text-align:right;font-size:11px;color:#888">Count</th></tr>';
+  var tc = 0;
+  Object.keys(statusCounts).sort().forEach(function(s) {
+    sh += '<tr><td style="padding:4px 6px">' + s.charAt(0).toUpperCase() + s.slice(1) + '</td><td style="padding:4px 6px;text-align:right;font-weight:600">' + statusCounts[s] + '</td></tr>';
+    tc += statusCounts[s];
+  });
+  sh += '<tr style="border-top:2px solid var(--primary)"><td style="padding:6px;font-weight:600">Total</td><td style="padding:6px;text-align:right;font-weight:600">' + tc + '</td></tr>';
+  document.getElementById('repStatusTable').innerHTML = sh;
+  
+  // Payment table
+  var ph = '<tr style="border-bottom:1px solid #eee"><th style="padding:6px;text-align:left;font-size:11px;color:#888">Method</th><th style="padding:6px;text-align:right;font-size:11px;color:#888">Count</th></tr>';
+  Object.keys(payCounts).sort().forEach(function(p) {
+    ph += '<tr><td style="padding:4px 6px">' + p + '</td><td style="padding:4px 6px;text-align:right;font-weight:600">' + payCounts[p] + '</td></tr>';
+  });
+  document.getElementById('repPaymentTable').innerHTML = ph;
+  
+  // Orders list
+  var oh = '';
+  if (filtered.length === 0) {
+    oh = '<div style="text-align:center;padding:15px;color:#999">No orders in this period</div>';
+  } else {
+    oh = '<table style="width:100%;border-collapse:collapse;font-size:12px"><tr style="border-bottom:1px solid #eee"><th style="padding:6px;text-align:left">Order</th><th style="padding:6px;text-align:left">Customer</th><th style="padding:6px;text-align:right">Total</th><th style="padding:6px;text-align:left">Status</th></tr>';
+    filtered.slice(0, 20).forEach(function(o) {
+      var id = (o._id || o.id || '').slice(-8);
+      var cust = o.customer?.name || o.shipping?.name || '-';
+      var t = parseFloat(o.total || 0).toFixed(2);
+      var s = o.status || 'pending';
+      oh += '<tr><td style="padding:4px 6px">' + id + '</td><td style="padding:4px 6px">' + cust + '</td><td style="padding:4px 6px;text-align:right;font-weight:600">KSh ' + t + '</td><td style="padding:4px 6px">' + s + '</td></tr>';
+    });
+    oh += '</table>';
+    if (filtered.length > 20) oh += '<div style="text-align:center;padding:8px;color:#888;font-size:11px">Showing 20 of ' + filtered.length + ' orders</div>';
+  }
+  document.getElementById('repOrdersList').innerHTML = oh;
+}
+
+function repRefresh() {
+  document.getElementById('repStatusTable').innerHTML = '<tr><td style="text-align:center;padding:12px;color:#999">Loading...</td></tr>';
+  repLoad();
+}
+
+function repCSV() {
+  var now = new Date();
+  var filtered = [];
+  var start, end;
+  var _range = rep_currentRange || 'today';
+  
+  switch(_range) {
+    case 'today':
+      start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      end = new Date(start.getTime() + 86400000);
+      break;
+    case 'yesterday':
+      start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+      end = new Date(start.getTime() + 86400000);
+      break;
+    case 'thisweek':
+      var d = now.getDay() || 7;
+      start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - d + 1);
+      end = new Date(start.getTime() + 7 * 86400000);
+      break;
+    case 'thismonth':
+      start = new Date(now.getFullYear(), now.getMonth(), 1);
+      end = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+      break;
+    case 'custom':
+      start = document.getElementById('repDateStart');
+      end = document.getElementById('repDateEnd');
+      if (start && end && start.value && end.value) {
+        start = new Date(start.value + 'T00:00:00');
+        end = new Date(end.value + 'T23:59:59');
+      } else {
+        start = new Date(0);
+        end = '9999-12-31';
+      }
+      break;
+    default:
+      start = new Date(0);
+      end = '9999-12-31';
+  }
+  
+  var startStr = start.toISOString().slice(0,10);
+  var endStr = typeof end === 'string' ? end : end.toISOString().slice(0,10);
+  
+  filtered = rep_allOrders.filter(function(o) {
+    var d = (o.createdAt || '').slice(0,10);
+    return d >= startStr && d < endStr;
+  });
+  
+  if (!filtered.length) { alert('No orders to export'); return; }
+  
+  var csv = 'Order ID,Customer,Total,Status,Payment Method,Date' + '\n';
+  filtered.forEach(function(o) {
+    var id = (o._id || o.id || '');
+    var cust = (o.customer?.name || o.shipping?.name || '').replace(/,/g, ' ');
+    var t = parseFloat(o.total || 0);
+    var s = o.status || '';
+    var pmt = (o.payment?.method) || '';
+    var d = (o.createdAt || '').slice(0, 10);
+    csv += id + ',' + cust + ',' + t + ',' + s + ',' + pmt + ',' + d + '\n';
+  });
+  
+  var blob = new Blob([csv], {type: 'text/csv'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'obwocha-report-' + rep_currentRange + '.csv';
+  a.click();
+  URL.createObjectURL(a.href);
+}
+function repCustomDate() {
+  var startInp = document.getElementById('repDateStart');
+  var endInp = document.getElementById('repDateEnd');
+  if (!startInp || !endInp) return;
+  var s = startInp.value, e = endInp.value;
+  if (!s || !e) { alert('Select both start and end dates'); return; }
+  rep_currentRange = 'custom';
+  // Visual: reset rep-filter buttons
+  document.querySelectorAll('.rep-filter').forEach(function(b) {
+    b.style.background = 'white';
+    b.style.color = '#333';
+  });
+  repLoad();
 }
 
 </script>

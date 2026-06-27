@@ -1,9 +1,13 @@
-// Orders + Tracking + Notifications API
-// GET  /api/orders          — list orders (admin)
-// GET  /api/orders?track=ID — public order tracking (no auth)
-// POST /api/orders          — create order (public) + auto-notify
-// GET  /api/orders?notifications=1   — list notifications (admin)
-// PATCH /api/orders          — mark notification read / mark all read (admin)
+// Orders + Tracking + Notifications API (merged with single-order detail from order.js)
+// GET   /api/orders             — list orders (admin)
+// GET   /api/orders?track=ID   — public order tracking (no auth)
+// GET   /api/orders?email=...  — customer order history (no auth)
+// GET   /api/orders?notifications=1 — list notifications (admin)
+// GET   /api/orders?analytics=1    — dashboard analytics (admin)
+// GET   /api/orders?id=xxx     — single order detail (admin)
+// POST  /api/orders            — create order (public) + auto-notify
+// PATCH /api/orders?id=xxx     — update order status / apply discount (admin)
+// PATCH /api/orders            — mark notification read / mark all read (admin)
 const db = require('../lib/db');
 const notif = require('../lib/notifications_db');
 const email = require('../lib/email');
@@ -54,10 +58,10 @@ module.exports = async (req, res) => {
 
       // PUBLIC: Get orders by user email (for customer order history)
       if (req.query?.email) {
-        const email = req.query.email.trim().toLowerCase();
-        if (!email) return res.status(400).json({ error: 'Missing email parameter' });
+        const em = req.query.email.trim().toLowerCase();
+        if (!em) return res.status(400).json({ error: 'Missing email parameter' });
 
-        const orders = await db.getOrders({ customerEmail: email, limit: 50 });
+        const orders = await db.getOrders({ customerEmail: em, limit: 50 });
         return res.json({
           success: true,
           count: orders.length,
@@ -173,6 +177,16 @@ module.exports = async (req, res) => {
         return res.json({ success: true, stats });
       }
 
+      // ADMIN: Single order detail (was in api/order.js)
+      if (req.query?.id) {
+        const user = requireAdmin(req, res);
+        if (!user) return;
+
+        const order = await db.getOrder(req.query.id);
+        if (!order) return res.status(404).json({ error: 'Order not found' });
+        return res.json({ success: true, order });
+      }
+
       // ADMIN: List orders
       const user = requireAdmin(req, res);
       if (!user) return;
@@ -265,8 +279,62 @@ module.exports = async (req, res) => {
     }
 
     // ============== PATCH ==============
-    // Mark notification read (ADMIN)
     if (req.method === 'PATCH') {
+      // Route: if ?id=xxx, it's an order status/discount update (from merged order.js)
+      if (req.query?.id) {
+        const user = requireAdmin(req, res);
+        if (!user) return;
+
+        const orderId = req.query.id;
+        const { status, discount } = req.body;
+
+        // Apply discount
+        if (discount) {
+          if (!discount.type || !discount.value) {
+            return res.status(400).json({ error: 'Discount needs type (percentage/fixed) and value' });
+          }
+          if (!['percentage', 'fixed'].includes(discount.type)) {
+            return res.status(400).json({ error: 'Discount type must be percentage or fixed' });
+          }
+          if (discount.value <= 0) {
+            return res.status(400).json({ error: 'Discount value must be positive' });
+          }
+          const updated = await db.applyDiscount(orderId, discount);
+          if (!updated) return res.status(404).json({ error: 'Order not found' });
+          return res.json({ success: true, order: updated });
+        }
+
+        // Update status
+        if (!status) return res.status(400).json({ error: 'Missing status or discount field' });
+
+        const updated = await db.updateOrderStatus(orderId, status);
+        if (!updated) return res.status(404).json({ error: 'Order not found' });
+
+        // Auto-notify on status change
+        try {
+          const statusLabels = { pending:'Pending', confirmed:'Confirmed', processing:'Processing', shipped:'Shipped', delivered:'Delivered', cancelled:'Cancelled' };
+          await notif.createNotification({
+            type: 'order_updated',
+            title: 'Order Status Updated',
+            message: 'Order ' + orderId + ' status changed to ' + (statusLabels[status] || status),
+            orderId: orderId,
+            customer: updated.customer?.name || ''
+          });
+        } catch (notifErr) {
+          console.warn('Failed to create notification:', notifErr.message);
+        }
+
+        // Send email status update (non-blocking)
+        try {
+          await email.sendStatusUpdate(updated, status, updated.customer?.email || '');
+        } catch (emailErr) {
+          console.warn('[EMAIL] Status update notification failed:', emailErr.message);
+        }
+
+        return res.json({ success: true, order: updated, notification: 'Status updated' });
+      }
+
+      // Otherwise: mark notification read (ADMIN)
       const user = requireAdmin(req, res);
       if (!user) return;
 

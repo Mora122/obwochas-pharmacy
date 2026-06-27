@@ -1,4 +1,5 @@
-const CACHE = 'obwocha-v14';
+const CACHE = 'obwocha-v18';
+const API_CACHE = 'obwocha-api-v1';
 const ASSETS = [
   '/',
   '/index.html',
@@ -24,8 +25,7 @@ const ASSETS = [
   '/careers.html',
   '/health-tips.html',
   '/loyalty.html',
-  '/order-confirmation.html',
-  '/admin.html'
+  '/order-confirmation.html'
 ];
 
 self.addEventListener('install', e => {
@@ -38,7 +38,7 @@ self.addEventListener('install', e => {
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys => Promise.all(
-      keys.filter(k => k !== CACHE).map(k => caches.delete(k))
+      keys.filter(k => k !== CACHE && k !== API_CACHE).map(k => caches.delete(k))
     ))
   );
   self.clients.claim();
@@ -47,11 +47,51 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
 
-  // Skip API requests — never cache or intercept them
-  if (url.pathname.startsWith('/api/')) return;
+  // Skip non-GET requests
   if (e.request.method !== 'GET') return;
 
-  // Prescription forms: ALWAYS fetch fresh (network-first)
+  // ====== Static data: cache-first, never expire ======
+  if (url.pathname.startsWith('/static-data/')) {
+    e.respondWith(
+      caches.match(e.request).then(cached => cached || fetch(e.request).then(res => {
+        if (res.ok) {
+          const clone = res.clone();
+          caches.open(CACHE).then(cache => cache.put(e.request, clone));
+        }
+        return res;
+      }))
+    );
+    return;
+  }
+
+  // ====== Product & brand API: cache-first with stale-while-revalidate ======
+  // These are read-heavy, change infrequently. Serve cached instantly,
+  // then silently update in background.
+  const apiReadPatterns = ['/api/products', '/api/brands', '/api/reviews', '/api/auth'];  // auth GET (seed + list users) is read-heavy
+  const isApiRead = apiReadPatterns.some(p => url.pathname.startsWith(p))
+    && !url.searchParams.has('action')
+    && e.request.method === 'GET';
+
+  if (isApiRead) {
+    e.respondWith(
+      caches.match(e.request).then(cached => {
+        const fetchPromise = fetch(e.request).then(res => {
+          if (res.ok) {
+            const clone = res.clone();
+            caches.open(API_CACHE).then(cache => cache.put(e.request, clone));
+          }
+          return res;
+        }).catch(() => cached);
+        return cached || fetchPromise;
+      })
+    );
+    return;
+  }
+
+  // ====== Skip other API requests ======
+  if (url.pathname.startsWith('/api/')) return;
+
+  // ====== Prescription forms: network-first ======
   if (url.pathname === '/prescription.html' || url.pathname === '/view-prescription.html') {
     e.respondWith(
       fetch(e.request)
@@ -67,7 +107,23 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // Other static pages: cache-first
+  // ====== Admin page: network-first ======
+  if (url.pathname === '/admin.html') {
+    e.respondWith(
+      fetch(e.request)
+        .then(res => {
+          if (res.ok && res.type === 'basic') {
+            const clone = res.clone();
+            caches.open(CACHE).then(cache => cache.put(e.request, clone));
+          }
+          return res;
+        })
+        .catch(() => caches.match(e.request))
+    );
+    return;
+  }
+
+  // ====== Other static pages: cache-first ======
   e.respondWith(
     caches.match(e.request).then(cached => {
       const fetchPromise = fetch(e.request).then(res => {

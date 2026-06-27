@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Obwocha's — Reports</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,Segoe UI,sans-serif;background:#f0f2f5;padding:20px;color:#333}
+h1{font-size:22px;color:#2e7d32;margin-bottom:10px}
+.sub{color:#666;font-size:13px;margin-bottom:20px}
+.quick-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.quick-filters button{padding:6px 14px;border:1px solid #ddd;border-radius:6px;background:white;cursor:pointer;font-size:13px}
+.quick-filters button.active{background:#2e7d32;color:white;border-color:#2e7d32}
+.custom-range{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.custom-range input{padding:5px 8px;border:1px solid #ccc;border-radius:4px;font-size:13px}
+.custom-range button{padding:5px 14px;background:#2e7d32;color:white;border:none;border-radius:4px;cursor:pointer;font-size:13px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px}
+.card{background:white;padding:16px;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.card .label{font-size:12px;color:#888;margin-bottom:4px}
+.card .value{font-size:22px;font-weight:700;color:#2e7d32}
+.section{margin-bottom:24px}
+.section h3{font-size:15px;color:#2e7d32;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #2e7d32}
+table{width:100%;border-collapse:collapse;background:white;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+th{background:#2e7d32;color:white;padding:8px 10px;font-size:12px;text-align:left}
+td{padding:7px 10px;font-size:13px;border-bottom:1px solid #eee}
+.num{text-align:right;font-weight:600}
+.tools{display:flex;gap:8px;margin:16px 0}
+.tools button{padding:7px 16px;background:white;border:1px solid #2e7d32;color:#2e7d32;border-radius:5px;cursor:pointer;font-size:13px}
+.tools button:hover{background:#2e7d32;color:white}
+.status{padding:10px;margin:10px 0;border-radius:6px;font-size:14px}
+.status.loading{background:#fff8e1;color:#f57f17}
+.status.ok{background:#e8f5e9;color:#2e7d32}
+.status.err{background:#fdecea;color:#d32f2f}
+.hidden{display:none}
+.login-box{max-width:360px;margin:60px auto;background:white;padding:30px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.1)}
+.login-box h2{color:#2e7d32;margin-bottom:20px;text-align:center}
+.login-box input{width:100%;padding:10px;margin-bottom:12px;border:1px solid #ddd;border-radius:6px;font-size:14px}
+.login-box button{width:100%;padding:10px;background:#2e7d32;color:white;border:none;border-radius:6px;font-size:15px;cursor:pointer}
+.login-box button:hover{background:#1b5e20}
+.login-box .error{color:#d32f2f;font-size:13px;margin-bottom:10px;text-align:center}
+</style></head><body>
+
+<div id="reportPage" class="hidden">
+  <h1>📊 Reports</h1>
+  <p class="sub">Order reports and analytics for Obwocha's Pharmacy</p>
+  
+  <div class="quick-filters">
+    <button onclick="setRange('today',this)" class="active">Today</button>
+    <button onclick="setRange('yesterday',this)">Yesterday</button>
+    <button onclick="setRange('thisweek',this)">This Week</button>
+    <button onclick="setRange('thismonth',this)">This Month</button>
+    <button onclick="setRange('all',this)">All Time</button>
+  </div>
+  
+  <div class="custom-range">
+    <input type="date" id="startDate">
+    <span>to</span>
+    <input type="date" id="endDate">
+    <button onclick="applyCustomRange()">Go</button>
+  </div>
+  
+  <div class="tools">
+    <button onclick="refresh()">🔄 Refresh</button>
+    <button onclick="downloadCSV()">📥 Download CSV</button>
+    <button onclick="window.print()">🖨️ Print</button>
+  </div>
+  
+  <div id="status" class="status loading">Loading...</div>
+  
+  <div class="cards" id="summaryCards">
+    <div class="card"><div class="label">Orders</div><div class="value" id="totalOrders">-</div></div>
+    <div class="card"><div class="label">Revenue</div><div class="value" id="totalRevenue">-</div></div>
+    <div class="card"><div class="label">Avg Order</div><div class="value" id="avgOrder">-</div></div>
+    <div class="card"><div class="label">Items Sold</div><div class="value" id="itemsSold">-</div></div>
+  </div>
+  
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+    <div class="section">
+      <h3>📋 Order Status</h3>
+      <table id="statusTable"><tr><td style="text-align:center;padding:20px;color:#999">Loading...</td></tr></table>
+    </div>
+    <div class="section">
+      <h3>💳 Payment Methods</h3>
+      <table id="paymentTable"><tr><td style="text-align:center;padding:20px;color:#999">Loading...</td></tr></table>
+    </div>
+  </div>
+  
+  <div class="section">
+    <h3>🏆 Top Selling Products</h3>
+    <table id="topProducts"><tr><td style="text-align:center;padding:20px;color:#999">Loading...</td></tr></table>
+  </div>
+  
+  <div class="section">
+    <h3>📄 Orders</h3>
+    <table id="ordersTable"><tr><th>Order</th><th>Customer</th><th class="num">Total</th><th>Status</th><th>Payment</th><th>Date</th></tr>
+    <tr><td colspan="6" style="text-align:center;padding:20px;color:#999">Loading...</td></tr></table>
+  </div>
+</div>
+
+<div id="loginPage" class="login-box">
+  <h2>🔐 Obwocha's Pharmacy</h2>
+  <div id="loginError" class="error"></div>
+  <input type="email" id="loginEmail" placeholder="Email" value="admin@obwochas.com">
+  <input type="password" id="loginPass" placeholder="Password" value="admin123">
+  <button onclick="doLogin()">Sign In & Load Reports</button>
+</div>
+
+<script>
+var TOKEN = localStorage.getItem('obwochas_token') || '';
+var API = window.location.origin + '/api';
+var currentRange = {start: null, end: null};
+var allOrders = [];
+
+// Auto-login if token exists
+if (TOKEN) {
+  document.getElementById('loginPage').classList.add('hidden');
+  document.getElementById('reportPage').classList.remove('hidden');
+  loadData();
+}
+
+function doLogin() {
+  var email = document.getElementById('loginEmail').value;
+  var pass = document.getElementById('loginPass').value;
+  var err = document.getElementById('loginError');
+  err.textContent = '';
+  
+  fetch(API + '/auth', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({email: email, password: pass})
+  })
+  .then(function(r) {
+    if (!r.ok) throw new Error('Login failed');
+    return r.json();
+  })
+  .then(function(data) {
+    TOKEN = data.token || data.data?.token || '';
+    if (!TOKEN) throw new Error('No token in response');
+    localStorage.setItem('obwochas_token', TOKEN);
+    document.getElementById('loginPage').classList.add('hidden');
+    document.getElementById('reportPage').classList.remove('hidden');
+    loadData();
+  })
+  .catch(function(e) {
+    err.textContent = e.message;
+  });
+}
+
+function getHeaders() {
+  var h = {'Content-Type': 'application/json'};
+  if (TOKEN) h['Authorization'] = 'Bearer ' + TOKEN;
+  return h;
+}
+
+function fetchWithAuth(url) {
+  return fetch(url, {headers: getHeaders()});
+}
+
+function getDateRange() {
+  var r = currentRange;
+  if (!r || !r.start) {
+    // Today by default
+    var t = new Date();
+    t.setHours(0,0,0,0);
+    return {start: t.toISOString(), end: new Date().toISOString(), label: 'today'};
+  }
+  return r;
+}
+
+function setRange(name, btn) {
+  document.querySelectorAll('.quick-filters button').forEach(function(b) { b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  
+  var now = new Date();
+  var end = now.toISOString();
+  var start;
+  
+  switch(name) {
+    case 'today':
+      var t = new Date(); t.setHours(0,0,0,0);
+      start = t.toISOString();
+      break;
+    case 'yesterday':
+      var t = new Date(); t.setDate(t.getDate() - 1); t.setHours(0,0,0,0);
+      start = t.toISOString();
+      end = new Date(t.getTime() + 86400000).toISOString();
+      break;
+    case 'thisweek':
+      var t = new Date(); t.setDate(t.getDate() - t.getDay()); t.setHours(0,0,0,0);
+      start = t.toISOString();
+      break;
+    case 'thismonth':
+      var t = new Date(); t.setDate(1); t.setHours(0,0,0,0);
+      start = t.toISOString();
+      break;
+    case 'all':
+      start = '2020-01-01T00:00:00Z';
+      break;
+  }
+  
+  currentRange = {start: start, end: end, label: name};
+  filterAndRender();
+}
+
+function applyCustomRange() {
+  var s = document.getElementById('startDate').value;
+  var e = document.getElementById('endDate').value;
+  if (!s || !e) { alert('Select start and end dates'); return; }
+  currentRange = {start: new Date(s).toISOString(), end: new Date(e + 'T23:59:59').toISOString(), label: 'custom'};
+  document.querySelectorAll('.quick-filters button').forEach(function(b) { b.classList.remove('active'); });
+  filterAndRender();
+}
+
+function loadData() {
+  setStatus('Loading orders...', 'loading');
+  
+  fetchWithAuth(API + '/orders')
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(json) {
+      allOrders = json.orders || json || [];
+      setStatus('✅ Loaded ' + allOrders.length + ' orders', 'ok');
+      setRange('today', document.querySelector('.quick-filters button'));
+    })
+    .catch(function(err) {
+      setStatus('❌ Error: ' + err.message, 'err');
+    });
+}
+
+function filterByRange(orders, range) {
+  if (!range || !range.start || range.label === 'all') return orders;
+  var start = new Date(range.start).getTime();
+  var end = new Date(range.end).getTime();
+  return orders.filter(function(o) {
+    var d = new Date(o.createdAt || o.date || o.orderDate || 0).getTime();
+    return d >= start && d <= end;
+  });
+}
+
+function filterAndRender() {
+  var filtered = filterByRange(allOrders, currentRange);
+  renderReport(filtered, allOrders);
+}
+
+function renderReport(filtered, all) {
+  var totalOrders = filtered.length;
+  var totalRevenue = 0, totalItems = 0;
+  var statusCounts = {}, paymentCounts = {}, productCounts = {};
+  
+  filtered.forEach(function(o) {
+    var t = parseFloat(o.total || o.totals?.total || 0);
+    if (o.status !== 'cancelled') totalRevenue += t;
+    totalItems += (o.items || o.itemCount || 0);
+    var s = o.status || 'pending';
+    statusCounts[s] = (statusCounts[s] || 0) + 1;
+    var pm = (o.payment?.method) || (o.paymentMethod) || 'Pending';
+    paymentCounts[pm] = (paymentCounts[pm] || 0) + 1;
+  });
+  
+  var avgOrder = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+  
+  document.getElementById('totalOrders').textContent = totalOrders;
+  document.getElementById('totalRevenue').textContent = 'KSh ' + totalRevenue.toLocaleString(undefined, {minimumFractionDigits:2});
+  document.getElementById('avgOrder').textContent = 'KSh ' + avgOrder.toLocaleString(undefined, {minimumFractionDigits:2});
+  document.getElementById('itemsSold').textContent = totalItems;
+  
+  // Status table
+  var sh = '<tr><th>Status</th><th class="num">Count</th></tr>';
+  var totalCheck = 0;
+  Object.keys(statusCounts).sort().forEach(function(s) {
+    sh += '<tr><td>' + s.charAt(0).toUpperCase() + s.slice(1) + '</td><td class="num">' + statusCounts[s] + '</td></tr>';
+    totalCheck += statusCounts[s];
+  });
+  sh += '<tr style="border-top:2px solid #2e7d32"><td><strong>Total</strong></td><td class="num"><strong>' + totalCheck + '</strong></td></tr>';
+  document.getElementById('statusTable').innerHTML = sh;
+  
+  // Payment table
+  var ph = '<tr><th>Method</th><th class="num">Count</th></tr>';
+  Object.keys(paymentCounts).sort().forEach(function(p) {
+    ph += '<tr><td>' + p + '</td><td class="num">' + paymentCounts[p] + '</td></tr>';
+  });
+  document.getElementById('paymentTable').innerHTML = ph;
+  
+  // Top products from flat items array
+  filtered.forEach(function(o) {
+    var items = o.items || o.products || o.cartItems || [];
+    if (typeof items === 'number') return; // items count only
+    (items || []).forEach(function(item) {
+      var name = item.name || item.productName || item.title || 'Unknown';
+      var qty = parseInt(item.quantity || item.qty || 1);
+      productCounts[name] = (productCounts[name] || 0) + qty;
+    });
+  });
+  
+  var sortedProducts = Object.keys(productCounts).sort(function(a, b) { return productCounts[b] - productCounts[a]; });
+  var th = '<tr><th>#</th><th>Product</th><th class="num">Sold</th></tr>';
+  sortedProducts.slice(0, 10).forEach(function(name, i) {
+    th += '<tr><td>' + (i + 1) + '</td><td>' + name + '</td><td class="num">' + productCounts[name] + '</td></tr>';
+  });
+  if (sortedProducts.length === 0) th += '<tr><td colspan="3" style="text-align:center;padding:15px;color:#999">No product data</td></tr>';
+  document.getElementById('topProducts').innerHTML = th;
+  
+  // Orders list
+  var oh = '<tr><th>Order</th><th>Customer</th><th class="num">Total</th><th>Status</th><th>Payment</th><th>Date</th></tr>';
+  if (filtered.length === 0) {
+    oh += '<tr><td colspan="6" style="text-align:center;padding:20px;color:#999">No orders in this period</td></tr>';
+  } else {
+    filtered.forEach(function(o) {
+      var id = (o._id || o.id || o.orderId || '').slice(-8);
+      var cust = o.customer?.name || o.shipping?.name || o.customerName || '-';
+      var t = parseFloat(o.total || 0).toLocaleString(undefined, {minimumFractionDigits:2});
+      var s = o.status || 'pending';
+      var pmt = (o.payment?.method) || (o.paymentMethod) || '-';
+      var d = (o.createdAt || o.date || o.orderDate || '').slice(0, 10);
+      oh += '<tr><td>' + id + '</td><td>' + cust + '</td><td class="num">KSh ' + t + '</td><td>' + s + '</td><td>' + pmt + '</td><td>' + d + '</td></tr>';
+    });
+  }
+  document.getElementById('ordersTable').innerHTML = oh;
+}
+
+function downloadCSV() {
+  var filtered = filterByRange(allOrders, currentRange);
+  if (!filtered.length) { alert('No orders to export'); return; }
+  
+  var csv = 'Order ID,Customer,Total,Status,Payment Method,Date,Items\n';
+  filtered.forEach(function(o) {
+    var id = (o._id || o.id || '');
+    var cust = (o.customer?.name || o.shipping?.name || '').replace(/,/g, ' ');
+    var t = parseFloat(o.total || 0);
+    var s = o.status || '';
+    var pmt = (o.payment?.method) || '';
+    var d = (o.createdAt || '').slice(0, 10);
+    var items = o.items || 0;
+    csv += id + ',' + cust + ',' + t + ',' + s + ',' + pmt + ',' + d + ',' + items + '\n';
+  });
+  
+  var blob = new Blob([csv], {type: 'text/csv'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'obwocha-report-' + (currentRange.label || 'custom') + '.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function refresh() {
+  setStatus('Refreshing...', 'loading');
+  loadData();
+}
+
+function setStatus(msg, cls) {
+  var el = document.getElementById('status');
+  el.textContent = msg;
+  el.className = 'status ' + (cls || '');
+}
+</script>
+</body></html>
