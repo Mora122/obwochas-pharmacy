@@ -2478,7 +2478,8 @@ function repRender() {
       end = document.getElementById('repDateEnd');
       if (start && end && start.value && end.value) {
         start = new Date(start.value + 'T00:00:00');
-        end = new Date(end.value + 'T23:59:59');
+        end = new Date(end.value + 'T00:00:00');
+        end.setDate(end.getDate() + 1);
       } else {
         start = new Date(0);
         end = '9999-12-31';
@@ -2586,7 +2587,8 @@ function repCSV() {
       end = document.getElementById('repDateEnd');
       if (start && end && start.value && end.value) {
         start = new Date(start.value + 'T00:00:00');
-        end = new Date(end.value + 'T23:59:59');
+        end = new Date(end.value + 'T00:00:00');
+        end.setDate(end.getDate() + 1);
       } else {
         start = new Date(0);
         end = '9999-12-31';
@@ -2607,23 +2609,27 @@ function repCSV() {
   
   if (!filtered.length) { alert('No orders to export'); return; }
   
-  var csv = 'Order ID,Customer,Total,Status,Payment Method,Date' + '\n';
+  var csv = '\uFEFFOrder ID,Customer,Total,Status,Payment Method,Date' + '\n';
   filtered.forEach(function(o) {
-    var id = (o._id || o.id || '');
+    var id = (o._id || o.id || '').replace(/,/g, ' ');
     var cust = (o.customer?.name || o.shipping?.name || '').replace(/,/g, ' ');
-    var t = parseFloat(o.total || 0);
+    var t = parseFloat(o.total || 0).toFixed(2);
     var s = o.status || '';
     var pmt = (o.payment?.method) || '';
     var d = (o.createdAt || '').slice(0, 10);
     csv += id + ',' + cust + ',' + t + ',' + s + ',' + pmt + ',' + d + '\n';
   });
   
-  var blob = new Blob([csv], {type: 'text/csv'});
+  var blob = new Blob([csv], {type: 'text/csv;charset=utf-8'});
   var a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'obwocha-report-' + rep_currentRange + '.csv';
+  document.body.appendChild(a);
   a.click();
-  URL.createObjectURL(a.href);
+  setTimeout(function() {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+  }, 100);
 }
 function repCustomDate() {
   var startInp = document.getElementById('repDateStart');
