@@ -13,6 +13,11 @@ _fix_*.py
 _find_*.py
 _live_*.py
 _check_presc*.py
+_*.js
+_*.py
+_*.html
+_*.txt
+_*.bin
 _temp*.txt
 presc_debug.txt
 *.log

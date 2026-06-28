@@ -1,4 +1,4 @@
-const CACHE = 'obwocha-v18';
+const CACHE = 'obwocha-v19';
 const API_CACHE = 'obwocha-api-v1';
 const ASSETS = [
   '/',

@@ -246,4 +246,72 @@ document.addEventListener('DOMContentLoaded', function() {
   updateBadge();
   if (document.querySelector('.cart-table tbody')) renderCart();
   if (document.getElementById('checkoutSummary')) renderCheckoutSummary();
+  renderWishlistIcons();
 });
+
+
+/* ========== WISHLIST / Favorites ========== */
+const OBOCHA_WISHLIST_KEY = 'obwocha_wishlist';
+
+function getWishlist() {
+  try { return JSON.parse(localStorage.getItem(OBOCHA_WISHLIST_KEY)) || []; } 
+  catch { return []; }
+}
+
+function saveWishlist(wl) {
+  localStorage.setItem(OBOCHA_WISHLIST_KEY, JSON.stringify(wl));
+}
+
+function isInWishlist(productId) {
+  return getWishlist().some(function(i) { return String(i.id) === String(productId); });
+}
+
+function toggleWishlist(productId, name, price, image) {
+  var wl = getWishlist();
+  var idx = wl.findIndex(function(i) { return String(i.id) === String(productId); });
+  if (idx > -1) {
+    wl.splice(idx, 1);
+    showToast('Removed from wishlist');
+  } else {
+    wl.push({ id: productId, name: name || 'Product', price: price || 0, image: image || '' });
+    showToast('Added to wishlist \u2665');
+  }
+  saveWishlist(wl);
+  renderWishlistIcons();
+  if (document.getElementById('wishlistItems')) renderWishlistPage();
+}
+
+function renderWishlistIcons() {
+  var wl = getWishlist();
+  document.querySelectorAll('.wishlist-btn').forEach(function(btn) {
+    var pid = btn.getAttribute('data-pid');
+    if (pid) {
+      var loved = wl.some(function(i) { return String(i.id) === String(pid); });
+      btn.innerHTML = loved ? '\u2665' : '\u2661';
+      btn.className = 'wishlist-btn' + (loved ? ' loved' : '');
+    }
+  });
+  // Update wishlist badge
+  var badge = document.querySelector('.wishlist-badge');
+  if (badge) badge.textContent = wl.length > 0 ? wl.length : '';
+}
+
+function renderWishlistPage() {
+  var container = document.getElementById('wishlistItems');
+  if (!container) return;
+  var wl = getWishlist();
+  if (wl.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:60px 20px;"><div style="font-size:48px;margin-bottom:16px;">\u2661</div><h3>Your wishlist is empty</h3><p style="margin:10px 0;color:#666;">Save your favorite products!</p><a href="shop.html" class="btn btn-primary" style="display:inline-block;margin-top:10px;">Browse Products \u2192</a></div>';
+    return;
+  }
+  container.innerHTML = wl.map(function(item) {
+    var imgSrc = item.image ? (item.image.startsWith('http') ? item.image : 'images/' + item.image) : 'images/placeholder.svg';
+    return '<div class="wishlist-item">' +
+      '<button class="wishlist-btn loved" data-pid="' + item.id + '" onclick="toggleWishlist(\'' + item.id + '\',\'' + item.name.replace(/'/g,"\\'") + '\',' + item.price + ',\' ' + (item.image || '') + '\')" style="position:absolute;top:8px;right:8px;background:white;border:none;border-radius:50%;width:32px;height:32px;font-size:18px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.15);z-index:2;display:flex;align-items:center;justify-content:center;color:#c00;line-height:1">\u2665</button>' +
+      '<img src="' + imgSrc + '" alt="' + item.name + '" loading="lazy" onerror="this.src=\'images/placeholder.svg\'">' +
+      '<h4>' + item.name + '</h4>' +
+      '<p class="price">KSh ' + (item.price || 0).toLocaleString() + '</p>' +
+      '<button class="btn btn-primary btn-sm" onclick="addToCart(\'' + item.id + '\',1)" style="width:100%;font-size:13px;padding:8px">Add to Cart</button>' +
+    '</div>';
+  }).join('');
+}

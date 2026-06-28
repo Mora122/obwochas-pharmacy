@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');</script><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="icon" type="image/svg+xml" href="/icons/logo.svg">
   <link rel="apple-touch-icon" href="/icons/icon-192.svg">
@@ -43,11 +46,14 @@
     "closes": "20:00"
   }
 }
-</script></head>
+</script><link rel="dns-prefetch" href="https://www.googletagmanager.com">
+<link rel="preconnect" href="https://www.googletagmanager.com">
+<link rel="dns-prefetch" href="https://embed.tawk.to">
+<link rel="preconnect" href="https://embed.tawk.to"></head>
 <body><div class="top-bar"><div class="left"><span>🚚 Free Delivery For orders above KSh 5,000/=</span></div><div class="right"><a href="shop.html">Shop</a><a href="contact.html">Contact</a></div></div>
 <div class="header-nav-wrap">
 <button class="mobile-menu-toggle" onclick="document.querySelector('.main-nav').classList.toggle('open')">☰ Menu</button>
-<header><a href="index.html" class="logo"><div class="logo-icon"><img src="icons/logo.svg" alt="Obwochas Pharmacy" width="44" height="44"></div><div class="logo-text"><h1>Obwocha's <span>Pharmacy</span></h1><small>Kenya's Fastest-Growing Online Pharmacy</small></div></a><div class="search-bar"><input type="text" placeholder="Search..."><button>Search</button></div><div class="header-icons"><a href="cart.html" class="cart-icon">🛒 <span class="badge">3</span></a></div></header>
+<header><a href="index.html" class="logo"><div class="logo-icon"><img src="icons/logo.svg" alt="Obwochas Pharmacy" width="44" height="44"></div><div class="logo-text"><h1>Obwocha's <span>Pharmacy</span></h1><small>Kenya's Fastest-Growing Online Pharmacy</small></div></a><div class="search-bar"><input type="text" placeholder="Search..."><button>Search</button></div><div class="header-icons"><a href="wishlist.html">? <span class="wishlist-badge"></span></a><a href="cart.html" class="cart-icon">🛒 <span class="badge">3</span></a></div></header>
 <nav class="main-nav"><ul><li><a href="index.html">Home</a></li><li><a href="shop.html">Shop</a></li><li><a href="account.html" class="active">My Account</a></li></ul></nav>
 </div>
 
@@ -61,11 +67,11 @@
   <input type="password" id="loginPassword" placeholder="Enter your password" required>
   <button type="button" onclick="togglePw('loginPassword')" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;padding:4px 8px;line-height:1;color:#666;" title="Show password">👁</button>
 </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-        <label style="font-size:13px;"><input type="checkbox" id="rememberMe"> Remember me</label>
-        <a href="#" style="font-size:13px;">Forgot password?</a>
-      </div>
       <button type="submit" class="btn btn-primary" style="width:100%;" id="loginBtn">Sign In →</button>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;">
+        <label style="font-size:13px;display:flex;align-items:center;gap:6px;font-weight:400;margin:0;cursor:pointer;"><input type="checkbox" id="rememberMe" style="width:16px;height:16px;margin:0;flex:none"> Remember me</label>
+        <a href="forgot-password.html" style="font-size:13px;color:var(--primary);">Forgot password?</a>
+      </div>
     </form>
     <p style="text-align:center;margin-top:14px;font-size:13px;">Don't have an account? <a href="register.html">Create Account</a></p>
   </div>
@@ -251,5 +257,7 @@ function togglePw(id) {
 }
 </script>
 
+<!-- Tawk.to Live Chat -->
+<script>var Tawk_API=Tawk_API||{},Tawk_LoadStart=new Date();(function(){var s1=document.createElement('script'),s0=document.getElementsByTagName('script')[0];s1.async=true;s1.src='https://embed.tawk.to/5e7f2b8e8d6b5a2b7f2e8d6f/1f2e8d6f2';s1.charset='UTF-8';s1.setAttribute('crossorigin','*');s0.parentNode.insertBefore(s1,s0)})();</script>
 </body>
 </html>

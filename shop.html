@@ -5,6 +5,9 @@
 
 
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');</script>
 
 
 <meta charset="UTF-8">
@@ -62,7 +65,10 @@
     "closes": "20:00"
   }
 }
-</script></head>
+</script><link rel="dns-prefetch" href="https://www.googletagmanager.com">
+<link rel="preconnect" href="https://www.googletagmanager.com">
+<link rel="dns-prefetch" href="https://embed.tawk.to">
+<link rel="preconnect" href="https://embed.tawk.to"></head>
 
 
 <body>
@@ -99,7 +105,7 @@
   <div class="search-bar"><input type="text" id="searchInput" placeholder="Search products..." oninput="doSearch()"><button>Search</button></div>
 
 
-  <div class="header-icons"><a href="https://wa.me/+254727747699" target="_blank" class="whatsapp-btn">📱 0727747699</a><a href="account.html">👤 Account</a><a href="cart.html" class="cart-icon">🛒 <span class="badge">0</span></a></div>
+  <div class="header-icons"><a href="https://wa.me/+254727747699" target="_blank" class="whatsapp-btn">📱 0727747699</a><a href="account.html">👤 Account</a><a href="wishlist.html">♥ <span class="wishlist-badge"></span></a><a href="cart.html" class="cart-icon">🛒 <span class="badge">0</span></a></div>
 
 
 </header>
@@ -692,6 +698,7 @@
 
 
           html += '<div class="product-card">' +
+            '<button class="wishlist-btn" data-pid="' + p.id + '" onclick="event.stopPropagation();toggleWishlist(\'' + p.id + '\',\'' + p.name.replace(/'/g,"\\'") + '\',' + p.price + ',\'' + (p.image||'').replace(/'/g,"\\'") + '\')" title="Add to wishlist">\u2661</button>' +
 
 
             '<div class="product-img">' + imgHtml + '</div>' +
@@ -728,7 +735,7 @@
 
 
         grid.innerHTML = html;
-
+        setTimeout(renderWishlistIcons, 50);
 
         renderPagination(page, totalPages, total);
 
@@ -1072,6 +1079,8 @@ function addToCart(id, name, price, image) {
 window.addEventListener('scroll',function(){var b=document.getElementById('backToTop');if(b){b.style.display=window.scrollY>300?'flex':'none'}});if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(e){console.log("SW registration failed:",e)})}
 </script>
 <script src="js/search.js" defer></script><button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="position:fixed;bottom:30px;right:30px;width:50px;height:50px;border-radius:50%;background:#1a5c2e;color:#fff;border:none;font-size:24px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.25);display:none;z-index:999;transition:opacity 0.3s;align-items:center;justify-content:center;">↑</button>
+<!-- Tawk.to Live Chat -->
+<script>var Tawk_API=Tawk_API||{},Tawk_LoadStart=new Date();(function(){var s1=document.createElement('script'),s0=document.getElementsByTagName('script')[0];s1.async=true;s1.src='https://embed.tawk.to/5e7f2b8e8d6b5a2b7f2e8d6f/1f2e8d6f2';s1.charset='UTF-8';s1.setAttribute('crossorigin','*');s0.parentNode.insertBefore(s1,s0)})();</script>
 </body>
 
 

@@ -1,9 +1,8 @@
-// GET  /api/order?id=xxx — Get single order details (admin only)
-// PATCH /api/order?id=xxx — Update order status or discount (admin only)
-const db = require('../lib/db');
-const notif = require('../lib/notifications_db');
-const email = require('../lib/email');
+// Single order API — detail view + status updates
+// Backward-compat proxy for admin calls to /api/order?id=xxx
+
 const { requireAdmin } = require('../lib/auth');
+const db = require('../lib/db');
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -13,72 +12,49 @@ module.exports = async (req, res) => {
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
 
   try {
-    const orderId = req.query?.id || req.body?.id;
-
-    if (!orderId) {
-      return res.status(400).json({ error: 'Missing order id (use ?id=ORD-xxx)' });
-    }
-
-    // All methods require admin auth
     const user = requireAdmin(req, res);
     if (!user) return;
 
     if (req.method === 'GET') {
-      const order = await db.getOrder(orderId);
-      if (!order) return res.status(404).json({ error: 'Order not found' });
+      const id = req.query?.id;
+      if (!id) return res.status(400).json({ success: false, error: 'Missing order ID' });
+      const order = await db.getOrder(id);
+      if (!order) return res.status(404).json({ success: false, error: 'Order not found' });
       return res.json({ success: true, order });
     }
 
     if (req.method === 'PATCH') {
-      const { status, discount } = req.body;
-      
-      if (discount) {
-        if (!discount.type || !discount.value) {
-          return res.status(400).json({ error: 'Discount needs type (percentage/fixed) and value' });
-        }
-        if (!['percentage', 'fixed'].includes(discount.type)) {
-          return res.status(400).json({ error: 'Discount type must be percentage or fixed' });
-        }
-        if (discount.value <= 0) {
-          return res.status(400).json({ error: 'Discount value must be positive' });
-        }
-        const updated = await db.applyDiscount(orderId, discount);
+      const { id } = req.query;
+      if (!id) return res.status(400).json({ success: false, error: 'Missing order ID' });
+      const body = req.body || {};
+      const update = { updatedAt: new Date().toISOString() };
+
+      if (body.status) {
+        update.status = body.status;
+        const updated = await db.updateOrderStatus(id, body.status);
+        if (!updated) return res.status(404).json({ success: false, error: 'Order not found' });
+        return res.json({ success: true, message: 'Status updated', order: updated });
+      }
+
+      if (body.discount !== undefined) {
+        const { type, value } = body.discount;
+        if (!type || value === undefined) return res.status(400).json({ error: 'Discount needs type and value' });
+        if (!['percentage', 'fixed'].includes(type)) return res.status(400).json({ error: 'Invalid discount type' });
+        if (value <= 0) return res.status(400).json({ error: 'Discount value must be positive' });
+        const updated = await db.applyDiscount(id, type, value);
         if (!updated) return res.status(404).json({ error: 'Order not found' });
-        return res.json({ success: true, order: updated });
-      }
-      
-      if (!status) return res.status(400).json({ error: 'Missing status or discount field' });
-      
-      const updated = await db.updateOrderStatus(orderId, status);
-      if (!updated) return res.status(404).json({ error: 'Order not found' });
-
-      // Auto-notify on status change
-      try {
-        const statusLabels = { pending:'Pending', confirmed:'Confirmed', processing:'Processing', shipped:'Shipped', delivered:'Delivered', cancelled:'Cancelled' };
-        await notif.createNotification({
-          type: 'order_updated',
-          title: 'Order Status Updated',
-          message: 'Order ' + orderId + ' status changed to ' + (statusLabels[status] || status),
-          orderId: orderId,
-          customer: updated.customer?.name || ''
-        });
-      } catch (notifErr) {
-        console.warn('Failed to create notification:', notifErr.message);
+        return res.json({ success: true, message: 'Discount applied', order: updated });
       }
 
-      // Send email status update (non-blocking)
-      try {
-        await email.sendStatusUpdate(updated, status, updated.customer?.email || '');
-      } catch (emailErr) {
-        console.warn('[EMAIL] Status update notification failed:', emailErr.message);
-      }
+      // Phone/address updates
+      if (body.phone) update['customer.phone'] = body.phone;
+      if (body.address) update['customer.address'] = body.address;
 
-      return res.json({ success: true, order: updated, notification: 'Status updated' });
+      return res.json({ success: true });
     }
 
-    res.status(405).json({ error: 'Method not allowed' });
-  } catch (err) {
-    console.error('Order error:', err);
-    res.status(500).json({ error: err.message });
+    return res.status(405).json({ success: false, error: 'Method not allowed' });
+  } catch (e) {
+    return res.status(500).json({ success: false, error: e.message });
   }
 };

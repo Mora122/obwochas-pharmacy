@@ -5,6 +5,9 @@
 
 
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');</script>
 
 
 <meta charset="UTF-8">
@@ -79,7 +82,10 @@
     "closes": "20:00"
   }
 }
-</script></head>
+</script><link rel="dns-prefetch" href="https://www.googletagmanager.com">
+<link rel="preconnect" href="https://www.googletagmanager.com">
+<link rel="dns-prefetch" href="https://embed.tawk.to">
+<link rel="preconnect" href="https://embed.tawk.to"></head>
 
 
 <body>
@@ -952,6 +958,7 @@ function renderFeatured(products, grid) {
     window.ApiProductDB[p.id || p._id] = p;
     var img = p.image || 'images/placeholder.svg';
     html += '<div class="product-card">' +
+      '<button class="wishlist-btn" data-pid="' + (p.id || p._id) + '" onclick="event.stopPropagation();toggleWishlist(\'' + (p.id || p._id) + '\',\'' + p.name.replace(/'/g,"\\'") + '\',' + p.price + ',\'' + (p.image || '') + '\')" title="Add to wishlist">&#9825;</button>' +
       '<div class="product-img"><img loading="lazy" src="' + img + '" onerror="this.onerror=null;this.src=\'images/placeholder.svg\'" alt="' + p.name + '" style="width:100%;height:100%;object-fit:contain;background:#f0f5f0;padding:15px;"></div>' +
       '<div class="product-body">' +
       '<div class="brand">' + (p.category || '') + '</div>' +
@@ -964,6 +971,7 @@ function renderFeatured(products, grid) {
       '</div></div></div>';
   }
   grid.innerHTML = html;
+setTimeout(renderWishlistIcons, 50);
 }
 
 // Load featured products — first from static data (instant!), then refresh from API
@@ -1007,6 +1015,7 @@ function renderSpecialOffers(products, grid) {
     window.ApiProductDB[p.id || p._id] = p;
     var img = p.image || 'images/placeholder.svg';
     html += '<div class="product-card">' +
+      '<button class="wishlist-btn" data-pid="' + (p.id || p._id) + '" onclick="event.stopPropagation();toggleWishlist(\'' + (p.id || p._id) + '\',\'' + p.name.replace(/'/g,"\\'") + '\',' + p.price + ',\'' + (p.image || '') + '\')" title="Add to wishlist">&#9825;</button>' +
       '<div class="product-img"><img loading="lazy" src="' + img + '" onerror="this.onerror=null;this.src=\'images/placeholder.svg\'" alt="' + p.name + '" style="width:100%;height:100%;object-fit:contain;background:#f0f5f0;padding:15px;"></div>' +
       '<div class="product-body">' +
       '<div class="brand">' + (p.category || '') + '</div>' +
@@ -1019,6 +1028,7 @@ function renderSpecialOffers(products, grid) {
       '</div></div></div>';
   }
   grid.innerHTML = html;
+setTimeout(renderWishlistIcons, 50);
 }
 
 // Load special offers — first from static data (instant!), then refresh from API
@@ -1234,6 +1244,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="position:fixed;bottom:30px;right:30px;width:50px;height:50px;border-radius:50%;background:#1a5c2e;color:#fff;border:none;font-size:24px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.25);display:none;z-index:999;transition:opacity 0.3s;align-items:center;justify-content:center;">↑</button>
+<!-- Tawk.to Live Chat -->
+<script>var Tawk_API=Tawk_API||{},Tawk_LoadStart=new Date();(function(){var s1=document.createElement('script'),s0=document.getElementsByTagName('script')[0];s1.async=true;s1.src='https://embed.tawk.to/5e7f2b8e8d6b5a2b7f2e8d6f/1f2e8d6f2';s1.charset='UTF-8';s1.setAttribute('crossorigin','*');s0.parentNode.insertBefore(s1,s0)})();</script>
 </body>
 
 

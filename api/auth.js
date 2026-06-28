@@ -4,6 +4,7 @@
 // POST /api/auth                   — Login or Register (public)
 const bcrypt = require('bcryptjs');
 const { generateToken, requireAdmin } = require('../lib/auth');
+const { sendResetEmail } = require('../lib/email');
 
 // Shared connection & memory store
 let client = null;
@@ -125,6 +126,101 @@ module.exports = async (req, res) => {
         }
       } catch(_e) {
         console.warn('[AUTH] Auto-seed warning:', _e.message);
+      }
+
+      // ============== FORGOT PASSWORD ==============
+      if (action === 'forgot-password') {
+        const fpEmail = (email || '').toLowerCase().trim();
+        if (!fpEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fpEmail)) {
+          return res.status(400).json({ success: false, message: 'Valid email is required' });
+        }
+
+        const conn = await connect();
+        let user;
+        if (conn.mode === 'mongodb') {
+          user = await conn.db.collection('users').findOne({ email: fpEmail });
+        } else {
+          user = inMemoryUsers.find(u => u.email === fpEmail);
+        }
+
+        if (!user) {
+          // Don't reveal if email exists — always return success
+          return res.json({ success: true, message: 'If an account with that email exists, a reset link has been sent.' });
+        }
+
+        const crypto = require('crypto');
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        const resetExpiry = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hour
+
+        // Store reset token
+        if (conn.mode === 'mongodb') {
+          await conn.db.collection('users').updateOne(
+            { email: fpEmail },
+            { $set: { resetToken, resetExpiry } }
+          );
+        } else {
+          const u = inMemoryUsers.find(x => x.email === fpEmail);
+          if (u) { u.resetToken = resetToken; u.resetExpiry = resetExpiry; }
+        }
+
+        // Send reset email (async — won't block response)
+        sendResetEmail(fpEmail, resetToken).catch(function(err) {
+          console.warn('[AUTH] Failed to send reset email:', err.message);
+        });
+
+        return res.json({
+          success: true,
+          message: 'If an account with that email exists, a reset link has been sent.',
+          // In dev mode, return the link directly
+          ...(process.env.VERCEL_ENV === 'development' || !process.env.VERCEL_ENV
+            ? { resetUrl: 'https://obwochas-pharmacy.vercel.app/reset-password.html?token=' + resetToken + '&email=' + encodeURIComponent(fpEmail) }
+            : {})
+        });
+      }
+
+      // ============== RESET PASSWORD ==============
+      if (action === 'reset-password') {
+        const rpToken = req.body.token || '';
+        const rpEmail = (req.body.email || '').toLowerCase().trim();
+        const rpPassword = req.body.password || '';
+
+        if (!rpToken || !rpEmail) {
+          return res.status(400).json({ success: false, message: 'Invalid reset link' });
+        }
+        if (!rpPassword || rpPassword.length < 8) {
+          return res.status(400).json({ success: false, message: 'Password must be at least 8 characters' });
+        }
+
+        const conn = await connect();
+        let user;
+        if (conn.mode === 'mongodb') {
+          user = await conn.db.collection('users').findOne({ email: rpEmail });
+        } else {
+          user = inMemoryUsers.find(u => u.email === rpEmail);
+        }
+
+        if (!user || !user.resetToken || user.resetToken !== rpToken) {
+          return res.status(400).json({ success: false, message: 'Invalid or expired reset link' });
+        }
+
+        if (user.resetExpiry && new Date(user.resetExpiry) < new Date()) {
+          return res.status(400).json({ success: false, message: 'Reset link has expired. Please request a new one.' });
+        }
+
+        const salt = await bcrypt.genSalt(12);
+        const hashedPassword = await bcrypt.hash(rpPassword, salt);
+
+        if (conn.mode === 'mongodb') {
+          await conn.db.collection('users').updateOne(
+            { email: rpEmail },
+            { $set: { password: hashedPassword, updatedAt: new Date().toISOString() }, $unset: { resetToken: '', resetExpiry: '' } }
+          );
+        } else {
+          const u = inMemoryUsers.find(x => x.email === rpEmail);
+          if (u) { u.password = hashedPassword; delete u.resetToken; delete u.resetExpiry; }
+        }
+
+        return res.json({ success: true, message: 'Password reset successful! You can now sign in with your new password.' });
       }
 
       // Determine if this is login or register

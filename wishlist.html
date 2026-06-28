@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');</script><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/svg+xml" href="/icons/logo.svg">
+  <link rel="apple-touch-icon" href="/icons/icon-192.svg">
+  <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512.svg">
+  <title>My Wishlist — Obwocha's Pharmacy</title>
+  <meta name="description" content="Your saved favorites at Obwocha's Pharmacy.">
+  <meta property="og:title" content="My Wishlist — Obwocha's Pharmacy">
+  <meta property="og:description" content="Your saved favorites at Obwocha's Pharmacy.">
+  <meta property="og:url" content="https://obwochas-pharmacy.vercel.app/wishlist.html">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://obwochas-pharmacy.vercel.app/icons/icon-192.svg">
+  <link rel="preload" href="css/style.css" as="style">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/cart.js" defer></script>
+<link rel="dns-prefetch" href="https://www.googletagmanager.com">
+<link rel="preconnect" href="https://www.googletagmanager.com">
+<link rel="dns-prefetch" href="https://embed.tawk.to">
+<link rel="preconnect" href="https://embed.tawk.to"></head>
+<body>
+<div class="top-bar"><div class="left"><span>🚚 Free Delivery For orders above KSh 2,500/=</span></div><div class="right"><a href="help.html">Help</a><a href="contact.html">Contact</a></div></div>
+<button class="mobile-menu-toggle" onclick="document.querySelector('.main-nav').classList.toggle('open')">☰ Menu</button>
+<header><a href="index.html" class="logo"><div class="logo-icon"><img src="icons/logo.svg" alt="Obwochas Pharmacy" width="44" height="44"></div><div class="logo-text"><h1>Obwocha's <span>Pharmacy</span></h1><small>Kenya's Fastest-Growing Online Pharmacy</small></div></a><div class="header-icons"><a href="wishlist.html">♥ <span class="wishlist-badge" id="wishlistBadge">0</span></a><a href="cart.html">🛒 <span class="badge" id="cartBadge">0</span></a></div></header>
+<nav class="main-nav">
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="cart.html">Cart</a></li>
+    <li><a href="account.html">Account</a></li>
+  </ul>
+</nav>
+<div class="page-header"><h2>♥ My Wishlist</h2><p>Your favorite products, saved for later</p><div class="breadcrumb"><a href="index.html">Home</a> / <span>Wishlist</span></div></div>
+
+<div class="container" style="max-width:900px;margin:0 auto;padding:40px 20px;">
+  <div id="wishlistItems">
+    <div style="text-align:center;padding:60px 20px;color:#999;">Loading your wishlist...</div>
+  </div>
+</div>
+
+<section class="newsletter"><h3>📬 Stay in the Know</h3><p>Get the latest health tips, deals, and new arrivals.</p><div class="newsletter-form"><input type="email" placeholder="Enter your email address"><button>Subscribe</button></div></section>
+<footer>
+  <div class="footer-grid">
+    <div><h4>Shop</h4><a href="shop.html">All Products</a><a href="shop.html?cat=vitamins">Vitamins</a><a href="shop.html?cat=pain%20relief">Pain Relief</a><a href="brands.html">Brands</a></div>
+    <div><h4>Help</h4><a href="faq.html">FAQ</a><a href="delivery.html">Delivery Info</a><a href="contact.html">Contact</a></div>
+    <div><h4>Account</h4><a href="account.html">My Account</a><a href="register.html">Register</a><a href="wishlist.html">Wishlist</a></div>
+    <div><h4>More</h4><a href="blog.html">Health Blog</a><a href="about.html">About Us</a><a href="privacy.html">Privacy</a></div>
+  </div>
+  <div class="footer-bottom"><p>Copyright © 2026 Obwocha's Pharmacy — Kenya's Fastest-Growing Online Pharmacy</p></div>
+</footer>
+
+<style>
+  #wishlistItems { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; }
+  .wishlist-item { position:relative; background:#fff; border-radius:10px; padding:16px; box-shadow:0 1px 4px rgba(0,0,0,0.08); text-align:center; transition:transform 0.2s,box-shadow 0.2s; }
+  .wishlist-item:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,0.12); }
+  .wishlist-item img { width:100%; height:140px; object-fit:contain; margin-bottom:10px; }
+  .wishlist-item h4 { margin:0 0 6px; font-size:14px; color:#333; }
+  .wishlist-item .price { font-size:16px; font-weight:700; color:var(--primary); margin:0 0 10px; }
+  .wishlist-badge { background:var(--primary); color:#fff; border-radius:50%; padding:0 6px; font-size:11px; min-width:18px; height:18px; display:inline-flex; align-items:center; justify-content:center; vertical-align:top; }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  renderWishlistPage();
+  var b = document.querySelector('.wishlist-badge');
+  if (b) { var wl = getWishlist(); b.textContent = wl.length > 0 ? wl.length : ''; }
+});
+</script>
+<!-- Tawk.to Live Chat -->
+<script>var Tawk_API=Tawk_API||{},Tawk_LoadStart=new Date();(function(){var s1=document.createElement('script'),s0=document.getElementsByTagName('script')[0];s1.async=true;s1.src='https://embed.tawk.to/5e7f2b8e8d6b5a2b7f2e8d6f/1f2e8d6f2';s1.charset='UTF-8';s1.setAttribute('crossorigin','*');s0.parentNode.insertBefore(s1,s0)})();</script>
+</body>
+</html>

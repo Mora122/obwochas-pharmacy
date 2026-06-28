@@ -39,4 +39,10 @@
   } else {
     initGlobalSearch();
   }
+
+  // Load analytics/widgets (avoids adding another script tag to every page)
+  var analyticsScript = document.createElement('script');
+  analyticsScript.src = 'js/analytics.js';
+  analyticsScript.defer = true;
+  document.head.appendChild(analyticsScript);
 })();

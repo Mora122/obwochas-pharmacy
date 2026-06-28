@@ -411,3 +411,28 @@ img{max-width:100%;height:auto}
 @media (max-width:768px) {
   #backToTop { bottom:20px;right:20px;width:44px;height:44px;font-size:20px; }
 }
+
+/* ===== #19 Mobile Responsiveness Fixes ===== */
+@media (max-width:600px) {
+  header { flex-wrap:wrap; gap:8px; padding:10px 12px; }
+  header .search-bar { order:3; width:100%; margin:4px 0 0; }
+  header .search-bar input { width:100%; font-size:13px; }
+  header .logo-text h1 { font-size:15px; }
+  header .logo-text small { font-size:9px; }
+  .header-icons { gap:8px; }
+  .header-icons .cart-icon { font-size:17px; }
+  .header-icons .wishlist-heart { font-size:20px; }
+  .header-nav-wrap .main-nav { left:0; right:0; width:100%; }
+  .main-nav.open + header { display:none; }
+}
+
+/* Checkout mobile */
+@media (max-width:480px) {
+  .checkout-layout { grid-template-columns:1fr; }
+  .checkout-summary { position:static; }
+  .contact-form label { font-size:13px; }
+  .contact-form input, .contact-form select, .contact-form textarea { font-size:14px; padding:10px; }
+  .account-form { padding:20px 16px; }
+  .account-form .btn { width:100%; }
+  #loginForm .btn { width:100%; }
+}

@@ -291,8 +291,10 @@ body{background:#f0f2f5}
     <button onclick="handleLogout()" style="background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);padding:4px 12px;border-radius:4px;cursor:pointer;font-size:11px;margin-left:10px">Sign Out</button>
   </div>
   <div class="admin-header">
-
-  <div><h1>Obwocha's Pharmacy <span style="opacity:0.7;font-size:14px;font-weight:400">Admin Dashboard</span></h1></div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <img src="/icons/logo.svg" alt="Obwocha's" style="width:40px;height:40px;border-radius:8px">
+    <div><h1 style="margin:0">Obwocha's Pharmacy <span style="opacity:0.7;font-size:14px;font-weight:400">Admin Dashboard</span></h1></div>
+  </div>
 
   <div class="stats">
 
@@ -398,6 +400,7 @@ body{background:#f0f2f5}
       <input type="date" id="repDateEnd" style="padding:5px 9px;border:1px solid #ddd;border-radius:5px;font-size:12px">
       <button onclick="repCustomDate()" style="padding:5px 12px;border:1px solid #2e7d32;border-radius:5px;background:#2e7d32;cursor:pointer;font-size:12px;color:white">→ Go</button>
       <button onclick="repCSV()" style="padding:5px 12px;border:1px solid #2e7d32;border-radius:5px;background:white;cursor:pointer;font-size:12px;color:#2e7d32">📥 CSV</button>
+      <button onclick="repPDF()" style="padding:5px 12px;border:1px solid #d32f2f;border-radius:5px;background:white;cursor:pointer;font-size:12px;color:#d32f2f">📄 PDF</button>
       <button onclick="repRefresh()" style="padding:5px 12px;border:1px solid #2e7d32;border-radius:5px;background:white;cursor:pointer;font-size:12px;color:#2e7d32">🔄 Refresh</button>
     </div>
     
@@ -781,7 +784,7 @@ async function handleLogin() {
   
 (async function() {
   try {
-    var r = await _origFetch.call(window, API + '/login', {
+    var r = await _origFetch.call(window, API + '/auth', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: email, password: password })
@@ -1135,7 +1138,7 @@ async function loadUsers() {
   el.innerHTML = '<div class="loading">Loading users...</div>';
   try {
     var search = (document.getElementById('userSearchBox') && document.getElementById('userSearchBox').value) || '';
-    var r = await fetch('/api/users');
+    var r = await fetch('/api/auth');
     var d = await r.json();
     if (!d.success) {
       el.innerHTML = '<div style="text-align:center;padding:40px;color:#f44336">Failed to load users. Make sure you are signed in as admin.</div>';
@@ -1353,7 +1356,11 @@ async function showOrderDetail(id) {
     var oid = o.id || id;
 
     panel.innerHTML =
-
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">' +
+        '<img src="/icons/logo.svg" alt="" style="width:32px;height:32px;border-radius:6px">' +
+        '<div><div style="font-weight:700;color:#2e7d32;font-size:14px">Obwocha\'s Pharmacy</div><div style="font-size:10px;color:#999">Sales Receipt</div></div>' +
+      '</div>' +
+      '<hr style="border:none;border-top:1px solid #e0e0e0;margin:8px 0 12px">' +
       '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">' +
 
         '<h3 style="margin:0;color:var(--primary)">Order #' + oid + '</h3>' +
@@ -2631,6 +2638,134 @@ function repCSV() {
     URL.revokeObjectURL(a.href);
   }, 100);
 }
+
+function repPDF() {
+  var now = new Date();
+  var filtered = [];
+  var start, end;
+  var _range = rep_currentRange || 'today';
+  switch(_range) {
+    case 'today':
+      start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      end = new Date(start.getTime() + 86400000);
+      break;
+    case 'yesterday':
+      start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+      end = new Date(start.getTime() + 86400000);
+      break;
+    case 'thisweek':
+      var d = now.getDay() || 7;
+      start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - d + 1);
+      end = new Date(start.getTime() + 7 * 86400000);
+      break;
+    case 'thismonth':
+      start = new Date(now.getFullYear(), now.getMonth(), 1);
+      end = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+      break;
+    case 'custom':
+      start = document.getElementById('repDateStart');
+      end = document.getElementById('repDateEnd');
+      if (start && end && start.value && end.value) {
+        start = new Date(start.value + 'T00:00:00');
+        end = new Date(end.value + 'T00:00:00');
+        end.setDate(end.getDate() + 1);
+      } else {
+        start = new Date(0);
+        end = '9999-12-31';
+      }
+      break;
+    default:
+      start = new Date(0);
+      end = '9999-12-31';
+  }
+  var startStr = start.toISOString().slice(0,10);
+  var endStr = typeof end === 'string' ? end : end.toISOString().slice(0,10);
+  filtered = rep_allOrders.filter(function(o) {
+    var d = (o.createdAt || '').slice(0,10);
+    return d >= startStr && d < endStr;
+  });
+  if (filtered.length === 0) {
+    alert('No orders in this period to export.');
+    return;
+  }
+  var totalOrders = filtered.length;
+  var totalRevenue = filtered.reduce(function(s, o) { return s + parseFloat(o.total || 0); }, 0);
+  var totalItems = filtered.reduce(function(s, o) {
+    var items = Array.isArray(o.items) ? o.items : [];
+    try { return s + items.reduce(function(si, i) { return si + parseInt(i.quantity || 1); }, 0); }
+    catch(e) { return s; }
+  }, 0);
+  var avgOrder = totalOrders > 0 ? (totalRevenue / totalOrders) : 0;
+  var rangeLabel = _range.charAt(0).toUpperCase() + _range.slice(1);
+  var nowStr = new Date().toLocaleDateString('en-KE', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  
+  // Build print-friendly HTML report
+  var rowsHtml = filtered.map(function(o) {
+    var id = (o._id || o.id || '').slice(-6);
+    var cust = o.customer?.name || o.shipping?.name || 'N/A';
+    var total = parseFloat(o.total || 0).toFixed(2);
+    var status = (o.status || '').charAt(0).toUpperCase() + (o.status || '').slice(1);
+    var pmt = (o.payment?.method) || 'N/A';
+    var d = (o.createdAt || '').slice(0, 10);
+    return '<tr><td>#' + id + '</td><td>' + escHtml(cust) + '</td><td>KSh ' + total + '</td><td>' + status + '</td><td>' + pmt + '</td><td>' + d + '</td></tr>';
+  }).join('\n');
+  
+  var reportHtml = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Obwocha\'s Pharmacy - Sales Report</title>' +
+    '<style>' +
+    'body{font-family:Arial,sans-serif;margin:30px;color:#333}' +
+    'h1{color:#2e7d32;font-size:22px;margin:0}' +
+    'h2{font-size:16px;margin:8px 0 4px}' +
+    '.sub{color:#999;font-size:12px;margin:2px 0}' +
+    '.summary{display:flex;gap:12px;margin:16px 0;flex-wrap:wrap}' +
+    '.card{background:#e8f5e9;padding:12px 20px;border-radius:8px;min-width:100px}' +
+    '.card .val{font-size:22px;font-weight:700;color:#2e7d32}' +
+    '.card .lbl{font-size:11px;color:#666}' +
+    'h3{font-size:14px;color:#2e7d32;margin:16px 0 8px;border-bottom:1px solid #eee;padding-bottom:4px}' +
+    'table{width:100%;border-collapse:collapse;font-size:12px}' +
+    'th{background:#2e7d32;color:#fff;padding:8px 10px;text-align:left;font-size:11px}' +
+    'td{padding:6px 10px;border-bottom:1px solid #eee}' +
+    'tr:nth-child(even){background:#f9f9f9}' +
+    '.footer{font-size:10px;color:#aaa;text-align:center;margin-top:30px;border-top:1px solid #ddd;padding-top:10px}' +
+    '@media print{body{margin:15mm}.no-print{display:none}}' +
+    '</style></head><body>' +
+    '<div class="no-print" style="margin-bottom:16px"><button onclick="window.print()" style="padding:10px 24px;background:#2e7d32;color:#fff;border:none;border-radius:6px;font-size:14px;cursor:pointer">🖨️ Print / Save as PDF</button></div>' +
+    '<div style="display:flex;align-items:center;gap:12px;margin-bottom:4px"><img src="/icons/logo.svg" alt="" style="width:48px;height:48px;border-radius:8px"><h1 style="margin:0">Obwocha\'s Pharmacy</h1></div>' +
+    '<h2>Sales Report</h2>' +
+    '<div class="sub">Period: ' + rangeLabel + ' | Generated: ' + nowStr + '</div>' +
+    '<div class="summary">' +
+    '<div class="card"><div class="lbl">Orders</div><div class="val">' + totalOrders + '</div></div>' +
+    '<div class="card"><div class="lbl">Revenue</div><div class="val">KSh ' + totalRevenue.toLocaleString('en-KE', { minimumFractionDigits: 2 }) + '</div></div>' +
+    '<div class="card"><div class="lbl">Avg Order</div><div class="val">KSh ' + avgOrder.toLocaleString('en-KE', { minimumFractionDigits: 2 }) + '</div></div>' +
+    '<div class="card"><div class="lbl">Items Sold</div><div class="val">' + totalItems + '</div></div>' +
+    '</div>' +
+    '<h3>📄 Orders in Period</h3>' +
+    '<table><thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Status</th><th>Payment</th><th>Date</th></tr></thead><tbody>' +
+    rowsHtml +
+    '</tbody></table>' +
+    '<div class="footer">Obwocha\'s Pharmacy - obwochaspharmacy.co.ke</div>' +
+    '<script src="js/analytics.js" defer></scr' + 'ipt>\n</body></html>';
+  
+  var win = window.open('', '_blank');
+  if (win) {
+    win.document.write(reportHtml);
+    win.document.close();
+  } else {
+    // Popup blocked fallback: print inline
+    var reportDiv = document.createElement('div');
+    reportDiv.innerHTML = reportHtml;
+    reportDiv.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:100%;z-index:-1';
+    document.body.appendChild(reportDiv);
+    setTimeout(function() {
+      window.print();
+      document.body.removeChild(reportDiv);
+    }, 100);
+  }
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 function repCustomDate() {
   var startInp = document.getElementById('repDateStart');
   var endInp = document.getElementById('repDateEnd');
@@ -2711,6 +2846,7 @@ function togglePw(id) {
 }
 </script>
 
+<script src="js/analytics.js" defer></script>
 </body>
 
 </html>
