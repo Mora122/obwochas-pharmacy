@@ -971,7 +971,7 @@ function renderFeatured(products, grid) {
       '</div></div></div>';
   }
   grid.innerHTML = html;
-setTimeout(renderWishlistIcons, 50);
+if (typeof renderWishlistIcons === 'function') { setTimeout(function() { renderWishlistIcons(); }, 50); }
 }
 
 // Load featured products — first from static data (instant!), then refresh from API
@@ -1028,7 +1028,7 @@ function renderSpecialOffers(products, grid) {
       '</div></div></div>';
   }
   grid.innerHTML = html;
-setTimeout(renderWishlistIcons, 50);
+if (typeof renderWishlistIcons === 'function') { setTimeout(function() { renderWishlistIcons(); }, 50); }
 }
 
 // Load special offers — first from static data (instant!), then refresh from API

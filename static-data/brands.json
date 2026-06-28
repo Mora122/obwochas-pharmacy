@@ -1,0 +1,76 @@
+{
+  "lastBuilt": "2026-06-27T05:38:02.083Z",
+  "count": 10,
+  "brands": [
+    {
+      "id": "BRAND-001",
+      "name": "Panadol",
+      "slug": "panadol",
+      "image": "",
+      "icon": "💊"
+    },
+    {
+      "id": "BRAND-002",
+      "name": "Brufen",
+      "slug": "brufen",
+      "image": "",
+      "icon": "💊"
+    },
+    {
+      "id": "BRAND-003",
+      "name": "Voltaren",
+      "slug": "voltaren",
+      "image": "",
+      "icon": "🧴"
+    },
+    {
+      "id": "BRAND-004",
+      "name": "Piriton",
+      "slug": "piriton",
+      "image": "",
+      "icon": "💊"
+    },
+    {
+      "id": "BRAND-005",
+      "name": "Cetaphil",
+      "slug": "cetaphil",
+      "image": "",
+      "icon": "🧴"
+    },
+    {
+      "id": "BRAND-006",
+      "name": "Lemsip",
+      "slug": "lemsip",
+      "image": "",
+      "icon": "🍋"
+    },
+    {
+      "id": "BRAND-007",
+      "name": "Strepsils",
+      "slug": "strepsils",
+      "image": "",
+      "icon": "🍬"
+    },
+    {
+      "id": "BRAND-008",
+      "name": "Dettol",
+      "slug": "dettol",
+      "image": "",
+      "icon": "🧴"
+    },
+    {
+      "id": "BRAND-009",
+      "name": "Maalox",
+      "slug": "maalox",
+      "image": "",
+      "icon": "💧"
+    },
+    {
+      "id": "BRAND-010",
+      "name": "Glucophage",
+      "slug": "glucophage",
+      "image": "",
+      "icon": "💊"
+    }
+  ]
+}
