@@ -175,15 +175,15 @@ function renderCart() {
   container.innerHTML = rows;
 
   if (summary) {
-    const discount = subtotal > 2500 ? 0 : 0; // free delivery when > 2500
-    const delivery = subtotal > 2500 ? 0 : 350;
+    const discount = subtotal > 5000 ? 0 : 0; // free delivery when > 5000
+    const delivery = subtotal > 5000 ? 0 : 350;
     const total = subtotal + delivery;
     summary.innerHTML = `
       <h3>📋 Order Summary</h3>
       <div class="row"><span>Subtotal (${totalItems} items)</span><span>KSh ${subtotal.toLocaleString()}</span></div>
       <div class="row"><span>Delivery</span><span style="color:${delivery === 0 ? 'var(--primary)' : 'inherit'};font-weight:600;">${delivery === 0 ? 'FREE' : 'KSh 350'}</span></div>
       <div class="row total"><span>Total</span><span>KSh ${total.toLocaleString()}</span></div>
-      <p style="font-size:12px;color:var(--text-muted);margin:8px 0;">Free delivery on orders above KSh 2,500</p>
+      <p style="font-size:12px;color:var(--text-muted);margin:8px 0;">Free delivery on orders above KSh 5,000</p>
       <a href="checkout.html" class="btn btn-primary" style="width:100%;text-align:center;padding:14px;display:block;">Proceed to Checkout →</a>
       <a href="shop.html" style="display:block;text-align:center;margin-top:8px;font-size:13px;">← Continue Shopping</a>
       <button onclick="clearCart()" style="display:block;width:100%;margin-top:8px;padding:8px;background:none;border:1px solid #c00;color:#c00;border-radius:4px;cursor:pointer;font-size:12px;">🗑️ Clear Cart</button>
@@ -212,7 +212,7 @@ function renderCheckoutSummary() {
     itemsHtml += `<div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;"><span>${item.name} × ${item.qty}</span><span>KSh ${sub.toLocaleString()}</span></div>`;
   });
 
-  const delivery = subtotal > 2500 ? 0 : 350;
+  const delivery = subtotal > 5000 ? 0 : 350;
   const total = subtotal + delivery;
 
   container.innerHTML = `
@@ -221,7 +221,7 @@ function renderCheckoutSummary() {
     <div style="display:flex;justify-content:space-between;font-size:14px;"><span>Subtotal (${totalItems} items)</span><span>KSh ${subtotal.toLocaleString()}</span></div>
     <div style="display:flex;justify-content:space-between;font-size:14px;color:var(--primary);font-weight:600;"><span>Delivery</span><span>${delivery === 0 ? 'FREE' : 'KSh ' + delivery}</span></div>
     <div style="display:flex;justify-content:space-between;font-size:20px;font-weight:800;color:var(--primary);margin-top:12px;border-top:2px solid var(--primary);padding-top:12px;"><span>Total</span><span id="totalAmount">KSh ${total.toLocaleString()}</span></div>
-    <p style="font-size:12px;color:var(--text-muted);margin-top:8px;">🚚 Free delivery on orders above KSh 2,500</p>
+    <p style="font-size:12px;color:var(--text-muted);margin-top:8px;">🚚 Free delivery on orders above KSh 5,000</p>
   `;
 }
 

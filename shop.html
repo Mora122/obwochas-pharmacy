@@ -501,6 +501,9 @@
 
 
             allProducts = d.products;
+            // Populate ApiProductDB for addToCart lookup
+            window.ApiProductDB = window.ApiProductDB || {};
+            d.products.forEach(function(p) { window.ApiProductDB[p.id] = p; });
 
 
             checkUrlFilters();
@@ -759,7 +762,7 @@
             '<a href="product.html?id=' + p.id + '" class="btn btn-sm">View</a>' +
 
 
-            (p.stock > 0 ? '<button class="btn btn-primary btn-sm" onclick="addToCart(\'' + p.id + '\',\'' + p.name.replace(/'/g,"\\'") + '\',' + p.price + ',\'' + (p.image||'').replace(/'/g,"\\'") + '\')">Add to Cart</button>' : '<button class="btn btn-sm" disabled style="background:#eee;color:#999;cursor:not-allowed">Out of Stock</button>') + '</div></div></div>';
+            (p.stock > 0 ? '<button class="btn btn-primary btn-sm" onclick="addToCart(\'' + p.id + '\',1)">Add to Cart</button>' : '<button class="btn btn-sm" disabled style="background:#eee;color:#999;cursor:not-allowed">Out of Stock</button>') + '</div></div></div>';
 
 
         }
@@ -865,46 +868,6 @@
       function doSearch() {
         filterBySearch();
       }
-function addToCart(id, name, price, image) {
-        try {
-          var cart = JSON.parse(localStorage.getItem('obwocha_cart')) || [];
-          var existing = cart.find(function(item) { return item.id === id; });
-          if (existing) {
-            existing.qty = (existing.qty || 1) + 1;
-          } else {
-            cart.push({id: id, name: name, price: price, qty: 1, image: image || '', brand: '', sku: ''});
-          }
-
-
-          localStorage.setItem('obwocha_cart', JSON.stringify(cart));
-
-
-          var badge = document.querySelector('.cart-icon .badge');
-
-
-          if (badge) badge.textContent = cart.reduce(function(s,i) { return s + (i.qty||1); }, 0);
-
-
-          showToast('\u2705 Added to cart!');
-
-
-        } catch(e) {}
-
-
-      function showToast(msg) {
-        var t = document.createElement('div');
-        t.textContent = msg;
-        t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#2e7d32;color:#fff;padding:12px 24px;border-radius:30px;font-size:15px;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.3);animation:fadeInUp 0.3s;max-width:90%;text-align:center';
-        document.body.appendChild(t);
-        setTimeout(function(){ t.style.opacity='0';t.style.transition='opacity 0.3s';setTimeout(function(){t.remove()},300) }, 1500);
-      }
-
-
-      }
-
-
-
-
 
       function clearFilters() {
 
