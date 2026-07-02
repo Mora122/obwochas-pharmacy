@@ -69,7 +69,7 @@
 </div>
       <button type="submit" class="btn btn-primary" style="width:100%;" id="loginBtn">Sign In →</button>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;">
-        <label style="font-size:13px;display:flex;align-items:center;gap:6px;font-weight:400;margin:0;cursor:pointer;"><input type="checkbox" id="rememberMe" style="width:16px;height:16px;margin:0;flex:none"> Remember me</label>
+        <span style="display:inline-flex;align-items:center;gap:5px;"><label for="rememberMe" style="font-size:13px;font-weight:400;margin:0;cursor:pointer;">Remember me</label><input type="checkbox" id="rememberMe" style="width:16px;height:16px;margin:0;flex-shrink:0;"></span>
         <a href="forgot-password.html" style="font-size:13px;color:var(--primary);">Forgot password?</a>
       </div>
     </form>
@@ -89,6 +89,33 @@
       <div id="ordersList" style="background:#fff;border-radius:var(--radius);padding:16px;border:1px solid var(--border);min-height:100px;">
         <div style="text-align:center;color:#999;padding:20px;">Loading orders...</div>
       </div>
+    </div>
+
+    <!-- Change Password Section -->
+    <div id="changePwSection" style="margin-top:20px;background:#fff;border-radius:var(--radius);padding:20px;border:1px solid var(--border);">
+      <h3 style="color:var(--primary);margin:0 0 12px;font-size:15px;">🔑 Change Password</h3>
+      <form id="changePwForm" style="display:flex;flex-direction:column;gap:10px;">
+        <div>
+          <label style="font-size:13px;font-weight:600;">Current Password</label>
+          <div style="position:relative;">
+            <input type="password" id="acctCurPw" placeholder="Enter current password" required style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px;box-sizing:border-box;padding-right:40px;">
+            <button type="button" onclick="togglePw('acctCurPw')" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;padding:4px;color:#666;" title="Show password">👁</button>
+          </div>
+        </div>
+        <div>
+          <label style="font-size:13px;font-weight:600;">New Password</label>
+          <div style="position:relative;">
+            <input type="password" id="acctNewPw" placeholder="Min. 8 characters" minlength="8" required style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px;box-sizing:border-box;padding-right:40px;">
+            <button type="button" onclick="togglePw('acctNewPw')" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;padding:4px;color:#666;" title="Show password">👁</button>
+          </div>
+        </div>
+        <div>
+          <label style="font-size:13px;font-weight:600;">Confirm New Password</label>
+          <input type="password" id="acctConfirmPw" placeholder="Repeat new password" required style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px;box-sizing:border-box;">
+        </div>
+        <button type="submit" id="acctChangePwBtn" style="background:var(--primary);color:#fff;border:none;padding:10px;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;">Update Password</button>
+        <div id="acctPwMsg" style="font-size:13px;min-height:20px;"></div>
+      </form>
     </div>
   </div>
 
@@ -216,6 +243,62 @@ function logout() {
   localStorage.removeItem('obwochas_user');
   window.location.reload();
 }
+
+// Change password form handler
+document.addEventListener('DOMContentLoaded', function() {
+  var cpForm = document.getElementById('changePwForm');
+  if (cpForm) {
+    cpForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var btn = document.getElementById('acctChangePwBtn');
+      var msg = document.getElementById('acctPwMsg');
+      var cur = document.getElementById('acctCurPw').value;
+      var newPw = document.getElementById('acctNewPw').value;
+      var confirm = document.getElementById('acctConfirmPw').value;
+
+      if (newPw !== confirm) {
+        msg.innerHTML = '<span style="color:#c62828;">❌ New passwords do not match.</span>';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Updating...';
+      msg.innerHTML = '';
+
+      var token = getToken();
+      if (!token) {
+        msg.innerHTML = '<span style="color:#c62828;">❌ You must be signed in.</span>';
+        btn.disabled = false;
+        btn.textContent = 'Update Password';
+        return;
+      }
+
+      fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ action: 'change-password', currentPassword: cur, newPassword: newPw })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (d.success) {
+          msg.innerHTML = '<span style="color:#2e7d32;">✅ ' + d.message + '</span>';
+          document.getElementById('acctCurPw').value = '';
+          document.getElementById('acctNewPw').value = '';
+          document.getElementById('acctConfirmPw').value = '';
+        } else {
+          msg.innerHTML = '<span style="color:#c62828;">❌ ' + (d.message || 'Failed to change password.') + '</span>';
+        }
+        btn.disabled = false;
+        btn.textContent = 'Update Password';
+      })
+      .catch(function() {
+        msg.innerHTML = '<span style="color:#c62828;">❌ Connection error. Please try again.</span>';
+        btn.disabled = false;
+        btn.textContent = 'Update Password';
+      });
+    });
+  }
+});
 
 // Check auth on page load
 document.addEventListener('DOMContentLoaded', checkAuth);

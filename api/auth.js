@@ -223,6 +223,66 @@ module.exports = async (req, res) => {
         return res.json({ success: true, message: 'Password reset successful! You can now sign in with your new password.' });
       }
 
+      // ============== CHANGE PASSWORD (authenticated) ==============
+      if (action === 'change-password') {
+        const { verifyToken } = require('../lib/auth');
+        const decoded = verifyToken(req);
+        if (!decoded) {
+          return res.status(401).json({ success: false, message: 'Unauthorized. Please sign in again.' });
+        }
+
+        const cpEmail = decoded.email;
+        const cpCurrent = req.body.currentPassword || '';
+        const cpNew = req.body.newPassword || '';
+
+        if (!cpCurrent || !cpNew) {
+          return res.status(400).json({ success: false, message: 'Current password and new password are required.' });
+        }
+        if (cpNew.length < 8) {
+          return res.status(400).json({ success: false, message: 'New password must be at least 8 characters.' });
+        }
+
+        const conn = await connect();
+        let user;
+        if (conn.mode === 'mongodb') {
+          user = await conn.db.collection('users').findOne({ email: cpEmail });
+        } else {
+          user = inMemoryUsers.find(u => u.email === cpEmail);
+        }
+
+        if (!user) {
+          return res.status(404).json({ success: false, message: 'User not found.' });
+        }
+
+        // Verify current password
+        let validCurrent = false;
+        if (user.password && user.password.startsWith('$2')) {
+          validCurrent = await bcrypt.compare(cpCurrent, user.password);
+        } else {
+          validCurrent = user.password === cpCurrent;
+        }
+
+        if (!validCurrent) {
+          return res.status(401).json({ success: false, message: 'Current password is incorrect.' });
+        }
+
+        // Hash and update
+        const newSalt = await bcrypt.genSalt(12);
+        const newHashed = await bcrypt.hash(cpNew, newSalt);
+
+        if (conn.mode === 'mongodb') {
+          await conn.db.collection('users').updateOne(
+            { email: cpEmail },
+            { $set: { password: newHashed, updatedAt: new Date().toISOString() } }
+          );
+        } else {
+          const u = inMemoryUsers.find(x => x.email === cpEmail);
+          if (u) { u.password = newHashed; u.updatedAt = new Date().toISOString(); }
+        }
+
+        return res.json({ success: true, message: 'Password changed successfully!' });
+      }
+
       // Determine if this is login or register
       const isLogin = action === 'login' || (!action && email && password && !name);
 

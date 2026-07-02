@@ -507,6 +507,18 @@ const ProductDB = {
     
 
 
+    // Auto-fill name from user account
+    try {
+      var userData = localStorage.getItem('obwochas_user');
+      if (userData) {
+        var u = JSON.parse(userData);
+        if (u && u.name) {
+          var nInp = document.getElementById('revName');
+          if (nInp) nInp.value = u.name;
+        }
+      }
+    } catch(e) {}
+
     // Build reviews section
 
 
@@ -1163,6 +1175,7 @@ document.addEventListener('DOMContentLoaded', function() {
 if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(e){console.log("SW registration failed:",e)})}
 </script>
 
+<script src="js/cart.js" defer></script>
 <script src="js/search.js" defer></script><button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="position:fixed;bottom:30px;right:30px;width:50px;height:50px;border-radius:50%;background:#1a5c2e;color:#fff;border:none;font-size:24px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.25);display:none;z-index:999;transition:opacity 0.3s;align-items:center;justify-content:center;">↑</button>
 <!-- Tawk.to Live Chat -->
 <script>var Tawk_API=Tawk_API||{},Tawk_LoadStart=new Date();(function(){var s1=document.createElement('script'),s0=document.getElementsByTagName('script')[0];s1.async=true;s1.src='https://embed.tawk.to/5e7f2b8e8d6b5a2b7f2e8d6f/1f2e8d6f2';s1.charset='UTF-8';s1.setAttribute('crossorigin','*');s0.parentNode.insertBefore(s1,s0)})();</script>

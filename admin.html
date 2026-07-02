@@ -326,6 +326,7 @@ body{background:#f0f2f5}
 
   <button class="tab-btn" data-tab="notifications" onclick="switchTab('notifications');loadNotifications()">🔔 Notifications <span id="notifCount"></span></button>
           <button class="tab-btn" onclick="switchTab('dashboard');setTimeout(function(){var e=document.getElementById('repHeader');if(e)e.scrollIntoView({behavior:'smooth'})},300)">📊 Reports</button>
+  <button class="tab-btn" data-tab="settings" onclick="switchTab('settings')">⚙️ Settings</button>
 
 </div>
 
@@ -732,6 +733,42 @@ body{background:#f0f2f5}
 
 </div>
 
+</div>
+
+<!-- Settings Tab -->
+<div id="tab-settings" class="tab-content" style="display:none">
+  <div class="admin-container">
+    <h2 style="margin:0 0 16px;font-size:20px">⚙️ Settings</h2>
+
+    <div style="background:#fff;border-radius:10px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,0.08);max-width:500px;">
+      <h3 style="color:var(--primary);margin:0 0 16px;font-size:16px;">🔑 Change Password</h3>
+
+      <form id="adminChangePwForm" style="display:flex;flex-direction:column;gap:12px;">
+        <div>
+          <label style="font-size:13px;font-weight:600;">Current Password</label>
+          <div style="position:relative;">
+            <input type="password" id="adminCurPw" placeholder="Enter current password" required style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px;box-sizing:border-box;padding-right:40px;">
+            <button type="button" onclick="togglePw('adminCurPw')" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;padding:4px;color:#666;" title="Show password">👁</button>
+          </div>
+        </div>
+        <div>
+          <label style="font-size:13px;font-weight:600;">New Password</label>
+          <div style="position:relative;">
+            <input type="password" id="adminNewPw" placeholder="Min. 8 characters" minlength="8" required style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px;box-sizing:border-box;padding-right:40px;">
+            <button type="button" onclick="togglePw('adminNewPw')" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;padding:4px;color:#666;" title="Show password">👁</button>
+          </div>
+        </div>
+        <div>
+          <label style="font-size:13px;font-weight:600;">Confirm New Password</label>
+          <input type="password" id="adminConfirmPw" placeholder="Repeat new password" required style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px;box-sizing:border-box;">
+        </div>
+        <button type="submit" id="adminChangePwBtn" style="background:var(--primary);color:#fff;border:none;padding:12px;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;">Update Password</button>
+        <div id="adminPwMsg" style="font-size:13px;min-height:20px;"></div>
+      </form>
+    </div>
+  </div>
+</div>
+
 </div><!-- /dashboardRoot -->
 
 <script>
@@ -822,6 +859,62 @@ function handleLogout() {
   document.getElementById('loginPassword').value = '';
 }
 
+// Change password form handler
+document.addEventListener('DOMContentLoaded', function() {
+  var pwForm = document.getElementById('adminChangePwForm');
+  if (pwForm) {
+    pwForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var btn = document.getElementById('adminChangePwBtn');
+      var msg = document.getElementById('adminPwMsg');
+      var cur = document.getElementById('adminCurPw').value;
+      var newPw = document.getElementById('adminNewPw').value;
+      var confirm = document.getElementById('adminConfirmPw').value;
+
+      if (newPw !== confirm) {
+        msg.innerHTML = '<span style="color:#c62828;">❌ New passwords do not match.</span>';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Updating...';
+      msg.innerHTML = '';
+
+      var token = getToken();
+      if (!token) {
+        msg.innerHTML = '<span style="color:#c62828;">❌ You must be signed in.</span>';
+        btn.disabled = false;
+        btn.textContent = 'Update Password';
+        return;
+      }
+
+      fetch(API + '/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ action: 'change-password', currentPassword: cur, newPassword: newPw })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (d.success) {
+          msg.innerHTML = '<span style="color:#2e7d32;">✅ ' + d.message + '</span>';
+          document.getElementById('adminCurPw').value = '';
+          document.getElementById('adminNewPw').value = '';
+          document.getElementById('adminConfirmPw').value = '';
+        } else {
+          msg.innerHTML = '<span style="color:#c62828;">❌ ' + (d.message || 'Failed to change password.') + '</span>';
+        }
+        btn.disabled = false;
+        btn.textContent = 'Update Password';
+      })
+      .catch(function() {
+        msg.innerHTML = '<span style="color:#c62828;">❌ Connection error. Please try again.</span>';
+        btn.disabled = false;
+        btn.textContent = 'Update Password';
+      });
+    });
+  }
+});
+
 // Initialize dashboard: check token on page load, show login or dashboard
 function checkAuth() {
   var token = getToken();
@@ -842,6 +935,7 @@ function initDashboard() {
   loadOrders();
   loadNotifications();
   updateNotifBadge();
+  repLoad(); // Initialize reports section
   setInterval(loadOrders, 60000);
   setInterval(updateNotifBadge, 30000);
 }
@@ -869,7 +963,7 @@ function switchTab(tab) {
   var el = document.getElementById('tab-' + tab);
   if (el) el.style.display = 'block';
 
-  if (tab === 'dashboard') loadDashboard();
+  if (tab === 'dashboard') { loadDashboard(); repLoad(); }
   if (tab === 'orders') loadOrders();
   if (tab === 'products') loadProducts();
     setTimeout(checkLowStock, 500);

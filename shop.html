@@ -463,7 +463,29 @@
 
 
 
+      var productRatings = {}; // { productId: { avg, count } }
+
       async function loadProducts() {
+        // Load reviews for rating display
+        try {
+          var revR = await fetch(API + '/reviews');
+          var revD = await revR.json();
+          if (revD.success && revD.reviews) {
+            var groups = {};
+            revD.reviews.forEach(function(rv) {
+              if (!rv.productId) return;
+              if (!groups[rv.productId]) groups[rv.productId] = { sum: 0, count: 0 };
+              groups[rv.productId].sum += rv.rating || 5;
+              groups[rv.productId].count++;
+            });
+            Object.keys(groups).forEach(function(pid) {
+              productRatings[pid] = {
+                avg: groups[pid].sum / groups[pid].count,
+                count: groups[pid].count
+              };
+            });
+          }
+        } catch(e) {}
 
 
         try {
@@ -721,6 +743,15 @@
 
             '<div style="font-size:11px;color:#666;margin:4px 0">' + stockLabel + '</div>' +
 
+            // Rating stars
+            (function() {
+              var rat = productRatings[p.id];
+              if (!rat || rat.count === 0) return '';
+              var avg = Math.round(rat.avg);
+              var stars = '';
+              for (var s = 1; s <= 5; s++) { stars += s <= avg ? '\u2B50' : '\u2606'; }
+              return '<div style="font-size:13px;margin:3px 0">' + stars + ' <span style="font-size:11px;color:#666">(' + rat.count + ')</span></div>';
+            })() +
 
             '<div class="product-actions">' +
 
@@ -1077,7 +1108,9 @@ function addToCart(id, name, price, image) {
 
 <script>
 window.addEventListener('scroll',function(){var b=document.getElementById('backToTop');if(b){b.style.display=window.scrollY>300?'flex':'none'}});if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(e){console.log("SW registration failed:",e)})}
+document.addEventListener('DOMContentLoaded',function(){if(typeof renderWishlistIcons==='function')renderWishlistIcons()});
 </script>
+<script src="js/cart.js" defer></script>
 <script src="js/analytics.js" defer></script>
 <script src="js/search.js" defer></script>
 <button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="position:fixed;bottom:30px;right:30px;width:50px;height:50px;border-radius:50%;background:#1a5c2e;color:#fff;border:none;font-size:24px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.25);display:none;z-index:999;transition:opacity 0.3s;align-items:center;justify-content:center;">↑</button>

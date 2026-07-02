@@ -1123,6 +1123,17 @@ function openReviewModal() {
   // Reset form
   document.getElementById('review-name').value = '';
   document.getElementById('review-location').value = '';
+
+  // Auto-fill name from user account if logged in
+  try {
+    var userData = localStorage.getItem('obwochas_user');
+    if (userData) {
+      var u = JSON.parse(userData);
+      if (u && u.name) {
+        document.getElementById('review-name').value = u.name;
+      }
+    }
+  } catch(e) {}
   document.getElementById('review-comment').value = '';
   document.getElementById('review-form-success').style.display = 'none';
   document.getElementById('review-form-error').style.display = 'none';
